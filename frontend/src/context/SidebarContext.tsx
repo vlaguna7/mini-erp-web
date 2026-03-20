@@ -19,14 +19,12 @@ interface SidebarProviderProps {
 }
 
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  // Persiste estado da sidebar — mobile começa fechada por padrão
   const [isOpen, setIsOpenState] = useState<boolean>(() => {
     const saved = localStorage.getItem('sidebar-open');
     if (saved !== null) return JSON.parse(saved);
-    return window.innerWidth > 768; // desktop abre, mobile fecha
+    return window.innerWidth > 768;
   });
 
-  // Persiste tema
   const [isDark, setIsDark] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark';

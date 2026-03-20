@@ -16,16 +16,13 @@ import {
 import './DashboardPage.css';
 
 interface DashboardStats {
-  // Produtos
   totalProducts: number;
   totalStockValue: number;
   lowStockProducts: any[];
-  // Vendas
   salesToday: number;
   salesTodayCount: number;
   salesWeek: number;
   salesWeekCount: number;
-  // Atividades
   recentActivity: any[];
 }
 

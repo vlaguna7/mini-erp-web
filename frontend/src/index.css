@@ -147,7 +147,6 @@ body {
   color: #666;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .form {
     padding: 20px;

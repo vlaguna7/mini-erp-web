@@ -11,9 +11,6 @@ import { EstoquePage } from './pages/EstoquePage';
 import { BlankPage } from './pages/BlankPage';
 import './App.css';
 
-/* ─────────────────────────────────────────────────────────────
-   Hook — detecta mobile e reage ao resize
-───────────────────────────────────────────────────────────── */
 const useIsMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint);
 
@@ -26,9 +23,6 @@ const useIsMobile = (breakpoint = 768) => {
   return isMobile;
 };
 
-/* ─────────────────────────────────────────────────────────────
-   Layout protegido
-───────────────────────────────────────────────────────────── */
 const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boolean }> = ({
   children,
   isInitializing,
@@ -49,20 +43,17 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/* Cabeçalho fixo — só renderiza no mobile via CSS */}
       <MobileHeader />
 
       <div style={{ display: 'flex' }}>
         <Sidebar />
 
-        {/* Backdrop: transparente no desktop, escuro no mobile */}
         <div
           className={`sidebar-backdrop ${isOpen ? 'visible' : ''}`}
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
 
-        {/* No mobile nunca recebe sidebar-open → sem push */}
         <main className={`main-content ${isOpen && !isMobile ? 'sidebar-open' : ''}`}>
           {children}
         </main>
@@ -71,9 +62,6 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   App raiz
-───────────────────────────────────────────────────────────── */
 function App() {
   const [isInitializing, setIsInitializing] = useState(true);
 

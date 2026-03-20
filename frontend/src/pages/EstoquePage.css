@@ -1,7 +1,3 @@
-/* ============================================================================
-   ESTOQUE PAGE
-   ============================================================================ */
-
 .estoque {
   padding: 1.75rem 2rem;
   max-width: 1200px;
@@ -11,7 +7,7 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* ── Header ─────────────────────────────────────────────────── */
+
 .estoque-header {
   margin-bottom: 1.25rem;
 }
@@ -30,7 +26,6 @@
   margin: 0;
 }
 
-/* ── Action Buttons ─────────────────────────────────────────── */
 .estoque-actions {
   display: flex;
   gap: 0.65rem;
@@ -76,7 +71,7 @@
 
 .estoque-btn-primary:hover { background: #1d4ed8; }
 
-/* ── Stats ──────────────────────────────────────────────────── */
+
 .estoque-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -114,7 +109,7 @@
 .estoque-stat.orange .estoque-stat-value { color: #ea580c; }
 .estoque-stat.red   .estoque-stat-value { color: #dc2626; }
 
-/* ── Filters ────────────────────────────────────────────────── */
+
 .estoque-filters {
   display: flex;
   gap: 0.65rem;
@@ -171,7 +166,6 @@
 
 .estoque-select:focus { border-color: #2563eb; }
 
-/* ── Secondary Toolbar ──────────────────────────────────────── */
 .estoque-toolbar {
   display: flex;
   align-items: center;
@@ -230,7 +224,6 @@
   color: white;
 }
 
-/* ── Loading / Empty ────────────────────────────────────────── */
 .estoque-loading {
   display: flex;
   flex-direction: column;
@@ -263,7 +256,6 @@
   text-align: center;
 }
 
-/* ── Modal ──────────────────────────────────────────────────── */
 .estoque-modal-overlay {
   position: fixed;
   inset: 0;
@@ -287,7 +279,6 @@
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
 }
 
-/* ── Card List ──────────────────────────────────────────────── */
 .estoque-card-list {
   display: flex;
   flex-direction: column;
@@ -361,7 +352,6 @@
   flex-shrink: 0;
 }
 
-/* ── Card Footer ────────────────────────────────────────────── */
 .estoque-card-footer {
   display: flex;
   align-items: center;
@@ -383,7 +373,6 @@
   gap: 0.4rem;
 }
 
-/* ── Badges ─────────────────────────────────────────────────── */
 .estoque-badge {
   display: inline-flex;
   align-items: center;
@@ -398,7 +387,6 @@
 .estoque-badge--estoque-baixo  { background: #fef3c7; color: #b45309; }
 .estoque-badge--sem-estoque    { background: #fee2e2; color: #b91c1c; }
 
-/* ── Qty Badge (no card) ────────────────────────────────────── */
 .estoque-qty-badge {
   display: inline-flex;
   align-items: center;
@@ -414,7 +402,6 @@
 .estoque-qty-badge--estoque-baixo  { background: #fef3c7; color: #b45309; }
 .estoque-qty-badge--sem-estoque    { background: #fee2e2; color: #b91c1c; }
 
-/* ── Icon Buttons ───────────────────────────────────────────── */
 .estoque-icon-btn {
   width: 30px;
   height: 30px;
@@ -432,7 +419,6 @@
 .estoque-icon-btn.edit:hover   { background: #dbeafe; }
 .estoque-icon-btn.delete:hover { background: #fee2e2; }
 
-/* ── Table View ─────────────────────────────────────────────── */
 .estoque-table-wrapper {
   overflow-x: auto;
   background: white;

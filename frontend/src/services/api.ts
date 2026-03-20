@@ -9,7 +9,6 @@ const apiClient = axios.create({
   },
 });
 
-// Add JWT token to requests
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,7 +17,6 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle token expiration
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

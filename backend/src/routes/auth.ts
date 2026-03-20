@@ -5,7 +5,6 @@ import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-// POST /auth/register
 router.post(
   '/register',
   [
@@ -32,7 +31,6 @@ router.post(
   }
 );
 
-// POST /auth/login
 router.post(
   '/login',
   [

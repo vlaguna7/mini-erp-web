@@ -25,7 +25,6 @@ export const productService = {
       const response = await apiClient.get('/products', {
         params: { page, limit },
       });
-      // Normalize response to always return array
       if (Array.isArray(response.data)) {
         return response.data;
       }

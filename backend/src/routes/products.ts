@@ -5,10 +5,8 @@ import { AuthRequest, authMiddleware } from '../middleware/auth';
 
 const router = Router();
 
-// Apply auth middleware to all product routes
 router.use(authMiddleware);
 
-// GET /products - Get all products for user
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const page = Math.max(0, (parseInt(req.query.page as string) || 1) - 1);
@@ -23,7 +21,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// GET /products/low-stock - Get low stock products
 router.get('/low-stock', async (req: AuthRequest, res: Response) => {
   try {
     const products = await ProductService.getLowStockProducts(req.user!.id);
@@ -33,7 +30,6 @@ router.get('/low-stock', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// GET /products/:id - Get single product
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const product = await ProductService.getProductById(
@@ -46,7 +42,6 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// POST /products - Create product
 router.post(
   '/',
   [
@@ -105,7 +100,6 @@ router.post(
   }
 );
 
-// PUT /products/:id - Update product
 router.put(
   '/:id',
   [
@@ -151,7 +145,6 @@ router.put(
   }
 );
 
-// DELETE /products/:id - Delete product
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const productId = parseInt(req.params.id);

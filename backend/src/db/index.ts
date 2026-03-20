@@ -22,7 +22,6 @@ export const initializeDatabase = async () => {
     await pool.query(schemaSql);
     console.log('Database schema initialized successfully');
   } catch (error: any) {
-    // Ignore error if tables already exist
     if (!error.message.includes('already exists')) {
       console.error('Database initialization error:', error.message);
     }

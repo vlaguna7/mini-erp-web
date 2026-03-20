@@ -1,7 +1,6 @@
 import apiClient from './api';
 
 export const dashboardService = {
-  // Estatísticas gerais do dashboard
   getStats: async () => {
     try {
       const response = await apiClient.get('/dashboard/stats');
@@ -11,7 +10,6 @@ export const dashboardService = {
     }
   },
 
-  // Vendas do dia
   getSalesToday: async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -31,7 +29,6 @@ export const dashboardService = {
     }
   },
 
-  // Vendas da semana
   getSalesWeek: async () => {
     try {
       const today = new Date();
@@ -57,7 +54,6 @@ export const dashboardService = {
     }
   },
 
-  // Atividades recentes (últimas vendas + entradas)
   getRecentActivity: async () => {
     try {
       const [salesRes, entriesRes] = await Promise.allSettled([
@@ -95,7 +91,6 @@ export const dashboardService = {
         });
       }
 
-      // Ordena por data decrescente
       activities.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );

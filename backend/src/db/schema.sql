@@ -1,4 +1,3 @@
--- Create Usuário table
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(100) UNIQUE NOT NULL,
@@ -8,7 +7,6 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Empresa table
 CREATE TABLE companies (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
@@ -20,7 +18,6 @@ CREATE TABLE companies (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Fornecedor table
 CREATE TABLE suppliers (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -32,7 +29,6 @@ CREATE TABLE suppliers (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Produto table
 CREATE TABLE products (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -49,7 +45,6 @@ CREATE TABLE products (
   UNIQUE(user_id, code)
 );
 
--- Create Cliente table
 CREATE TABLE clients (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -61,7 +56,6 @@ CREATE TABLE clients (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Entrada table (Compras/Despesas)
 CREATE TABLE entries (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -76,7 +70,6 @@ CREATE TABLE entries (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Venda table
 CREATE TABLE sales (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -88,7 +81,6 @@ CREATE TABLE sales (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Venda Itens table
 CREATE TABLE sale_items (
   id SERIAL PRIMARY KEY,
   sale_id INTEGER NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
@@ -99,7 +91,6 @@ CREATE TABLE sale_items (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Trocas e Devoluções table
 CREATE TABLE returns (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -112,7 +103,6 @@ CREATE TABLE returns (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes for performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_products_user_id ON products(user_id);
 CREATE INDEX idx_products_code ON products(code);

@@ -1,9 +1,7 @@
-/* Mobile header — só visível em telas pequenas */
 .mobile-header {
   display: none;
 }
 
-@media (max-width: 768px) {
   .mobile-header {
     display: flex;
     align-items: center;
@@ -17,7 +15,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
-  /* Tema claro */
   [data-theme='light'] .mobile-header {
     background: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);

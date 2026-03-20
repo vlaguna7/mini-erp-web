@@ -23,8 +23,7 @@ export class ProductService {
 
       return result.rows[0];
     } catch (error: any) {
-      if (error.code === '23505') { // Unique constraint violation
-        throw new Error('Product code already exists for this user');
+      throw new Error('Product code already exists for this user');
       }
       throw error;
     }
@@ -81,7 +80,6 @@ export class ProductService {
       minStock?: number;
     }
   ) {
-    try {
       // Verify ownership
       const product = await this.getProductById(userId, productId);
 
@@ -137,7 +135,6 @@ export class ProductService {
   }
 
   static async deleteProduct(userId: number, productId: number) {
-    try {
       // Verify ownership
       await this.getProductById(userId, productId);
 
