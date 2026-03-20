@@ -1,0 +1,51 @@
+import { create } from 'zustand';
+
+interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
+interface AuthStore {
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  error: string | null;
+
+  login: (user: User, token: string) => void;
+  logout: () => void;
+  setError: (error: string | null) => void;
+  setLoading: (loading: boolean) => void;
+  initialize: () => void;
+}
+
+export const useAuthStore = create<AuthStore>((set) => {
+  // ✅ Lê o localStorage ANTES do primeiro render — sem flash de deslogar
+  const storedUser = localStorage.getItem('user');
+  const storedToken = localStorage.getItem('token');
+
+  return {
+    user: storedUser ? JSON.parse(storedUser) : null,
+    token: storedToken ?? null,
+    isLoading: false,
+    error: null,
+
+    login: (user: User, token: string) => {
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+      set({ user, token, error: null });
+    },
+
+    logout: () => {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      set({ user: null, token: null });
+    },
+
+    setError: (error: string | null) => set({ error }),
+    setLoading: (loading: boolean) => set({ isLoading: loading }),
+
+    // Mantido por compatibilidade, mas não é mais necessário
+    initialize: () => {},
+  };
+});
