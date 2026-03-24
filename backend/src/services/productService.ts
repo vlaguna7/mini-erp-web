@@ -23,7 +23,9 @@ export class ProductService {
 
       return result.rows[0];
     } catch (error: any) {
-      throw new Error('Product code already exists for this user');
+      // ✅ Corrigido: bloco catch correto
+      if (error.code === '23505') {
+        throw new Error('Product code already exists for this user');
       }
       throw error;
     }
@@ -80,7 +82,7 @@ export class ProductService {
       minStock?: number;
     }
   ) {
-      // Verify ownership
+    try { // ✅ Corrigido: try estava faltando
       const product = await this.getProductById(userId, productId);
 
       const fields = [];
@@ -135,7 +137,7 @@ export class ProductService {
   }
 
   static async deleteProduct(userId: number, productId: number) {
-      // Verify ownership
+    try { // ✅ Corrigido: try estava faltando
       await this.getProductById(userId, productId);
 
       const result = await pool.query(
