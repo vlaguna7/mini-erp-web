@@ -8,6 +8,7 @@ import { MobileHeader } from './components/MobileHeader';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EstoquePage } from './pages/EstoquePage';
+import { SalesAndClientsPage } from './pages/SalesAndClientsPage';
 import { BlankPage } from './pages/BlankPage';
 import './App.css';
 
@@ -76,7 +77,11 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
-          <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Vendas e Clientes" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><SalesAndClientsPage /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/cadastrar-cliente" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Cadastrar Cliente" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lista de Clientes" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/lancar-venda" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Venda" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Devolução de Venda" /></ProtectedLayout>} />
           <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Financeiro" /></ProtectedLayout>} />
           <Route path="/relatorios" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Relatórios" /></ProtectedLayout>} />
           <Route path="/configuracoes" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Configurações" /></ProtectedLayout>} />
