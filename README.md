@@ -109,7 +109,7 @@ A aplicação utiliza **JWT (JSON Web Tokens)** para autenticação:
 - **products**: Produtos (isolados por user_id)
 - **clients**: Clientes
 - **suppliers**: Fornecedores
-- **sales**: Vendas
+- **sales**: Vendas e Clientes
 - **entries**: Compras e despesas
 - **returns**: Trocas e devoluções
 

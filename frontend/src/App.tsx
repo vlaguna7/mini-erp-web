@@ -76,7 +76,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
-          <Route path="/vendas"    element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Vendas" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Vendas e Clientes" /></ProtectedLayout>} />
           <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Financeiro" /></ProtectedLayout>} />
           <Route path="/relatorios" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Relatórios" /></ProtectedLayout>} />
           <Route path="/configuracoes" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Configurações" /></ProtectedLayout>} />
