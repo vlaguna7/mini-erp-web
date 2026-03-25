@@ -3,16 +3,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useAuthStore } from './store/authStore';
 import { SidebarProvider } from './context/SidebarContext';
 import { useSidebar } from './context/SidebarContext';
-import { Sidebar } from './components/Sidebar';
-import { MobileHeader } from './components/MobileHeader';
-import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { EstoquePage } from './pages/EstoquePage';
-import { PDVPage } from './pages/PDVPage';
-import { SalesAndClientsPage } from './pages/SalesAndClientsPage';
-import { BlankPage } from './pages/BlankPage';
+import Sidebar from './components/Sidebar';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import EstoquePage from './pages/EstoquePage';
+import PDVPage from './pages/PDVPage';
+import SalesAndClientsPage from './pages/SalesAndClientsPage';
+import BlankPage from './pages/BlankPage';
 import { PDVLayout } from './layouts/PDVLayout';
-import './App.css';
+import styles from './App.module.css';
 
 const useIsMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint);
@@ -45,19 +44,17 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
   if (!user) return <Navigate to="/login" />;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <MobileHeader />
-
-      <div style={{ display: 'flex' }}>
+    <div className={styles.flexLayout}>
+      <div className={styles.flexRow}>
         <Sidebar />
 
         <div
-          className={`sidebar-backdrop ${isOpen ? 'visible' : ''}`}
+          className={`${styles.sidebarBackdrop} ${isOpen ? styles.visible : ''}`}
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
 
-        <main className={`main-content ${isOpen && !isMobile ? 'sidebar-open' : ''}`}>
+        <main className={`${styles.mainContent} ${!isMobile ? (isOpen ? styles.sidebarOpen : '') : ''}`}>
           {children}
         </main>
       </div>

@@ -1,0 +1,229 @@
+/* ============================================================================
+   PDV CLIENT - CSS Module
+   ============================================================================ */
+
+.pdvClient {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.pdvClientHeader {
+  flex-shrink: 0;
+}
+
+.pdvClientTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pdvClientSearch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-shrink: 0;
+}
+
+.pdvClientSearchInput {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: white;
+  color: #0f172a;
+}
+
+.pdvClientSearchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdvClientSearchInput::placeholder {
+  color: #94a3b8;
+}
+
+.pdvClientsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.pdvClientItem {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdvClientItem:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.pdvClientItem.selected {
+  background: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.pdvClientName {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+  margin: 0;
+  flex: 1;
+}
+
+.pdvClientInfo {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  flex: 1;
+}
+
+.pdvSearchIcon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.pdvClientSelectedBox {
+  flex-shrink: 0;
+}
+
+.pdvClientSelectedInfo {
+  background: #dbeafe;
+  border: 1.5px solid #93c5fd;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pdvClientSelectedName {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.pdvClientSelectedMeta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.pdvClientDeselectBtn {
+  margin-top: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+
+.pdvClientDeselectBtn:hover {
+  background: #dc2626;
+}
+
+.pdvClientNoSelection {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 0;
+}
+
+.pdvClientCardName {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.pdvClientCardEmail {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.pdvClientCardCpf {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.pdvClientsEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #64748b;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.pdvAddClientBtn {
+  padding: 0.7rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+.pdvAddClientBtn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+@media (max-width: 1024px) {
+  .pdvClientTitle {
+    font-size: 1.1rem;
+  }
+
+  .pdvClientItem {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pdvClientTitle {
+    font-size: 1rem;
+  }
+
+  .pdvClientSearchInput {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .pdvClientItem {
+    padding: 0.7rem;
+  }
+}

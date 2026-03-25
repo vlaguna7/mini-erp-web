@@ -1,0 +1,85 @@
+/* ============================================================================
+   LOGIN PAGE - CSS Module
+   ============================================================================ */
+
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  padding: 20px;
+}
+
+.loginContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: white;
+}
+
+.logoSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.logoSection p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin: 0;
+}
+
+.formContainer {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .loginContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .logoSection {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+
+  .form {
+    padding: 2rem;
+  }
+
+  .logoSection h1 {
+    font-size: 1.8rem;
+  }
+
+  .logoSection p {
+    font-size: 0.95rem;
+  }
+
+  .loginPage {
+    padding: 20px;
+  }
+}

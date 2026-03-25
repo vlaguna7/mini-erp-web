@@ -1,0 +1,322 @@
+/* ============================================================================
+   DASHBOARD PAGE - CSS Module
+   ============================================================================ */
+
+.dash {
+  padding: 2rem 0;       
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dashLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 1rem;
+  color: #64748b;
+}
+
+.dashSpinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dashHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.dashTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.3px;
+}
+
+.dashSubtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.dashWelcome {
+  font-size: 0.9rem;
+  color: #475569;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.dashCards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0 2rem;
+}
+
+.dashCard {
+  background: white;
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #f1f5f9;
+}
+
+.dashCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+.dashCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.dashCardLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dashCardIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dashCardValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.3rem;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.dashCardSub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.dashBottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0 2rem;
+}
+
+.dashPanel {
+  background: white;
+  border-radius: 14px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dashPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashPanelHeader h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.dashPanelIcon { flex-shrink: 0; }
+.dashPanelIcon.alert    { color: #f59e0b; }
+.dashPanelIcon.activity { color: #3b82f6; }
+
+.dashEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  color: #94a3b8;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.dashAlertList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.dashAlertItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dashAlertRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashAlertName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dashAlertQty {
+  font-size: 0.78rem;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.dashProgressTrack {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dashProgressBar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.dashPanelBtn {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 0.5rem 1.1rem;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dashPanelBtn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.dashActivityList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dashActivityItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.dashActivityItem:last-child { border-bottom: none; }
+
+.dashActivityDot {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  margin-top: 1px;
+}
+
+.dashActivityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dashActivityLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.dashActivityDetail {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .dashCards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .dash { padding: 1rem 0; }
+
+  .dashHeader {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0 1rem;
+  }
+
+  .dashTitle    { font-size: 1.4rem; }
+
+  .dashCards {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0 1rem;
+  }
+
+  .dashCardValue { font-size: 1.25rem; }
+  .dashBottom { grid-template-columns: 1fr; padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .dashCards  { grid-template-columns: 1fr; }
+  .dashCard   { padding: 1rem; }
+}

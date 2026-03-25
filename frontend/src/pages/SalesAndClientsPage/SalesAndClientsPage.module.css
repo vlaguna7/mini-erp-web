@@ -1,0 +1,71 @@
+/* ============================================================================
+   SALES & CLIENTS PAGE - CSS Module
+   ============================================================================ */
+
+.salesClients {
+  padding: 1.75rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.salesClientsHeader {
+  margin-bottom: 1.75rem;
+}
+
+.salesClientsTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+
+.salesClientsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.salesClientsColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .salesClientsContainer {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .salesClients {
+    padding: 1rem;
+  }
+
+  .salesClientsHeader {
+    margin-bottom: 1.25rem;
+  }
+
+  .salesClientsTitle {
+    font-size: 1.5rem;
+  }
+
+  .salesClientsContainer {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .salesClients {
+    padding: 0.75rem;
+  }
+
+  .salesClientsTitle {
+    font-size: 1.25rem;
+  }
+}

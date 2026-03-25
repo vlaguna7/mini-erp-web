@@ -1,0 +1,143 @@
+/* ============================================================================
+   PDV MAIN LAYOUT - CSS Module
+   ============================================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.pdv {
+  display: grid;
+  grid-template-columns: 200px 1fr 320px;
+  gap: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f8fafc;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.pdvContent {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: white;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.pdvContent > * {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem 2rem;
+}
+
+.pdvContent > *::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pdvContent > *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pdvContent > *::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.pdvContent > *::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.pdvCartSidebar {
+  border-left: 1px solid #e2e8f0;
+  background: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.pdvCartSidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pdvCartSidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pdvCartSidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.pdvCartSidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 1400px) {
+  .pdv {
+    grid-template-columns: 180px 1fr 300px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .pdv {
+    grid-template-columns: 160px 1fr 280px;
+  }
+
+  .pdvContent > * {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .pdv {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .pdvContent {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    height: 100%;
+    display: flex;
+  }
+
+  .pdvContent > * {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .pdvCartSidebar {
+    border-left: none;
+    border-top: 1px solid #e2e8f0;
+    max-height: 30vh;
+    min-height: 140px;
+    overflow-y: auto;
+    padding: 1rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .pdv {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .pdvContent > * {
+    padding: 1rem;
+  }
+}
