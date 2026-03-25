@@ -8,8 +8,10 @@ import { MobileHeader } from './components/MobileHeader';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EstoquePage } from './pages/EstoquePage';
+import { PDVPage } from './pages/PDVPage';
 import { SalesAndClientsPage } from './pages/SalesAndClientsPage';
 import { BlankPage } from './pages/BlankPage';
+import { PDVLayout } from './layouts/PDVLayout';
 import './App.css';
 
 const useIsMobile = (breakpoint = 768) => {
@@ -75,6 +77,7 @@ function App() {
       <SidebarProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/pdv/*" element={<PDVLayout isInitializing={isInitializing}><PDVPage /></PDVLayout>} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><SalesAndClientsPage /></ProtectedLayout>} />

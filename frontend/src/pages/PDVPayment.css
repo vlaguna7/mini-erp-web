@@ -1,0 +1,147 @@
+.pdv-payment {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.pdv-payment-header {
+  flex-shrink: 0;
+}
+
+.pdv-payment-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pdv-payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  flex: 1;
+}
+
+.pdv-payment-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.pdv-payment-card:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.pdv-payment-card.selected {
+  border-color: #3b82f6;
+  background: #dbeafe;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.pdv-payment-icon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pdv-payment-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #0f172a;
+  flex: 1;
+  text-align: left;
+}
+
+.pdv-payment-check {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.pdv-payment-info {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+  border-radius: 8px;
+  padding: 0.8rem;
+  flex-shrink: 0;
+}
+
+.pdv-payment-info p {
+  margin: 0 0 0.2rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.pdv-payment-selected {
+  font-weight: 600;
+  color: #10b981;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) {
+  .pdv-payment-methods {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .pdv-payment-title {
+    font-size: 1.1rem;
+  }
+
+  .pdv-payment-methods {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .pdv-payment-card {
+    padding: 1rem 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pdv-payment-methods {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .pdv-payment-card {
+    padding: 0.9rem 0.75rem;
+  }
+
+  .pdv-payment-label {
+    font-size: 0.85rem;
+  }
+
+  .pdv-payment-icon {
+    font-size: 1.3rem;
+  }
+}

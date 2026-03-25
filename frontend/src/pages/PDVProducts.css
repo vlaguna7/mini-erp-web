@@ -1,0 +1,403 @@
+.pdv-products {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.pdv-products-header {
+  flex-shrink: 0;
+}
+
+.pdv-products-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pdv-products-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  flex-shrink: 0;
+}
+
+.pdv-search-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: white;
+  color: #0f172a;
+}
+
+.pdv-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdv-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.pdv-products-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  width: 100%;
+}
+
+/* ============================================
+   CARD DE PRODUTO - Layout 4 Colunas
+   ============================================ */
+
+.pdv-product-card {
+  background: white;
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  border-radius: 0;
+  padding: 0.85rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  flex-shrink: 0;
+  height: 80px;
+  position: relative;
+}
+
+.pdv-product-card:hover {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+  border-bottom-color: #e2e8f0;
+}
+
+.pdv-product-card.in-cart {
+  background: #f0fdf4;
+  border-top-color: #10b981;
+  border-bottom-color: #10b981;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pdv-product-card.in-cart:hover {
+  background: #f0fdf4;
+  border-top-color: #10b981;
+  border-bottom-color: #10b981;
+}
+
+/* ============================================
+   Coluna 1: Placeholder de Imagem
+   ============================================ */
+
+.pdv-product-image-placeholder {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdv-image-icon {
+  color: #94a3b8;
+}
+
+/* ============================================
+   Coluna 2: Informações Básicas (Categoria + Nome)
+   ============================================ */
+
+.pdv-product-info-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+  padding-right: 1rem;
+}
+
+.pdv-product-category-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.pdv-product-category-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: block;
+}
+
+.pdv-product-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0f172a;
+  display: block;
+}
+
+.pdv-product-name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+/* ============================================
+   Coluna 3: Informações Técnicas (SKU + Barcode)
+   ============================================ */
+
+.pdv-product-info-technical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0 1rem;
+  border-left: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+}
+
+.pdv-product-sku {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  display: block;
+}
+
+.pdv-product-barcode-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pdv-barcode-icon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.pdv-product-barcode {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Coluna 4: Informações Comerciais (Preço + Quantidade)
+   ============================================ */
+
+.pdv-product-info-commercial {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding-left: 1rem;
+}
+
+.pdv-product-price {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #10b981;
+  display: block;
+}
+
+.pdv-product-stock {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.pdv-stock-quantity {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.pdv-stock-unit {
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================
+   Estados e Utilidades
+   ============================================ */
+
+.pdv-products-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.pdv-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
+.pdv-page-btn {
+  padding: 0.55rem 1rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.pdv-page-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.pdv-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pdv-page-info {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 500;
+  min-width: 120px;
+  text-align: center;
+}
+
+.pdv-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #64748b;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .pdv-product-card {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 0.75rem;
+  }
+
+  .pdv-product-info-basic {
+    padding-right: 0.5rem;
+  }
+
+  .pdv-product-info-technical {
+    padding: 0 0.5rem;
+    border-left: none;
+    border-right: none;
+  }
+
+  .pdv-product-info-commercial {
+    padding-left: 0.5rem;
+  }
+
+  .pdv-product-price {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .pdv-products-title {
+    font-size: 1.1rem;
+  }
+
+  .pdv-product-card {
+    height: auto;
+    gap: 0.75rem;
+    padding: 0.65rem;
+  }
+
+  .pdv-product-image-placeholder {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pdv-image-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pdv-product-info-basic {
+    padding-right: 0;
+  }
+
+  .pdv-product-info-technical {
+    padding: 0;
+    border: none;
+  }
+
+  .pdv-product-info-commercial {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .pdv-product-card {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    gap: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  .pdv-product-image-placeholder {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pdv-product-name {
+    font-size: 0.85rem;
+  }
+
+  .pdv-product-price {
+    font-size: 0.95rem;
+  }
+
+  .pdv-pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pdv-page-btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
+  }
+}
