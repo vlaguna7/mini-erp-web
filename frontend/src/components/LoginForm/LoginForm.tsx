@@ -43,7 +43,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
         errorMessage = 'Erro de conexão. Verifique sua internet';
       }
       
-      } finally {
+      setError(errorMessage);
+    } finally {
         setIsLoading(false);
       }
     };
