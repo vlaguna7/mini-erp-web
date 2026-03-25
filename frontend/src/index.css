@@ -1,34 +1,30 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ==================== IMPORTAÇÕES GLOBAIS ==================== */
+@import './styles/globals/variables.css';
+@import './styles/globals/globals.css';
+@import './styles/globals/utilities.module.css';
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #f5f7fa;
-  color: #333;
-}
+/* ==================== ESTILOS LEGADOS (Compatibilidade Temporária) ==================== */
+/* Estes estilos serão removidos após migração completa dos componentes */
 
 .btn {
-  padding: 10px 20px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: var(--color-primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--color-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-primary:disabled {
@@ -37,34 +33,34 @@ body {
 }
 
 .btn-logout {
-  background-color: #dc3545;
+  background-color: var(--color-error);
   color: white;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
 }
 
 .btn-logout:hover {
-  background-color: #c82333;
+  background-color: var(--color-error-hover);
 }
 
 .btn-danger {
-  background-color: #dc3545;
+  background-color: var(--color-error);
   color: white;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #c82333;
+  background-color: var(--color-error-hover);
 }
 
 .btn-small {
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
 }
 
 .link-button {
   background: none;
   border: none;
-  color: #007bff;
+  color: var(--color-primary);
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
@@ -72,84 +68,84 @@ body {
 }
 
 .link-button:hover {
-  color: #0056b3;
+  color: var(--color-primary-hover);
 }
 
 .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  border: 1px solid #f5c6cb;
+  background-color: var(--color-error-light);
+  color: var(--color-error-hover);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--color-error);
 }
 
 .success-message {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  border: 1px solid #c3e6cb;
+  background-color: var(--color-success-light);
+  color: var(--color-success-hover);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--color-success);
 }
 
 .form {
   background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-3xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .form h2 {
-  margin-bottom: 25px;
-  color: #333;
-  font-size: 24px;
+  margin-bottom: var(--spacing-2xl);
+  color: var(--color-slate-900);
+  font-size: var(--font-size-2xl);
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
+  margin-bottom: var(--spacing-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate-900);
+  font-size: var(--font-size-sm);
 }
 
 .form-group input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: var(--spacing-md);
+  border: 1.5px solid var(--color-slate-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
   font-family: inherit;
-  transition: border-color 0.3s;
+  transition: border-color var(--transition-base);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 .form-switch {
   text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #666;
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-slate-600);
 }
 
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-md)) {
   .form {
-    padding: 20px;
+    padding: var(--spacing-lg);
   }
 
   .form-row {
@@ -159,5 +155,4 @@ body {
   .btn {
     width: 100%;
   }
-  
 }

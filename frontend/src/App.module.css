@@ -1,0 +1,174 @@
+@import './styles/globals/variables.css';
+
+/* ==================== APP LAYOUT ==================== */
+
+.appContainer {
+  min-height: 100vh;
+}
+
+/* ==================== FLEX LAYOUTS ==================== */
+
+.flexLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.flexRow {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ==================== NAVBAR STYLES ==================== */
+
+.navbar {
+  background-color: #2c3e50;
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.navUser {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navUser span {
+  font-size: 14px;
+}
+
+/* ==================== PAGE CONTENT ==================== */
+
+.pageContent {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  color: #666;
+}
+
+/* ============================================================================
+   MAIN CONTENT - Adjusts for sidebar width
+   ============================================================================ */
+
+.mainContent {
+  transition: margin-left 0.3s ease;
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  margin-left: 64px;
+}
+
+/* ============================================================================
+   SIDEBAR BACKDROP - Mobile overlay
+   ============================================================================ */
+
+.sidebarBackdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  z-index: 99;
+  transition: background 0.3s ease;
+}
+
+.sidebarBackdrop.visible {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================================
+   SIDEBAR OPEN STATE
+   ============================================================================ */
+
+.sidebarOpen {
+  margin-left: 260px;
+}
+
+/* ============================================================================
+   RESPONSIVE - Mobile Layout
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0;
+    margin-top: 64px;
+    padding: 1rem;
+  }
+
+  .sidebarOpen {
+    margin-left: 0;
+  }
+}
+
+/* ============================================================================
+   PAGE WRAPPER
+   ============================================================================ */
+
+.pageWrapper {
+  min-height: 100%;
+  background-color: #f5f7fa;
+  padding: 2rem;
+}
+
+/* ============================================================================
+   RESPONSIVE - Mobile breakpoint
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .navContent {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .navUser {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pageContent {
+    margin: 20px auto;
+  }
+
+  .mainContent {
+    margin-left: 64px;
+  }
+
+  .sidebarOpen {
+    margin-left: 64px;
+  }
+}

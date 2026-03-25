@@ -1,0 +1,115 @@
+/* Design Tokens - Variáveis CSS Globais */
+
+:root {
+  /* ==================== CORES PRIMÁRIAS ==================== */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  
+  /* ==================== CORES SEMÂNTICAS ==================== */
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-success-light: #d1fae5;
+  
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-warning-light: #fed7aa;
+  
+  --color-error: #ef4444;
+  --color-error-hover: #dc2626;
+  --color-error-light: #fee2e2;
+  
+  /* ==================== CORES NEUTRAS (Slate para neutralidade) ==================== */
+  --color-slate-50: #f8fafc;   /* Fundo muito claro */
+  --color-slate-100: #f1f5f9;  /* Fundo claro */
+  --color-slate-200: #e2e8f0;  /* Borda clara */
+  --color-slate-300: #cbd5e1;  /* Borda média */
+  --color-slate-400: #94a3b8;  /* Texto secundário desabilitado */
+  --color-slate-500: #64748b;  /* Texto secundário */
+  --color-slate-600: #475569;  /* Texto labels */
+  --color-slate-700: #334155;  /* Texto forte */
+  --color-slate-900: #0f172a;  /* Texto primário/escuro */
+  
+  /* ==================== ESPAÇAMENTO (8px base) ==================== */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 2.5rem;   /* 40px */
+  --spacing-3xl: 3rem;     /* 48px */
+  
+  /* ==================== TIPOGRAFIA ==================== */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-family-mono: 'Courier New', monospace;
+  
+  /* Tamanhos */
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-base: 1rem;    /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;   /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  
+  /* Pesos */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* ==================== RAIOS DE BORDA ==================== */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+  
+  /* ==================== SOMBRAS ==================== */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.1);
+  
+  /* ==================== TRANSITIONS ==================== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  
+  /* ==================== BREAKPOINTS (Mobile-first) ==================== */
+  /* Usar em media queries: @media (min-width: var(--breakpoint-md)) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1536px;
+  
+  /* ==================== LAYER Z-INDEX ==================== */
+  --z-dropdown: 1000;
+  --z-sticky: 100;
+  --z-fixed: 999;
+  --z-modal-backdrop: 999;
+  --z-modal: 1000;
+  --z-popover: 1001;
+  --z-tooltip: 1002;
+}
+
+/* ==================== DARK MODE (Futuro) ==================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-slate-50: #0f172a;
+    --color-slate-100: #1e293b;
+    --color-slate-200: #334155;
+    --color-slate-500: #94a3b8;
+    --color-slate-900: #f8fafc;
+  }
+}

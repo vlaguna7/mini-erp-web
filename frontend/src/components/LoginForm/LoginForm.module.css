@@ -1,0 +1,121 @@
+@import '../../styles/globals/variables.css';
+
+/* ==================== FORM STYLES ==================== */
+
+.form {
+  background: white;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+}
+
+.form h2 {
+  color: #0f172a;
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-2xl);
+}
+
+.formGroup {
+  margin-bottom: var(--spacing-lg);
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: #475569;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+}
+
+.formGroup input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1.5px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-base);
+  color: #0f172a;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.formGroup input:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.errorMessage {
+  background: var(--color-error-light);
+  color: var(--color-error-hover);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border-left: 4px solid var(--color-error);
+}
+
+.btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-top: var(--spacing-md);
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.formSwitch {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+  color: #475569;
+  font-size: var(--font-size-sm);
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-base);
+}
+
+.linkButton:hover:not(:disabled) {
+  color: var(--color-primary-hover);
+}
+
+.linkButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: var(--breakpoint-md)) {
+  .form {
+    padding: var(--spacing-lg);
+  }
+}

@@ -1,0 +1,303 @@
+/* ============================================================================
+   PDV RETURNS - CSS Module
+   ============================================================================ */
+
+.pdvReturns {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.pdvReturnsHeader {
+  flex-shrink: 0;
+}
+
+.pdvReturnsTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pdvReturnsSearch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-shrink: 0;
+}
+
+.pdvReturnsSearchInput {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: white;
+  color: #0f172a;
+}
+
+.pdvReturnsSearchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdvReturnsContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.pdvReturnsList {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-y: auto;
+}
+
+.pdvReturnsSubtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.pdvReturnsEmpty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.pdvReturnsSaleCard {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdvReturnsSaleCard:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.pdvReturnsSaleCard.selected {
+  border-color: #3b82f6;
+  background: #dbeafe;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.pdvReturnsSaleId {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.pdvReturnsSaleInfo {
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+  margin-top: 0;
+  flex: 1;
+}
+
+.pdvReturnsSaleInfo span {
+  font-size: 0.8rem;
+}
+
+.pdvReturnsSaleInfo span:first-child {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.pdvReturnsSaleInfo span:last-child {
+  color: #64748b;
+}
+
+.pdvReturnsSaleTotal {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.pdvReturnsDetails {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow-y: auto;
+}
+
+.pdvReturnsDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pdvReturnsDetailItem:last-child {
+  border-bottom: none;
+}
+
+.pdvReturnsDetailName {
+  color: #0f172a;
+  font-weight: 600;
+  flex: 1;
+}
+
+.pdvReturnsDetailQty {
+  color: #64748b;
+  font-size: 0.8rem;
+  margin: 0 1rem;
+}
+
+.pdvReturnsDetailPrice {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.pdvSearchIcon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.pdvReturnsDetails {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow-y: auto;
+}
+
+.pdvReturnsSaleDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pdvReturnsLabel {
+  color: #64748b;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.pdvReturnsItems {
+  margin-top: 0.5rem;
+}
+
+.pdvReturnsItemsTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.pdvReturnsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+}
+
+.pdvReturnsItem:last-child {
+  border-bottom: none;
+}
+
+.pdvReturnsTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #059669;
+  border-top: 2px solid #e2e8f0;
+  padding-top: 0.6rem;
+  margin-top: 0.3rem;
+}
+
+.pdvReturnsReverseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.pdvReturnsReverseBtn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.pdvReturnsReverseBtn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pdvReturnsActionBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s ease;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.pdvReturnsActionBtn:hover {
+  background: #dc2626;
+}
+
+.pdvReturnsActionBtn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
