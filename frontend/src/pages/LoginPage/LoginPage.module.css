@@ -90,6 +90,11 @@
   }
 
   .loginPage {
+    /* Permitir rolagem vertical e altura automática */
+    min-height: unset;
+    height: auto;
+    align-items: unset;
+    display: block;
     padding: 8px;
   }
 
