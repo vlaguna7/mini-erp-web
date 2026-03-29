@@ -8,12 +8,16 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   width: 100%;
+  /* Evita overflow horizontal em telas pequenas */
+  box-sizing: border-box;
 }
 
 .form h2 {
   color: #0f172a;
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-2xl);
+  /* Impede quebra estranha em títulos longos */
+  word-break: break-word;
 }
 
 .formGroup {
@@ -26,16 +30,27 @@
   color: #475569;
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-sm);
+  /* Evita seleção acidental ao tocar no label */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .formGroup input {
   width: 100%;
+  /* Mínimo de 48px de altura — padrão WCAG para touch targets */
+  min-height: 48px;
   padding: var(--spacing-md);
   border: 1.5px solid #e2e8f0;
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
-  transition: border-color var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
   color: #0f172a;
+  box-sizing: border-box;
+  /* Evita zoom automático no iOS (font-size mínimo de 16px) */
+  font-size: max(16px, var(--font-size-base));
+  /* Remove aparência nativa em iOS */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .formGroup input:focus {
@@ -47,6 +62,14 @@
 .formGroup input:disabled {
   background: #f8fafc;
   color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Estado de erro no input */
+.formGroup input[aria-invalid='true'],
+.formGroup input.inputError {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .errorMessage {
@@ -57,6 +80,10 @@
   margin-bottom: var(--spacing-md);
   font-size: var(--font-size-sm);
   border-left: 4px solid var(--color-error);
+  /* Acessível para leitores de tela */
+  role: alert;
+  /* Quebra URLs ou textos longos */
+  word-break: break-word;
 }
 
 .btn {
@@ -69,6 +96,13 @@
   transition: all var(--transition-base);
   margin-top: var(--spacing-md);
   width: 100%;
+  /* Touch target mínimo */
+  min-height: 48px;
+  /* Evita delay de 300ms no iOS */
+  touch-action: manipulation;
+  /* Remove tap highlight azul no Android */
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 .btn:disabled {
@@ -76,14 +110,23 @@
   cursor: not-allowed;
 }
 
+/* Remove hover em dispositivos touch para evitar "stuck hover" */
+@media (hover: hover) {
+  .btnPrimary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
 .btnPrimary {
   background: var(--color-primary);
   color: white;
 }
 
-.btnPrimary:hover:not(:disabled) {
+/* Active state para feedback tátil imediato */
+.btnPrimary:active:not(:disabled) {
+  transform: scale(0.98);
   background: var(--color-primary-hover);
-  box-shadow: var(--shadow-lg);
 }
 
 .formSwitch {
@@ -91,6 +134,8 @@
   margin-top: var(--spacing-lg);
   color: #475569;
   font-size: var(--font-size-sm);
+  /* Espaço extra para não colar no final da tela */
+  padding-bottom: var(--spacing-sm);
 }
 
 .linkButton {
@@ -103,9 +148,21 @@
   padding: 0;
   font-size: var(--font-size-sm);
   transition: color var(--transition-base);
+  /* Touch target sem alterar visual */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.linkButton:hover:not(:disabled) {
+@media (hover: hover) {
+  .linkButton:hover:not(:disabled) {
+    color: var(--color-primary-hover);
+  }
+}
+
+.linkButton:active:not(:disabled) {
   color: var(--color-primary-hover);
 }
 
@@ -114,17 +171,124 @@
   cursor: not-allowed;
 }
 
+/* ==================== MOBILE ==================== */
+
 @media (max-width: 768px) {
   .form {
-    padding: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md);
     min-width: 0;
     width: 100%;
+    border-radius: var(--radius-md);
+    /* Remove sombra pesada em mobile — ocupa mais espaço visual */
+    box-shadow: var(--shadow-sm);
   }
+
+  .form h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+  }
+
   .formGroup {
     margin-bottom: var(--spacing-md);
   }
+
+  .formGroup input {
+    /* Garante 16px mesmo em variáveis menores — evita zoom no iOS */
+    font-size: 16px;
+    padding: 12px var(--spacing-md);
+  }
+
   .btn {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 14px var(--spacing-md);
+    font-size: var(--font-size-base);
+    /* Botão levemente maior para toque fácil */
+    min-height: 52px;
+    margin-top: var(--spacing-sm);
+  }
+
+  .formSwitch {
     font-size: var(--font-size-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  .errorMessage {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+/* ==================== TELAS MUITO PEQUENAS (< 375px) ==================== */
+
+@media (max-width: 374px) {
+  .form {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .form h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .btn {
+    font-size: var(--font-size-sm);
+  }
+
+  .formSwitch {
+    font-size: 12px;
+  }
+}
+
+/* ==================== SAFE AREA (notch / barra de home iOS) ==================== */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  @media (max-width: 768px) {
+    .form {
+      padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ==================== LANDSCAPE MOBILE ==================== */
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .form {
+    padding: var(--spacing-md);
+  }
+
+  .formGroup {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .form h2 {
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+  }
+
+  .btn {
+    min-height: 44px;
+    margin-top: var(--spacing-xs);
+  }
+}
+
+/* ==================== ACESSIBILIDADE ==================== */
+
+/* Foco visível para navegação por teclado/assistivos */
+.btn:focus-visible,
+.linkButton:focus-visible,
+.formGroup input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Respeita preferência por menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .form,
+  .btn,
+  .linkButton,
+  .formGroup input {
+    transition: none;
+  }
+
+  .btnPrimary:active:not(:disabled) {
+    transform: none;
   }
 }
