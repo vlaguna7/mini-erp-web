@@ -10,8 +10,8 @@ import styles from './EstoquePage.module.css';
 type ViewMode = 'cards' | 'table';
 
 const getStatus = (product: any) => {
-  const current = product.quantity_stock ?? 0;
-  const min = product.min_stock ?? 0;
+  const current = product.quantityStock ?? 0;
+  const min = product.minStock ?? 0;
   if (current === 0) return 'sem-estoque';
   if (current <= min) return 'estoque-baixo';
   return 'normal';
@@ -98,7 +98,7 @@ const EstoquePage: React.FC = () => {
       ...products.map((p) =>
         [
           p.id, p.name, p.code, p.category,
-          p.price_cost, p.price_sale, p.quantity_stock, p.min_stock,
+          p.priceCost, p.priceSale, p.quantityStock, p.minStock,
         ].join(',')
       ),
     ].join('\n');
@@ -290,10 +290,10 @@ const EstoquePage: React.FC = () => {
                 {/* Col 4: Price + Quantity */}
                 <div className={styles.estoqueRowCommercial}>
                   <span className={styles.estoqueRowPrice}>
-                    {formatCurrency(parseFloat(product.price_sale) || 0)}
+                    {formatCurrency(parseFloat(product.priceSale) || 0)}
                   </span>
                   <span className={styles.estoqueRowQty}>
-                    {product.quantity_stock ?? 0}
+                    {product.quantityStock ?? 0}
                     <span className={styles.estoqueRowUnit}>UN</span>
                   </span>
                 </div>
@@ -342,9 +342,9 @@ const EstoquePage: React.FC = () => {
                       <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#1e293b' }}>{product.name}</td>
                       <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{product.code || '—'}</td>
                       <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{product.category || '—'}</td>
-                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'right' }}>{formatCurrency(parseFloat(product.price_sale) || 0)}</td>
-                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'center' }}>{product.quantity_stock ?? 0}</td>
-                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'center' }}>{product.min_stock ?? '—'}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'right' }}>{formatCurrency(parseFloat(product.priceSale) || 0)}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'center' }}>{product.quantityStock ?? 0}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: '#64748b', textAlign: 'center' }}>{product.minStock ?? '—'}</td>
                       <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>
                         <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '0.25rem 0.5rem', borderRadius: '4px', background: status === 'normal' ? '#dcfce7' : status === 'estoque-baixo' ? '#fed7aa' : '#fee2e2', color: status === 'normal' ? '#166534' : status === 'estoque-baixo' ? '#b45309' : '#991b1b' }}>
                           {STATUS_LABEL[status]}

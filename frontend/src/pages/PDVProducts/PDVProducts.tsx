@@ -29,7 +29,7 @@ const PDVProducts: React.FC = () => {
         category: p.category || 'Sem Categoria',
         sku: p.code || `SKU-${p.id}`,
         barcode: p.code || 'N/A',
-        stock: p.quantity_stock ?? 0,
+        stock: p.quantityStock ?? 0,
       }));
       
       setProducts(productList);
@@ -56,8 +56,8 @@ const PDVProducts: React.FC = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const isInCart = (productId: string) =>
-    cart.some((item) => item.id === productId);
+  const isInCart = (productId: number | string) =>
+    cart.some((item) => item.id === String(productId));
 
   const handleToggleProduct = (product: any) => {
     if (isInCart(product.id)) {
@@ -65,9 +65,9 @@ const PDVProducts: React.FC = () => {
       return;
     }
     addToCart({
-      id: product.id,
+      id: String(product.id),
       name: product.name,
-      price: parseFloat(product.price_sale) || 0,
+      price: parseFloat(product.priceSale) || 0,
       quantity: 1,
       code: product.code,
     });
@@ -140,7 +140,7 @@ const PDVProducts: React.FC = () => {
 
                 <div className={styles.pdvProductColRight}>
                   <span className={styles.pdvProductPrice}>
-                    R$ {parseFloat(product.price_sale || 0).toFixed(2)}
+                    R$ {parseFloat(product.priceSale || 0).toFixed(2)}
                   </span>
                   <div className={styles.pdvProductStock}>
                     <span className={styles.pdvStockQuantity}>{product.stock}</span>

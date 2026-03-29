@@ -112,13 +112,13 @@ const ProductsPage: React.FC = () => {
                 <div className="product-details">
                   <div className="detail-row">
                     <span>Stock:</span>
-                    <strong>{product.quantity_stock}</strong>
+                    <strong>{product.quantityStock}</strong>
                   </div>
                   <div className="detail-row">
                     <span>Min Stock:</span>
-                    <strong>{product.min_stock || '—'}</strong>
+                    <strong>{product.minStock || '—'}</strong>
                   </div>
-                  {product.quantity_stock <= (product.min_stock || 0) && (
+                  {product.quantityStock <= (product.minStock || 0) && (
                     <div className="alert alert-low-stock">
                       ⚠ Low Stock Alert
                     </div>
@@ -127,18 +127,18 @@ const ProductsPage: React.FC = () => {
                 <div className="product-prices">
                   <div className="price-row">
                     <span>Cost:</span>
-                    <strong>R$ {parseFloat(product.price_cost || 0).toFixed(2)}</strong>
+                    <strong>R$ {parseFloat(product.priceCost || 0).toFixed(2)}</strong>
                   </div>
                   <div className="price-row">
                     <span>Sale:</span>
-                    <strong>R$ {parseFloat(product.price_sale).toFixed(2)}</strong>
+                    <strong>R$ {parseFloat(product.priceSale).toFixed(2)}</strong>
                   </div>
-                  {product.price_cost && (
+                  {product.priceCost && (
                     <div className="price-row">
                       <span>Margin:</span>
                       <strong>
                         {(
-                          ((product.price_sale - product.price_cost) / product.price_sale) *
+                          ((product.priceSale - product.priceCost) / product.priceSale) *
                           100
                         ).toFixed(1)}
                         %

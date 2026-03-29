@@ -1,4 +1,5 @@
-import pool from '../db';
+import prisma from '../db/prismaClient';
+import { Prisma } from '@prisma/client';
 
 export class ProductService {
   static async createProduct(
@@ -13,18 +14,21 @@ export class ProductService {
     minStock?: number
   ) {
     try {
-      const result = await pool.query(
-        `INSERT INTO products 
-        (user_id, name, code, category, quantity_stock, price_cost, price_sale, supplier_id, min_stock) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
-        RETURNING *`,
-        [userId, name, code, category, quantityStock, priceCost, priceSale, supplierId || null, minStock || null]
-      );
-
-      return result.rows[0];
+      return await prisma.product.create({
+        data: {
+          userId,
+          name,
+          code,
+          category,
+          quantityStock,
+          priceCost,
+          priceSale,
+          supplierId: supplierId || null,
+          minStock: minStock || null,
+        },
+      });
     } catch (error: any) {
-      
-      if (error.code === '23505') {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new Error('Product code already exists for this user');
       }
       throw error;
@@ -32,41 +36,29 @@ export class ProductService {
   }
 
   static async getProductsByUser(userId: number, limit: number = 100, offset: number = 0) {
-    try {
-      const result = await pool.query(
-        `SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
-        [userId, limit, offset]
-      );
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: offset,
+      }),
+      prisma.product.count({ where: { userId } }),
+    ]);
 
-      const countResult = await pool.query(
-        `SELECT COUNT(*) FROM products WHERE user_id = $1`,
-        [userId]
-      );
-
-      return {
-        products: result.rows,
-        total: parseInt(countResult.rows[0].count),
-      };
-    } catch (error) {
-      throw error;
-    }
+    return { products, total };
   }
 
   static async getProductById(userId: number, productId: number) {
-    try {
-      const result = await pool.query(
-        `SELECT * FROM products WHERE id = $1 AND user_id = $2`,
-        [productId, userId]
-      );
+    const product = await prisma.product.findFirst({
+      where: { id: productId, userId },
+    });
 
-      if (result.rows.length === 0) {
-        throw new Error('Product not found');
-      }
-
-      return result.rows[0];
-    } catch (error) {
-      throw error;
+    if (!product) {
+      throw new Error('Product not found');
     }
+
+    return product;
   }
 
   static async updateProduct(
@@ -82,54 +74,23 @@ export class ProductService {
       minStock?: number;
     }
   ) {
-    try { 
-      const product = await this.getProductById(userId, productId);
+    await this.getProductById(userId, productId);
 
-      const fields = [];
-      const values = [];
-      let paramCount = 1;
-
-      if (updates.name !== undefined) {
-        fields.push(`name = $${paramCount++}`);
-        values.push(updates.name);
-      }
-      if (updates.code !== undefined) {
-        fields.push(`code = $${paramCount++}`);
-        values.push(updates.code);
-      }
-      if (updates.category !== undefined) {
-        fields.push(`category = $${paramCount++}`);
-        values.push(updates.category);
-      }
-      if (updates.quantityStock !== undefined) {
-        fields.push(`quantity_stock = $${paramCount++}`);
-        values.push(updates.quantityStock);
-      }
-      if (updates.priceCost !== undefined) {
-        fields.push(`price_cost = $${paramCount++}`);
-        values.push(updates.priceCost);
-      }
-      if (updates.priceSale !== undefined) {
-        fields.push(`price_sale = $${paramCount++}`);
-        values.push(updates.priceSale);
-      }
-      if (updates.minStock !== undefined) {
-        fields.push(`min_stock = $${paramCount++}`);
-        values.push(updates.minStock);
-      }
-
-      fields.push(`updated_at = $${paramCount++}`);
-      values.push(new Date());
-
-      values.push(productId, userId);
-
-      const query = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramCount} AND user_id = $${paramCount + 1} RETURNING *`;
-
-      const result = await pool.query(query, values);
-
-      return result.rows[0];
+    try {
+      return await prisma.product.update({
+        where: { id: productId },
+        data: {
+          ...(updates.name !== undefined && { name: updates.name }),
+          ...(updates.code !== undefined && { code: updates.code }),
+          ...(updates.category !== undefined && { category: updates.category }),
+          ...(updates.quantityStock !== undefined && { quantityStock: updates.quantityStock }),
+          ...(updates.priceCost !== undefined && { priceCost: updates.priceCost }),
+          ...(updates.priceSale !== undefined && { priceSale: updates.priceSale }),
+          ...(updates.minStock !== undefined && { minStock: updates.minStock }),
+        },
+      });
     } catch (error: any) {
-      if (error.code === '23505') {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new Error('Product code already exists for this user');
       }
       throw error;
@@ -137,32 +98,21 @@ export class ProductService {
   }
 
   static async deleteProduct(userId: number, productId: number) {
-    try { 
-      await this.getProductById(userId, productId);
+    await this.getProductById(userId, productId);
 
-      const result = await pool.query(
-        `DELETE FROM products WHERE id = $1 AND user_id = $2 RETURNING id`,
-        [productId, userId]
-      );
+    await prisma.product.delete({ where: { id: productId } });
 
-      return { message: 'Product deleted successfully' };
-    } catch (error) {
-      throw error;
-    }
+    return { message: 'Product deleted successfully' };
   }
 
   static async getLowStockProducts(userId: number) {
-    try {
-      const result = await pool.query(
-        `SELECT * FROM products 
-        WHERE user_id = $1 AND min_stock IS NOT NULL AND quantity_stock <= min_stock
-        ORDER BY quantity_stock ASC`,
-        [userId]
-      );
-
-      return result.rows;
-    } catch (error) {
-      throw error;
-    }
+    const products = await prisma.product.findMany({
+      where: {
+        userId,
+        minStock: { not: null },
+      },
+      orderBy: { quantityStock: 'asc' },
+    });
+    return products.filter(p => p.quantityStock <= (p.minStock ?? 0));
   }
 }

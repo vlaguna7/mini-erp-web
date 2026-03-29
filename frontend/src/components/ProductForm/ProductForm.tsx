@@ -29,10 +29,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
       setName(initialProduct.name || '');
       setCode(initialProduct.code || '');
       setCategory(initialProduct.category || '');
-      setPriceCost(initialProduct.price_cost?.toString() || '');
-      setPriceSale(initialProduct.price_sale?.toString() || '');
-      setQuantityStock(initialProduct.quantity_stock?.toString() || '0');
-      setMinStock(initialProduct.min_stock?.toString() || '10');
+      setPriceCost(initialProduct.priceCost?.toString() || '');
+      setPriceSale(initialProduct.priceSale?.toString() || '');
+      setQuantityStock(initialProduct.quantityStock?.toString() || '0');
+      setMinStock(initialProduct.minStock?.toString() || '10');
     }
   }, [initialProduct]);
 

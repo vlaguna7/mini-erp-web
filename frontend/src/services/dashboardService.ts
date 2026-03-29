@@ -71,8 +71,8 @@ export const dashboardService = {
           activities.push({
             type: 'sale',
             label: 'Venda realizada',
-            detail: `R$ ${parseFloat(s.total_value || 0).toFixed(2)}`,
-            date: s.created_at || s.sale_date,
+            detail: `R$ ${parseFloat(s.totalValue || s.total_value || 0).toFixed(2)}`,
+            date: s.createdAt || s.created_at || s.saleDate || s.sale_date,
           });
         });
       }
@@ -86,7 +86,7 @@ export const dashboardService = {
             type: 'entry',
             label: e.description || 'Entrada registrada',
             detail: `R$ ${parseFloat(e.value || 0).toFixed(2)}`,
-            date: e.created_at || e.entry_date,
+            date: e.createdAt || e.created_at || e.entryDate || e.entry_date,
           });
         });
       }

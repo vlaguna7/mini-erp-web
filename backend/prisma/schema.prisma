@@ -1,0 +1,181 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique @db.VarChar(100)
+  passwordHash String     @map("password_hash") @db.VarChar(255)
+  name         String     @db.VarChar(100)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at")
+
+  company   Company?
+  products  Product[]
+  suppliers Supplier[]
+  clients   Client[]
+  entries   Entry[]
+  sales     Sale[]
+  returns   Return[]
+
+  @@index([email], name: "idx_users_email")
+  @@map("users")
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique @map("user_id")
+  name      String   @db.VarChar(100)
+  cnpj      String?  @unique @db.VarChar(14)
+  email     String?  @db.VarChar(100)
+  phone     String?  @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("companies")
+}
+
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  cnpj      String?  @db.VarChar(14)
+  email     String?  @db.VarChar(100)
+  phone     String?  @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+  entries  Entry[]
+
+  @@index([userId], name: "idx_suppliers_user_id")
+  @@map("suppliers")
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  name          String   @db.VarChar(100)
+  code          String   @db.VarChar(50)
+  category      String?  @db.VarChar(100)
+  quantityStock Int      @default(0) @map("quantity_stock")
+  priceCost     Decimal? @map("price_cost") @db.Decimal(10, 2)
+  priceSale     Decimal? @map("price_sale") @db.Decimal(10, 2)
+  supplierId    Int?     @map("supplier_id")
+  minStock      Int?     @map("min_stock")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplier  Supplier?  @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  saleItems SaleItem[]
+  entries   Entry[]
+  returns   Return[]
+
+  @@unique([userId, code])
+  @@index([userId], name: "idx_products_user_id")
+  @@index([code], name: "idx_products_code")
+  @@map("products")
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  phone     String?  @db.VarChar(100)
+  email     String?  @db.VarChar(100)
+  category  String?  @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sales Sale[]
+
+  @@index([userId], name: "idx_clients_user_id")
+  @@map("clients")
+}
+
+model Entry {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  productId   Int?     @map("product_id")
+  supplierId  Int?     @map("supplier_id")
+  type        String   @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  quantity    Int?
+  value       Decimal  @db.Decimal(10, 2)
+  entryDate   DateTime @map("entry_date") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  supplier Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@index([userId], name: "idx_entries_user_id")
+  @@map("entries")
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  clientId   Int?     @map("client_id")
+  totalValue Decimal  @map("total_value") @db.Decimal(10, 2)
+  discount   Decimal  @default(0) @db.Decimal(10, 2)
+  saleDate   DateTime @map("sale_date") @db.Date
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client  Client?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  items   SaleItem[]
+  returns Return[]
+
+  @@index([userId], name: "idx_sales_user_id")
+  @@index([clientId], name: "idx_sales_client_id")
+  @@map("sales")
+}
+
+model SaleItem {
+  id        Int      @id @default(autoincrement())
+  saleId    Int      @map("sale_id")
+  productId Int      @map("product_id")
+  quantity  Int
+  unitPrice Decimal  @map("unit_price") @db.Decimal(10, 2)
+  subtotal  Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  sale    Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([saleId], name: "idx_sale_items_sale_id")
+  @@map("sale_items")
+}
+
+model Return {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  saleId     Int?     @map("sale_id")
+  productId  Int      @map("product_id")
+  quantity   Int
+  reason     String?  @db.VarChar(255)
+  returnDate DateTime @map("return_date") @db.Date
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sale    Sale?   @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([userId], name: "idx_returns_user_id")
+  @@map("returns")
+}

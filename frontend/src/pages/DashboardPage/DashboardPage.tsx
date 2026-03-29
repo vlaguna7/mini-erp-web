@@ -62,14 +62,14 @@ const DashboardPage: React.FC = () => {
         products.status === 'fulfilled' ? products.value : [];
 
       const lowStockProducts = productList.filter(
-        (p: any) => (p.quantity_stock || 0) <= (p.min_stock || 0)
+        (p: any) => (p.quantityStock || 0) <= (p.minStock || 0)
       );
 
       const totalStockValue = productList
-        .filter((p: any) => (p.quantity_stock || 0) >= 1)
+        .filter((p: any) => (p.quantityStock || 0) >= 1)
         .reduce(
           (sum: number, p: any) =>
-            sum + (parseFloat(p.price_sale) || 0) * p.quantity_stock,
+            sum + (parseFloat(p.priceSale) || 0) * p.quantityStock,
           0
         );
 
@@ -216,11 +216,11 @@ const DashboardPage: React.FC = () => {
           ) : (
             <ul className={styles.dashAlertList}>
               {stats.lowStockProducts.slice(0, 6).map((product) => {
-                const pct = product.min_stock
+                const pct = product.minStock
                   ? Math.min(
                     100,
                     Math.round(
-                      (product.quantity_stock / product.min_stock) * 100
+                      (product.quantityStock / product.minStock) * 100
                     )
                   )
                   : 0;
@@ -229,7 +229,7 @@ const DashboardPage: React.FC = () => {
                     <div className={styles.dashAlertRow}>
                       <span className={styles.dashAlertName}>{product.name}</span>
                       <span className={styles.dashAlertQty}>
-                        {product.quantity_stock} unidades
+                        {product.quantityStock} unidades
                       </span>
                     </div>
                     <div className={styles.dashProgressTrack}>

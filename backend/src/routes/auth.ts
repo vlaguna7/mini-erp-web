@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { AuthService } from '../services/authService';
+import { AuthService, AppError } from '../services/authService';
 import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -26,7 +26,11 @@ router.post(
 
       res.status(201).json(result);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      if (error instanceof AppError) {
+        return res.status(error.status).json({ error: error.message });
+      }
+      console.error('Register error:', error.message);
+      res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }
 );
