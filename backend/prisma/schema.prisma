@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -88,14 +88,21 @@ model Product {
 }
 
 model Client {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  name      String   @db.VarChar(100)
-  phone     String?  @db.VarChar(100)
-  email     String?  @db.VarChar(100)
-  category  String?  @db.VarChar(50)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  name       String   @db.VarChar(100)
+  personType String?  @map("person_type") @db.VarChar(10)
+  cpfCnpj    String?  @map("cpf_cnpj") @db.VarChar(18)
+  gender     String?  @db.VarChar(20)
+  birthDate  String?  @map("birth_date") @db.VarChar(10)
+  phone      String?  @db.VarChar(100)
+  whatsapp   String?  @db.VarChar(20)
+  instagram  String?  @db.VarChar(100)
+  email      String?  @db.VarChar(100)
+  category   String?  @db.VarChar(50)
+  photo      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   sales Sale[]

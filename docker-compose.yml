@@ -43,7 +43,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:3001/api"
     container_name: mini_erp_frontend
+    environment:
+      PORT: "3000"
     ports:
       - "3000:3000"
     depends_on:
