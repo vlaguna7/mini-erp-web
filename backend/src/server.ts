@@ -6,10 +6,6 @@ import productRoutes from './routes/products';
 import clientRoutes from './routes/clients';
 
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-app.use(cors({
-  origin: '*',
-  credentials: true,
-}));
 dotenv.config();
 
 const app: Express = express();
