@@ -76,26 +76,27 @@
   }
 
   .logoSection {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    text-align: center;
+    gap: 0;
     margin-bottom: 0;
   }
 
   .logoSection h1 {
-    font-size: 1.4rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
   }
 
   .logoSection p {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
   }
 
   .logoIcon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
-    margin-bottom: 0;
+    margin-bottom: 1rem;
   }
 
   .formContainer {
