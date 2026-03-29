@@ -4,10 +4,10 @@ RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY backend/package.json backend/package-lock.json ./
 RUN npm ci
 
-COPY . .
+COPY backend/ .
 
 RUN npx prisma generate
 RUN npm run build
