@@ -33,7 +33,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 app.use(cors({
   origin: '*',
-  credentials: true,
 }));
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
