@@ -20,6 +20,35 @@
   overflow: hidden;
 }
 
+/* ==================== AUTH LAYOUT (Login / Cadastro) ==================== */
+/*
+  Use esta classe no wrapper da página de login/cadastro.
+  Ela substitui completamente o mainContent — sem sidebar, sem margin-left.
+
+  Exemplo de uso no componente:
+    <div className={styles.authLayout}>
+      <LoginForm />
+    </div>
+*/
+
+.authLayout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;         /* dvh respeita a barra de endereços no mobile */
+  padding: 1.5rem 1rem;       /* espaço interno para não colar nas bordas */
+  background-color: #f5f7fa;
+  box-sizing: border-box;
+}
+
+/* No mobile, permite crescer verticalmente se o conteúdo for maior que a tela */
+@media (max-width: 640px) {
+  .authLayout {
+    align-items: flex-start;      /* permite scroll natural se form for longo */
+    padding: 2rem 1rem 3rem;      /* mais padding embaixo para respiro */
+  }
+}
+
 /* ==================== NAVBAR STYLES ==================== */
 
 .navbar {
@@ -119,22 +148,6 @@
 }
 
 /* ============================================================================
-   RESPONSIVE - Mobile Layout
-   ============================================================================ */
-
-@media (max-width: 768px) {
-  .mainContent {
-    margin-left: 0;
-    margin-top: 64px;
-    padding: 1rem;
-  }
-
-  .sidebarOpen {
-    margin-left: 0;
-  }
-}
-
-/* ============================================================================
    PAGE WRAPPER
    ============================================================================ */
 
@@ -149,6 +162,16 @@
    ============================================================================ */
 
 @media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0;
+    margin-top: 64px;
+    padding: 1rem;
+  }
+
+  .sidebarOpen {
+    margin-left: 0;
+  }
+
   .navContent {
     flex-direction: column;
     gap: 15px;
@@ -162,13 +185,5 @@
 
   .pageContent {
     margin: 20px auto;
-  }
-
-  .mainContent {
-    margin-left: 64px;
-  }
-
-  .sidebarOpen {
-    margin-left: 64px;
   }
 }
