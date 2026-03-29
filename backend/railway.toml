@@ -1,3 +1,3 @@
 [build]
-dockerfilePath = "Dockerfile"
-context = "backend"
+dockerfilePath = "/backend/Dockerfile"
+context = "/backend"
