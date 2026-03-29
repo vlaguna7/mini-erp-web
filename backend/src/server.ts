@@ -5,6 +5,7 @@ import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import clientRoutes from './routes/clients';
 
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 dotenv.config();
 
 const app: Express = express();
@@ -29,7 +30,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
-
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
