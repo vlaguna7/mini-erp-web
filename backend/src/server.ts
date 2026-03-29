@@ -6,6 +6,10 @@ import productRoutes from './routes/products';
 import clientRoutes from './routes/clients';
 
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
 dotenv.config();
 
 const app: Express = express();
@@ -31,6 +35,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
