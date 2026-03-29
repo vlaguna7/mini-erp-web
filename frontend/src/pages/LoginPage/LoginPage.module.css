@@ -3,12 +3,13 @@
    ============================================================================ */
 
 .loginPage {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .loginContainer {
@@ -56,52 +57,49 @@
   align-items: center;
 }
 
+/* ============================================================================
+   MOBILE
+   ============================================================================ */
+
 @media (max-width: 768px) {
+  .loginPage {
+    /* Mantém flex + centralização — só ajusta padding e permite rolar */
+    min-height: 100dvh;
+    align-items: flex-start;
+    padding: 2rem 1rem 3rem;
+  }
+
   .loginContainer {
     grid-template-columns: 1fr;
-    gap: 12px;
-    max-width: 100vw;
-    width: 100%;
+    gap: 1.5rem;
+    max-width: 100%;
   }
 
   .logoSection {
-    display: flex;
-    margin-bottom: 1rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0;
+  }
+
+  .logoSection h1 {
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .logoSection p {
+    font-size: 0.85rem;
+  }
+
+  .logoIcon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    margin-bottom: 0;
   }
 
   .formContainer {
     width: 100%;
-    justify-content: center;
     align-items: stretch;
-  }
-
-  .form {
-    padding: 1rem;
-    min-width: 0;
-    width: 100%;
-  }
-
-  .logoSection h1 {
-    font-size: 1.8rem;
-  }
-
-  .logoSection p {
-    font-size: 0.95rem;
-  }
-
-  .loginPage {
-    /* Permitir rolagem vertical e altura automática */
-    min-height: unset;
-    height: auto;
-    align-items: unset;
-    display: block;
-    padding: 8px;
-  }
-
-  /* Reduzir tamanho do logo para mobile */
-  .logoIcon {
-    width: 56px;
-    height: 56px;
-    margin-bottom: 1rem;
   }
 }
