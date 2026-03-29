@@ -1,294 +1,326 @@
 @import '../../styles/globals/variables.css';
 
-/* ==================== FORM STYLES ==================== */
+/* ==================== LOGIN FORM ==================== */
 
+/* --- Entrada animada do card --- */
+@keyframes formEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Card principal --- */
 .form {
   background: white;
-  padding: var(--spacing-2xl);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  padding: var(--spacing-2xl) var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 4px 6px -1px rgba(15, 23, 42, 0.04),
+    0 16px 32px -8px rgba(15, 23, 42, 0.10);
   width: 100%;
-  /* Evita overflow horizontal em telas pequenas */
-  box-sizing: border-box;
+  max-width: 440px;
+  animation: formEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* --- Eyebrow / subtítulo de contexto --- */
+.formEyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* --- Título principal --- */
 .form h2 {
   color: #0f172a;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-xs);
   font-size: var(--font-size-2xl);
-  /* Impede quebra estranha em títulos longos */
-  word-break: break-word;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
+/* --- Subtítulo descritivo --- */
+.formSubtitle {
+  font-size: var(--font-size-sm);
+  color: #64748b;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* --- Linha divisória decorativa --- */
+.formDivider {
+  height: 1px;
+  background: #f1f5f9;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* --- Grupo de campo --- */
 .formGroup {
   margin-bottom: var(--spacing-lg);
+  position: relative;
 }
 
+/* --- Label refinada --- */
 .formGroup label {
   display: block;
   margin-bottom: var(--spacing-xs);
   color: #475569;
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
-  /* Evita seleção acidental ao tocar no label */
-  user-select: none;
-  -webkit-user-select: none;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
+/* --- Wrapper do input com ícone --- */
+.inputWrap {
+  position: relative;
+}
+
+/* --- Ícone dentro do input --- */
+.inputIcon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+  transition: color var(--transition-base);
+}
+
+/* Input com ícone */
+.inputWrap input {
+  padding-left: 40px !important;
+}
+
+/* Ícone ativo quando input está focado */
+.inputWrap:has(input:focus) .inputIcon {
+  color: var(--color-primary);
+}
+
+/* --- Input --- */
 .formGroup input {
   width: 100%;
-  /* Mínimo de 48px de altura — padrão WCAG para touch targets */
-  min-height: 48px;
-  padding: var(--spacing-md);
+  padding: 11px var(--spacing-md);
   border: 1.5px solid #e2e8f0;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
   color: #0f172a;
+  background: #ffffff;
   box-sizing: border-box;
-  /* Evita zoom automático no iOS (font-size mínimo de 16px) */
-  font-size: max(16px, var(--font-size-base));
-  /* Remove aparência nativa em iOS */
-  -webkit-appearance: none;
-  appearance: none;
+  line-height: 1.5;
 }
 
+.formGroup input::placeholder {
+  color: #94a3b8;
+  font-size: var(--font-size-sm);
+}
+
+/* Foco */
 .formGroup input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
+  background: #fafcff;
 }
 
+/* Hover */
+.formGroup input:hover:not(:focus):not(:disabled) {
+  border-color: #cbd5e1;
+}
+
+/* Desabilitado */
 .formGroup input:disabled {
   background: #f8fafc;
   color: #94a3b8;
   cursor: not-allowed;
+  border-color: #e2e8f0;
 }
 
 /* Estado de erro no input */
-.formGroup input[aria-invalid='true'],
-.formGroup input.inputError {
+.formGroup.hasError input {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10);
 }
 
+/* Mensagem de erro inline por campo */
+.fieldError {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  font-weight: var(--font-weight-medium);
+}
+
+/* --- Mensagem de erro global --- */
 .errorMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
   background: var(--color-error-light);
   color: var(--color-error-hover);
-  padding: var(--spacing-md);
+  padding: 11px var(--spacing-md);
   border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-sm);
-  border-left: 4px solid var(--color-error);
-  /* Acessível para leitores de tela */
-  role: alert;
-  /* Quebra URLs ou textos longos */
-  word-break: break-word;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-left: 3px solid var(--color-error);
+  line-height: 1.5;
+  animation: formEnter 0.25s ease;
 }
 
+/* --- Botão primário --- */
 .btn {
-  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: 12px var(--spacing-lg);
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    background var(--transition-base),
+    transform 0.15s ease,
+    box-shadow var(--transition-base),
+    opacity var(--transition-base);
   margin-top: var(--spacing-md);
-  width: 100%;
-  /* Touch target mínimo */
-  min-height: 48px;
-  /* Evita delay de 300ms no iOS */
-  touch-action: manipulation;
-  /* Remove tap highlight azul no Android */
-  -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
+  letter-spacing: 0.01em;
+  line-height: 1;
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-/* Remove hover em dispositivos touch para evitar "stuck hover" */
-@media (hover: hover) {
-  .btnPrimary:hover:not(:disabled) {
-    background: var(--color-primary-hover);
-    box-shadow: var(--shadow-lg);
-  }
-}
-
+/* Primário */
 .btnPrimary {
   background: var(--color-primary);
   color: white;
 }
 
-/* Active state para feedback tátil imediato */
-.btnPrimary:active:not(:disabled) {
-  transform: scale(0.98);
+.btnPrimary:hover:not(:disabled) {
   background: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px rgba(37, 99, 235, 0.3),
+    0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
+.btnPrimary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Spinner de loading no botão */
+.btnSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Rodapé do form: trocar de tela --- */
 .formSwitch {
   text-align: center;
-  margin-top: var(--spacing-lg);
-  color: #475569;
+  margin-top: var(--spacing-xl);
+  color: #64748b;
   font-size: var(--font-size-sm);
-  /* Espaço extra para não colar no final da tela */
-  padding-bottom: var(--spacing-sm);
 }
 
+/* --- Link estilo botão --- */
 .linkButton {
   background: none;
   border: none;
   color: var(--color-primary);
   cursor: pointer;
   font-weight: var(--font-weight-semibold);
-  text-decoration: underline;
   padding: 0;
   font-size: var(--font-size-sm);
   transition: color var(--transition-base);
-  /* Touch target sem alterar visual */
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
 }
 
-@media (hover: hover) {
-  .linkButton:hover:not(:disabled) {
-    color: var(--color-primary-hover);
-  }
-}
-
-.linkButton:active:not(:disabled) {
+.linkButton:hover:not(:disabled) {
   color: var(--color-primary-hover);
+  text-decoration: underline;
 }
 
 .linkButton:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-/* ==================== MOBILE ==================== */
+/* ==================== RESPONSIVO ==================== */
 
-@media (max-width: 768px) {
+/* Tablet */
+@media (max-width: 640px) {
   .form {
-    padding: var(--spacing-lg) var(--spacing-md);
-    min-width: 0;
-    width: 100%;
+    padding: var(--spacing-xl) var(--spacing-lg);
     border-radius: var(--radius-md);
-    /* Remove sombra pesada em mobile — ocupa mais espaço visual */
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+      0 0 0 1px rgba(15, 23, 42, 0.06),
+      0 8px 24px -4px rgba(15, 23, 42, 0.08);
   }
 
   .form h2 {
     font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-md);
   }
 
   .formGroup {
     margin-bottom: var(--spacing-md);
   }
 
-  .formGroup input {
-    /* Garante 16px mesmo em variáveis menores — evita zoom no iOS */
-    font-size: 16px;
-    padding: 12px var(--spacing-md);
+  .btn {
+    padding: 11px var(--spacing-md);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 390px) {
+  .form {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-radius: var(--radius-sm);
   }
 
-  .btn {
-    padding: 14px var(--spacing-md);
+  .form h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .formGroup input {
     font-size: var(--font-size-base);
-    /* Botão levemente maior para toque fácil */
-    min-height: 52px;
-    margin-top: var(--spacing-sm);
-  }
-
-  .formSwitch {
-    font-size: var(--font-size-sm);
-    margin-top: var(--spacing-md);
-  }
-
-  .errorMessage {
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-}
-
-/* ==================== TELAS MUITO PEQUENAS (< 375px) ==================== */
-
-@media (max-width: 374px) {
-  .form {
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-
-  .form h2 {
-    font-size: var(--font-size-lg);
   }
 
   .btn {
-    font-size: var(--font-size-sm);
-  }
-
-  .formSwitch {
-    font-size: 12px;
-  }
-}
-
-/* ==================== SAFE AREA (notch / barra de home iOS) ==================== */
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  @media (max-width: 768px) {
-    .form {
-      padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
-    }
-  }
-}
-
-/* ==================== LANDSCAPE MOBILE ==================== */
-
-@media (max-width: 768px) and (orientation: landscape) {
-  .form {
-    padding: var(--spacing-md);
-  }
-
-  .formGroup {
-    margin-bottom: var(--spacing-sm);
-  }
-
-  .form h2 {
-    margin-bottom: var(--spacing-sm);
-    font-size: var(--font-size-lg);
-  }
-
-  .btn {
-    min-height: 44px;
-    margin-top: var(--spacing-xs);
-  }
-}
-
-/* ==================== ACESSIBILIDADE ==================== */
-
-/* Foco visível para navegação por teclado/assistivos */
-.btn:focus-visible,
-.linkButton:focus-visible,
-.formGroup input:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Respeita preferência por menos movimento */
-@media (prefers-reduced-motion: reduce) {
-  .form,
-  .btn,
-  .linkButton,
-  .formGroup input {
-    transition: none;
-  }
-
-  .btnPrimary:active:not(:disabled) {
-    transform: none;
+    padding: 12px var(--spacing-sm);
   }
 }
