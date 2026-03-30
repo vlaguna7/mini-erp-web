@@ -1,326 +1,110 @@
-@import '../../styles/globals/variables.css';
+/* ============================================================================
+   LOGIN PAGE - CSS Module
+   ============================================================================ */
 
-/* ==================== LOGIN FORM ==================== */
-
-/* --- Entrada animada do card --- */
-@keyframes formEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* --- Card principal --- */
-.form {
-  background: white;
-  padding: var(--spacing-2xl) var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  box-shadow:
-    0 0 0 1px rgba(15, 23, 42, 0.06),
-    0 4px 6px -1px rgba(15, 23, 42, 0.04),
-    0 16px 32px -8px rgba(15, 23, 42, 0.10);
-  width: 100%;
-  max-width: 440px;
-  animation: formEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* --- Eyebrow / subtítulo de contexto --- */
-.formEyebrow {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-xs);
-}
-
-/* --- Título principal --- */
-.form h2 {
-  color: #0f172a;
-  margin-bottom: var(--spacing-xs);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-
-/* --- Subtítulo descritivo --- */
-.formSubtitle {
-  font-size: var(--font-size-sm);
-  color: #64748b;
-  margin-bottom: var(--spacing-xl);
-}
-
-/* --- Linha divisória decorativa --- */
-.formDivider {
-  height: 1px;
-  background: #f1f5f9;
-  margin-bottom: var(--spacing-xl);
-}
-
-/* --- Grupo de campo --- */
-.formGroup {
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-}
-
-/* --- Label refinada --- */
-.formGroup label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  color: #475569;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* --- Wrapper do input com ícone --- */
-.inputWrap {
-  position: relative;
-}
-
-/* --- Ícone dentro do input --- */
-.inputIcon {
-  position: absolute;
-  left: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: #94a3b8;
-  pointer-events: none;
-  transition: color var(--transition-base);
-}
-
-/* Input com ícone */
-.inputWrap input {
-  padding-left: 40px !important;
-}
-
-/* Ícone ativo quando input está focado */
-.inputWrap:has(input:focus) .inputIcon {
-  color: var(--color-primary);
-}
-
-/* --- Input --- */
-.formGroup input {
-  width: 100%;
-  padding: 11px var(--spacing-md);
-  border: 1.5px solid #e2e8f0;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    background var(--transition-base);
-  color: #0f172a;
-  background: #ffffff;
-  box-sizing: border-box;
-  line-height: 1.5;
-}
-
-.formGroup input::placeholder {
-  color: #94a3b8;
-  font-size: var(--font-size-sm);
-}
-
-/* Foco */
-.formGroup input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
-  background: #fafcff;
-}
-
-/* Hover */
-.formGroup input:hover:not(:focus):not(:disabled) {
-  border-color: #cbd5e1;
-}
-
-/* Desabilitado */
-.formGroup input:disabled {
-  background: #f8fafc;
-  color: #94a3b8;
-  cursor: not-allowed;
-  border-color: #e2e8f0;
-}
-
-/* Estado de erro no input */
-.formGroup.hasError input {
-  border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10);
-}
-
-/* Mensagem de erro inline por campo */
-.fieldError {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 5px;
-  font-size: var(--font-size-xs);
-  color: var(--color-error);
-  font-weight: var(--font-weight-medium);
-}
-
-/* --- Mensagem de erro global --- */
-.errorMessage {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  background: var(--color-error-light);
-  color: var(--color-error-hover);
-  padding: 11px var(--spacing-md);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--font-size-sm);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-left: 3px solid var(--color-error);
-  line-height: 1.5;
-  animation: formEnter 0.25s ease;
-}
-
-/* --- Botão primário --- */
-.btn {
+.loginPage {
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  padding: 20px;
+  box-sizing: border-box;
+  /*
+    Safari iOS: NÃO usar overflow-y aqui.
+    overflow-y num container flex cria um scroll context isolado que o Safari
+    perde toda vez que o teclado abre/fecha ou o React re-renderiza.
+    O scroll fica no document (body) naturalmente.
+  */
+}
+
+.loginContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 900px;
   width: 100%;
-  padding: 12px var(--spacing-lg);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-  transition:
-    background var(--transition-base),
-    transform 0.15s ease,
-    box-shadow var(--transition-base),
-    opacity var(--transition-base);
-  margin-top: var(--spacing-md);
-  letter-spacing: 0.01em;
-  line-height: 1;
 }
 
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Primário */
-.btnPrimary {
-  background: var(--color-primary);
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: white;
 }
 
-.btnPrimary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 12px rgba(37, 99, 235, 0.3),
-    0 2px 4px rgba(37, 99, 235, 0.15);
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: white;
 }
 
-.btnPrimary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: none;
+.logoSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
 }
 
-/* Spinner de loading no botão */
-.btnSpinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.65s linear infinite;
-  flex-shrink: 0;
+.logoSection p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin: 0;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.formContainer {
+  display: flex;
+  align-items: center;
 }
 
-/* --- Rodapé do form: trocar de tela --- */
-.formSwitch {
-  text-align: center;
-  margin-top: var(--spacing-xl);
-  color: #64748b;
-  font-size: var(--font-size-sm);
-}
+/* ============================================================================
+   MOBILE
+   ============================================================================ */
 
-/* --- Link estilo botão --- */
-.linkButton {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  cursor: pointer;
-  font-weight: var(--font-weight-semibold);
-  padding: 0;
-  font-size: var(--font-size-sm);
-  transition: color var(--transition-base);
-  text-decoration: none;
-}
-
-.linkButton:hover:not(:disabled) {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
-}
-
-.linkButton:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* ==================== RESPONSIVO ==================== */
-
-/* Tablet */
-@media (max-width: 640px) {
-  .form {
-    padding: var(--spacing-xl) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    box-shadow:
-      0 0 0 1px rgba(15, 23, 42, 0.06),
-      0 8px 24px -4px rgba(15, 23, 42, 0.08);
+@media (max-width: 768px) {
+  .loginPage {
+    align-items: flex-start;
+    padding: 2rem 1rem 3rem;
   }
 
-  .form h2 {
-    font-size: var(--font-size-xl);
+  .loginContainer {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 100%;
   }
 
-  .formGroup {
-    margin-bottom: var(--spacing-md);
+  .logoSection {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    margin-bottom: 0;
   }
 
-  .btn {
-    padding: 11px var(--spacing-md);
-    font-size: var(--font-size-sm);
-  }
-}
-
-/* Mobile pequeno */
-@media (max-width: 390px) {
-  .form {
-    padding: var(--spacing-lg) var(--spacing-md);
-    border-radius: var(--radius-sm);
+  .logoSection h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
   }
 
-  .form h2 {
-    font-size: var(--font-size-lg);
+  .logoSection p {
+    font-size: 0.875rem;
   }
 
-  .formGroup input {
-    font-size: var(--font-size-base);
+  .logoIcon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    margin-bottom: 1rem;
   }
 
-  .btn {
-    padding: 12px var(--spacing-sm);
+  .formContainer {
+    width: 100%;
+    align-items: stretch;
   }
 }
