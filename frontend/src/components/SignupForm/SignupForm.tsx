@@ -9,15 +9,15 @@ interface SignupFormProps {
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName]                   = useState('');
+  const [email, setEmail]                 = useState('');
+  const [password, setPassword]           = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const [error, setError]                 = useState('');
+  const [isLoading, setIsLoading]         = useState(false);
+
+  const navigate      = useNavigate();
+  const login         = useAuthStore((state) => state.login);
   const setStoreError = useAuthStore((state) => state.setError);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,12 +28,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
       setError('Por favor, preencha todos os campos');
       return;
     }
-
     if (password !== confirmPassword) {
       setError('As senhas não coincidem');
       return;
     }
-
     if (password.length < 6) {
       setError('A senha deve ter no mínimo 6 caracteres');
       return;
@@ -46,18 +44,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
       login(response.user, response.token);
       navigate('/dashboard');
     } catch (err: any) {
-      let errorMessage = 'Falha ao cadastrar';
-      
-      if (err.response?.status === 409) {
-        errorMessage = 'Este e-mail já está cadastrado';
-      } else if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.message === 'Network Error') {
-        errorMessage = 'Erro de conexão. Verifique sua internet';
-      }
-      
-      setError(errorMessage);
-      setStoreError(errorMessage);
+      let msg = 'Falha ao cadastrar';
+      if (err.response?.status === 409)          msg = 'Este e-mail já está cadastrado';
+      else if (err.response?.data?.error)        msg = err.response.data.error;
+      else if (err.message === 'Network Error')  msg = 'Erro de conexão. Verifique sua internet';
+      setError(msg);
+      setStoreError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -65,75 +57,85 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
 
   return (
     <form onSubmit={handleSubmit} className={`${styles.form} ${styles.signupForm}`}>
-      <h2>Cadastrar</h2>
-      
-      {error && <div className={styles.errorMessage}>{error}</div>}
-      
+      <h2>Criar conta</h2>
+
+      {error && (
+        <div className={styles.errorMessage}>
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M7.5 4.5v3.5M7.5 10h.01" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+          </svg>
+          {error}
+        </div>
+      )}
+
       <div className={styles.formGroup}>
-        <label htmlFor="name">Nome Completo</label>
+        <label htmlFor="signup-name">Nome Completo</label>
         <input
-          id="name"
+          id="signup-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="João Silva"
           required
           disabled={isLoading}
+          autoComplete="name"
         />
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="signup-email">Email</label>
         <input
-          id="email"
+          id="signup-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="seu@email.com"
           required
           disabled={isLoading}
+          autoComplete="email"
         />
       </div>
 
-      <div className={styles.formGroup}>
-        <label htmlFor="password">Senha</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-          disabled={isLoading}
-        />
+      <div className={styles.twoCol}>
+        <div className={styles.formGroup}>
+          <label htmlFor="signup-password">Senha</label>
+          <input
+            id="signup-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            disabled={isLoading}
+            autoComplete="new-password"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="signup-confirm">Confirmar</label>
+          <input
+            id="signup-confirm"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            disabled={isLoading}
+            autoComplete="new-password"
+          />
+        </div>
       </div>
 
-      <div className={styles.formGroup}>
-        <label htmlFor="confirmPassword">Confirmar Senha</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-          disabled={isLoading}
-        />
-      </div>
-
-      <button type="submit" disabled={isLoading} className={`${styles.btn} ${styles.btnPrimary}`}>
-        {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Criando conta…' : 'Criar conta'}
       </button>
 
+      {/* formSwitch hidden inside AuthPage, visible standalone */}
       <p className={styles.formSwitch}>
         Já tem uma conta?{' '}
-        <button
-          type="button"
-          onClick={onSwitchToLogin}
-          className={styles.linkButton}
-          disabled={isLoading}
-        >
-          Faça login aqui
+        <button type="button" onClick={onSwitchToLogin} className={styles.linkButton} disabled={isLoading}>
+          Faça login
         </button>
       </p>
     </form>

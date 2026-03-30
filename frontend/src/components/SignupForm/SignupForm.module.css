@@ -1,15 +1,15 @@
 @import '../../styles/globals/variables.css';
 
 /* ============================================================================
-   SIGNUP FORM - CSS Module
+   SIGNUP FORM — CSS Module
    ============================================================================ */
 
-@keyframes formEnter {
-  from { opacity: 0; transform: translateY(16px); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Card principal --- */
+/* --- Card (standalone) --- */
 .form {
   background: white;
   padding: var(--spacing-2xl);
@@ -19,25 +19,28 @@
     0 4px 6px -1px rgba(15, 23, 42, 0.04),
     0 16px 32px -8px rgba(15, 23, 42, 0.10);
   width: 100%;
-  animation: formEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Variação signup — sem max-width para ocupar o espaço do container pai */
-.signupForm {
-  width: 100%;
-}
+.signupForm { width: 100%; }
 
-/* --- Título --- */
 .form h2 {
   color: #0f172a;
   margin-bottom: var(--spacing-xl);
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
-/* --- Grupo de campo --- */
+/* --- Two-column layout for password fields --- */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--spacing-md);
+}
+
+/* --- Field group --- */
 .formGroup {
   margin-bottom: var(--spacing-lg);
 }
@@ -59,29 +62,24 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   color: #0f172a;
-  background: #ffffff;
+  background: #fafbfc;
   box-sizing: border-box;
   line-height: 1.5;
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    background var(--transition-base);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
-.formGroup input::placeholder {
-  color: #94a3b8;
-  font-size: var(--font-size-sm);
-}
+.formGroup input::placeholder { color: #94a3b8; }
 
 .formGroup input:hover:not(:focus):not(:disabled) {
   border-color: #cbd5e1;
+  background: #fff;
 }
 
 .formGroup input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
-  background: #fafcff;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.1);
+  background: #fff;
 }
 
 .formGroup input:disabled {
@@ -91,25 +89,24 @@
   border-color: #e2e8f0;
 }
 
-/* --- Mensagem de erro --- */
+/* --- Error banner --- */
 .errorMessage {
   display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  background: var(--color-error-light);
-  color: var(--color-error-hover);
-  padding: 11px var(--spacing-md);
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 10px var(--spacing-md);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-sm);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-left: 3px solid var(--color-error);
+  border-left: 3px solid #ef4444;
   line-height: 1.5;
-  animation: formEnter 0.25s ease;
+  animation: fadeUp 0.2s ease;
 }
 
-/* --- Botão --- */
-.btn {
+/* --- Submit button (standalone) --- */
+.form > button[type='submit'] {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,40 +119,28 @@
   cursor: pointer;
   margin-top: var(--spacing-md);
   letter-spacing: 0.01em;
-  line-height: 1;
-  transition:
-    background var(--transition-base),
-    transform 0.15s ease,
-    box-shadow var(--transition-base),
-    opacity var(--transition-base);
-}
-
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.btnPrimary {
   background: var(--color-primary);
   color: white;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s, opacity 0.2s;
 }
 
-.btnPrimary:hover:not(:disabled) {
+.form > button[type='submit']:hover:not(:disabled) {
   background: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 12px rgba(37, 99, 235, 0.30),
-    0 2px 4px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.28);
 }
 
-.btnPrimary:active:not(:disabled) {
+.form > button[type='submit']:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: none;
 }
 
-/* --- Troca de tela --- */
+.form > button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Switch link --- */
 .formSwitch {
   text-align: center;
   margin-top: var(--spacing-xl);
@@ -171,7 +156,7 @@
   font-weight: var(--font-weight-semibold);
   padding: 0;
   font-size: var(--font-size-sm);
-  transition: color var(--transition-base);
+  transition: color 0.15s;
 }
 
 .linkButton:hover:not(:disabled) {
@@ -179,10 +164,7 @@
   text-decoration: underline;
 }
 
-.linkButton:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
+.linkButton:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ============================================================================
    MOBILE
@@ -199,22 +181,14 @@
     margin-bottom: var(--spacing-lg);
   }
 
-  .formGroup {
-    margin-bottom: var(--spacing-md);
-  }
+  .formGroup { margin-bottom: var(--spacing-md); }
 
-  .btn {
-    padding: 11px var(--spacing-md);
-    font-size: var(--font-size-sm);
+  .twoCol {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 390px) {
-  .form {
-    padding: var(--spacing-lg) var(--spacing-md);
-  }
-
-  .form h2 {
-    font-size: var(--font-size-lg);
-  }
+  .form { padding: var(--spacing-lg) var(--spacing-md); }
+  .form h2 { font-size: var(--font-size-lg); }
 }

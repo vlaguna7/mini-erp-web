@@ -1,110 +1,215 @@
 /* ============================================================================
-   LOGIN PAGE - CSS Module
+   LOGIN FORM — module CSS
+   Most visual styles are applied via AuthPage.module.css :global() overrides
+   when rendered inside AuthPage. These styles apply in standalone usage.
    ============================================================================ */
 
-.loginPage {
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  padding: 20px;
-  box-sizing: border-box;
-  /*
-    Safari iOS: NÃO usar overflow-y aqui.
-    overflow-y num container flex cria um scroll context isolado que o Safari
-    perde toda vez que o teclado abre/fecha ou o React re-renderiza.
-    O scroll fica no document (body) naturalmente.
-  */
+@import '../../styles/globals/variables.css';
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.loginContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  max-width: 900px;
+/* --- Card (standalone) --- */
+.form {
+  background: white;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 4px 6px -1px rgba(15, 23, 42, 0.04),
+    0 16px 32px -8px rgba(15, 23, 42, 0.10);
   width: 100%;
+  animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.logoSection {
+.form h2 {
+  color: #0f172a;
+  margin-bottom: var(--spacing-xl);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+/* --- Field group --- */
+.formGroup {
+  margin-bottom: var(--spacing-lg);
+}
+
+.labelRow {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: white;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
 }
 
-.logoIcon {
+.formGroup label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: #475569;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.labelRow label {
+  margin-bottom: 0;
+}
+
+.forgotLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: color 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.forgotLink:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.forgotLink:active {
+  transform: none;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 11px var(--spacing-md);
+  border: 1.5px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: #0f172a;
+  background: #fafbfc;
+  box-sizing: border-box;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.formGroup input::placeholder { color: #94a3b8; }
+
+.formGroup input:hover:not(:focus):not(:disabled) {
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.1);
+  background: #fff;
+}
+
+.formGroup input:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+/* --- Error banner --- */
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 10px var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  border-left: 3px solid #ef4444;
+  line-height: 1.5;
+  animation: fadeUp 0.2s ease;
+}
+
+/* --- Submit button (standalone) --- */
+.form > button[type='submit'] {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
+  width: 100%;
+  padding: 12px var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  margin-top: var(--spacing-md);
+  letter-spacing: 0.01em;
+  background: var(--color-primary);
   color: white;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s, opacity 0.2s;
 }
 
-.logoSection h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
+.form > button[type='submit']:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.28);
 }
 
-.logoSection p {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  opacity: 0.95;
-  margin: 0;
+.form > button[type='submit']:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
-.formContainer {
-  display: flex;
-  align-items: center;
+.form > button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
+
+/* --- Switch link (hidden inside AuthPage) --- */
+.formSwitch {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+  color: #64748b;
+  font-size: var(--font-size-sm);
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  padding: 0;
+  font-size: var(--font-size-sm);
+  transition: color 0.15s;
+}
+
+.linkButton:hover:not(:disabled) {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.linkButton:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ============================================================================
    MOBILE
    ============================================================================ */
 
-@media (max-width: 768px) {
-  .loginPage {
-    align-items: flex-start;
-    padding: 2rem 1rem 3rem;
+@media (max-width: 640px) {
+  .form {
+    padding: var(--spacing-xl) var(--spacing-lg);
+    border-radius: var(--radius-md);
   }
 
-  .loginContainer {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 100%;
+  .form h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-lg);
   }
 
-  .logoSection {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0;
-    margin-bottom: 0;
-  }
+  .formGroup { margin-bottom: var(--spacing-md); }
+}
 
-  .logoSection h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .logoSection p {
-    font-size: 0.875rem;
-  }
-
-  .logoIcon {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-    margin-bottom: 1rem;
-  }
-
-  .formContainer {
-    width: 100%;
-    align-items: stretch;
-  }
+@media (max-width: 390px) {
+  .form { padding: var(--spacing-lg) var(--spacing-md); }
+  .form h2 { font-size: var(--font-size-lg); }
 }
