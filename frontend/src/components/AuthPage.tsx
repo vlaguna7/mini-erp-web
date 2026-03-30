@@ -14,7 +14,7 @@ const AuthPage: React.FC = () => {
         <div className={styles.panelInner}>
           <div className={styles.logo}>
             <div className={styles.logoMark} />
-            <span className={styles.logoText}>YourBrand</span>
+            <span className={styles.logoText}>MINI ERP WEB</span>
           </div>
 
           <div className={styles.heroText}>
@@ -55,7 +55,7 @@ const AuthPage: React.FC = () => {
         {/* Mobile brand header */}
         <div className={styles.mobileBrand}>
           <div className={styles.logoMark} />
-          <span className={styles.logoText}>YourBrand</span>
+          <span className={styles.logoText}>Mini ERP WEB</span>
         </div>
 
         <div className={styles.formWrapper}>

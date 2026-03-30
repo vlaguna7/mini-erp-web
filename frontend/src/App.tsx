@@ -4,7 +4,7 @@ import { useAuthStore } from './store/authStore';
 import { SidebarProvider } from './context/SidebarContext';
 import { useSidebar } from './context/SidebarContext';
 import Sidebar from './components/Sidebar';
-import LoginPage from './pages/LoginPage';
+import AuthPage from './components/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import EstoquePage from './pages/EstoquePage';
 import PDVPage from './pages/PDVPage';
@@ -75,7 +75,7 @@ function App() {
     <Router>
       <SidebarProvider>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<AuthPage />} />
           <Route path="/pdv/*" element={<PDVLayout isInitializing={isInitializing}><PDVPage /></PDVLayout>} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
