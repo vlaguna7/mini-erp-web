@@ -35,7 +35,6 @@ body {
   transition: background-color var(--transition-base), color var(--transition-base);
   min-height: 100%;                    /* cresce com o conteúdo              */
   overflow-x: hidden;                  /* bloqueia scroll horizontal global  */
-  -webkit-overflow-scrolling: touch;   /* scroll com inércia no iOS          */
 }
 
 /* ==================== HEADINGS ==================== */
