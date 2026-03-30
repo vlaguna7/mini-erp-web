@@ -92,7 +92,7 @@ const AuthPage: React.FC = () => {
         </div>
 
         <p className={styles.footerNote}>
-          © {new Date().getFullYear()} YourBrand · Todos os direitos reservados
+          © {new Date().getFullYear()} Mini ERP Web · Todos os direitos reservados
         </p>
       </div>
     </div>
