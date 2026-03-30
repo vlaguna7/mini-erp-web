@@ -22,6 +22,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;                        /* referência de altura para Safari iOS */
 }
 
 body {
@@ -32,6 +33,9 @@ body {
   color: var(--color-slate-900);
   background-color: white;
   transition: background-color var(--transition-base), color var(--transition-base);
+  min-height: 100%;                    /* cresce com o conteúdo              */
+  overflow-x: hidden;                  /* bloqueia scroll horizontal global  */
+  -webkit-overflow-scrolling: touch;   /* scroll com inércia no iOS          */
 }
 
 /* ==================== HEADINGS ==================== */
@@ -300,7 +304,7 @@ img {
   display: block;
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* ==================== MOTION ==================== */
 
 @media (prefers-reduced-motion: reduce) {
   * {
