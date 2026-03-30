@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginForm from '../components/LoginForm/LoginForm';
 import SignupForm from './SignupForm/SignupForm';
 
-import styles from './AuthPage.module.css';
+import styles from './Authpage.module.css';
 
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
