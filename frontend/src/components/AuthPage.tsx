@@ -27,13 +27,13 @@ const AuthPage: React.FC = () => {
 
           <div className={styles.statsRow}>
             <div className={styles.stat}>
-              <span className={styles.statNum}>12k+</span>
-              <span className={styles.statLabel}>Produtos</span>
+              <span className={styles.statNum}>Funcionalidades</span>
+              <span className={styles.statLabel}>Simplificadas</span>
             </div>
             <div className={styles.statDivider} />
             <div className={styles.stat}>
-              <span className={styles.statNum}>99.9%</span>
-              <span className={styles.statLabel}>Uptime</span>
+              <span className={styles.statNum}>Preço</span>
+              <span className={styles.statLabel}>Justo</span>
             </div>
             <div className={styles.statDivider} />
             <div className={styles.stat}>
