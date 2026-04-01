@@ -55,6 +55,34 @@
   text-transform: uppercase;
 }
 
+.passwordWrapper {
+  position: relative;
+}
+
+.passwordWrapper input {
+  padding-right: 42px;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.togglePassword:hover {
+  color: #475569;
+}
+
 .formGroup input {
   width: 100%;
   padding: 11px var(--spacing-md);
