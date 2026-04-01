@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Image as ImageIcon, Code } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import { productService } from '../../services/productService';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVProducts.module.css';
@@ -28,7 +28,7 @@ const PDVProducts: React.FC = () => {
         ...p,
         category: p.category || 'Sem Categoria',
         sku: p.code || `SKU-${p.id}`,
-        barcode: p.code || 'N/A',
+        barcode: p.barcode || 'N/A',
         stock: p.quantityStock ?? 0,
       }));
       
@@ -60,12 +60,13 @@ const PDVProducts: React.FC = () => {
     cart.some((item) => item.id === String(productId));
 
   const handleToggleProduct = (product: any) => {
+    const id = String(product.id);
     if (isInCart(product.id)) {
-      removeFromCart(product.id);
+      removeFromCart(id);
       return;
     }
     addToCart({
-      id: String(product.id),
+      id,
       name: product.name,
       price: parseFloat(product.priceSale) || 0,
       quantity: 1,
@@ -116,7 +117,11 @@ const PDVProducts: React.FC = () => {
                 onClick={() => handleToggleProduct(product)}
               >
                 <div className={styles.pdvProductImagePlaceholder}>
-                  <ImageIcon size={24} className={styles.pdvImageIcon} />
+                  {product.images && product.images.length > 0 ? (
+                    <img src={product.images[0].url} alt={product.name} className={styles.pdvProductImgThumb} />
+                  ) : (
+                    <ImageIcon size={24} className={styles.pdvImageIcon} />
+                  )}
                 </div>
 
                 <div className={styles.pdvProductCol}>
@@ -133,7 +138,15 @@ const PDVProducts: React.FC = () => {
                   <span className={styles.pdvProductLabel}>SKU:</span>
                   <span className={styles.pdvProductValue}>{product.sku}</span>
                   <div className={styles.pdvProductBarcodeGroup}>
-                    <Code size={14} className={styles.pdvBarcodeIcon} />
+                    <svg width="14" height="10" viewBox="0 0 16 12" fill="none" className={styles.pdvBarcodeIcon}>
+                      <rect x="0" y="0" width="2" height="12" fill="currentColor"/>
+                      <rect x="3" y="0" width="1" height="12" fill="currentColor"/>
+                      <rect x="5" y="0" width="2" height="12" fill="currentColor"/>
+                      <rect x="8" y="0" width="1" height="12" fill="currentColor"/>
+                      <rect x="10" y="0" width="2" height="12" fill="currentColor"/>
+                      <rect x="13" y="0" width="1" height="12" fill="currentColor"/>
+                      <rect x="15" y="0" width="1" height="12" fill="currentColor"/>
+                    </svg>
                     <span className={styles.pdvProductBarcode}>{product.barcode}</span>
                   </div>
                 </div>

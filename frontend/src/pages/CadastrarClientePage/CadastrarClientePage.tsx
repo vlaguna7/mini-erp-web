@@ -81,7 +81,12 @@ function maskPhone(value: string): string {
 
 const TABS = ['Dados gerais', 'Endereço', 'Observações'];
 
-const CadastrarClientePage: React.FC = () => {
+interface CadastrarClientePageProps {
+  onSave?: (client: any) => void;
+  cancelPath?: string;
+}
+
+const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, cancelPath }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -184,7 +189,13 @@ const CadastrarClientePage: React.FC = () => {
         photo: photo || undefined,
       };
 
-      await clientService.createClient(data);
+      const created = await clientService.createClient(data);
+
+      if (onSave) {
+        onSave(created);
+        return;
+      }
+
       setSuccessMsg('Cliente cadastrado com sucesso!');
 
       // Reset form
@@ -211,7 +222,7 @@ const CadastrarClientePage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/vendas-e-clientes');
+    navigate(cancelPath || '/vendas-e-clientes');
   };
 
   const handleCpfCnpjChange = (value: string) => {

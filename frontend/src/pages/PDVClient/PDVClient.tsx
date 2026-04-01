@@ -1,18 +1,33 @@
-import React, { useState, useMemo } from 'react';
-import { Plus, Search } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, User } from 'lucide-react';
+import { clientService } from '../../services/clientService';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVClient.module.css';
 
-const MOCK_CLIENTS = [
-  { id: '1', name: 'João Silva', email: 'joao@email.com', cpf: '123.456.789-00', phone: '11999999999' },
-  { id: '2', name: 'Maria Santos', email: 'maria@email.com', cpf: '987.654.321-00', phone: '11988888888' },
-  { id: '3', name: 'Pedro Oliveira', email: 'pedro@email.com', cpf: '456.789.123-00', phone: '11977777777' },
-];
-
 const PDVClient: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [clients] = useState(MOCK_CLIENTS);
+  const [clients, setClients] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { selectedClient, setSelectedClient } = usePDVStore();
+
+  useEffect(() => {
+    loadClients();
+  }, []);
+
+  const loadClients = async () => {
+    setIsLoading(true);
+    try {
+      const data = await clientService.getClients();
+      const list = Array.isArray(data) ? data : data?.clients ?? [];
+      setClients(list);
+    } catch (error) {
+      console.error('Erro ao carregar clientes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredClients = useMemo(
     () =>
@@ -20,54 +35,64 @@ const PDVClient: React.FC = () => {
         (c) =>
           c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           c.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          c.cpf?.includes(searchTerm)
+          c.cpfCnpj?.includes(searchTerm) ||
+          c.phone?.includes(searchTerm)
       ),
     [clients, searchTerm]
   );
+
+  const handleSelectClient = (client: any) => {
+    const id = String(client.id);
+    if (selectedClient?.id === id) {
+      setSelectedClient(null);
+    } else {
+      setSelectedClient({
+        id,
+        name: client.name,
+        email: client.email || undefined,
+        cpf: client.cpfCnpj || undefined,
+        phone: client.phone || undefined,
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className={styles.pdvClient}>
+        <div className={styles.pdvClientsEmpty}>
+          <p>Carregando clientes...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pdvClient}>
       <div className={styles.pdvClientHeader}>
         <h2 className={styles.pdvClientTitle}>Cliente</h2>
-        <button className={styles.pdvAddClientBtn}>
-          <Plus size={18} />
-          Novo Cliente
-        </button>
       </div>
 
-      <div className={styles.pdvClientSearch}>
-        <Search size={18} className={styles.pdvSearchIcon} />
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', width: '100%' }}>
         <input
           type="text"
-          placeholder="Buscar por nome, email ou CPF..."
+          placeholder="Buscar por nome, email, CPF ou telefone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.pdvClientSearchInput}
+          style={{ flex: 1, minWidth: 0, padding: '0.65rem 0.9rem', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', background: 'white', color: '#0f172a' }}
         />
-      </div>
-
-      <div className={styles.pdvClientSelectedBox}>
-        {selectedClient ? (
-          <div className={styles.pdvClientSelectedInfo}>
-            <p className={styles.pdvClientSelectedName}>{selectedClient.name}</p>
-            <p className={styles.pdvClientSelectedMeta}>
-              {selectedClient.email} • {selectedClient.cpf}
-            </p>
-            <button
-              className={styles.pdvClientDeselectBtn}
-              onClick={() => setSelectedClient(null)}
-            >
-              Desselecionar
-            </button>
-          </div>
-        ) : (
-          <p className={styles.pdvClientNoSelection}>Nenhum cliente selecionado</p>
-        )}
+        <button
+          onClick={() => navigate('/pdv/cliente/criar-cliente')}
+          type="button"
+          style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.65rem 1rem', background: '#2563eb', color: '#fff', border: '1.5px solid #2563eb', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+        >
+          <Plus size={16} />
+          Adicionar Cliente
+        </button>
       </div>
 
       {filteredClients.length === 0 ? (
         <div className={styles.pdvClientsEmpty}>
-          <p>Nenhum cliente encontrado</p>
+          <p>{clients.length === 0 ? 'Nenhum cliente cadastrado' : 'Nenhum cliente encontrado'}</p>
         </div>
       ) : (
         <div className={styles.pdvClientsList}>
@@ -75,13 +100,37 @@ const PDVClient: React.FC = () => {
             <button
               key={client.id}
               className={`${styles.pdvClientItem} ${
-                selectedClient?.id === client.id ? styles.selected : ''
+                selectedClient?.id === String(client.id) ? styles.selected : ''
               }`}
-              onClick={() => setSelectedClient(client)}
+              onClick={() => handleSelectClient(client)}
             >
-              <div className={styles.pdvClientCardName}>{client.name}</div>
-              <div className={styles.pdvClientCardEmail}>{client.email}</div>
-              <div className={styles.pdvClientCardCpf}>{client.cpf}</div>
+              <div className={styles.pdvClientItemPhoto}>
+                {client.photo ? (
+                  <img src={client.photo} alt={client.name} className={styles.pdvClientPhotoImg} />
+                ) : (
+                  <User size={20} />
+                )}
+              </div>
+
+              <div className={styles.pdvClientItemCol}>
+                <span className={styles.pdvClientItemLabel}>NOME:</span>
+                <span className={styles.pdvClientItemName}>{client.name}</span>
+              </div>
+
+              <div className={styles.pdvClientItemCol}>
+                <span className={styles.pdvClientItemLabel}>CPF/CNPJ:</span>
+                <span className={styles.pdvClientItemValue}>{client.cpfCnpj || '—'}</span>
+              </div>
+
+              <div className={styles.pdvClientItemCol}>
+                <span className={styles.pdvClientItemLabel}>TELEFONE:</span>
+                <span className={styles.pdvClientItemValue}>{client.phone || '—'}</span>
+              </div>
+
+              <div className={styles.pdvClientItemCol}>
+                <span className={styles.pdvClientItemLabel}>EMAIL:</span>
+                <span className={styles.pdvClientItemValue}>{client.email || '—'}</span>
+              </div>
             </button>
           ))}
         </div>

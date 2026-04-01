@@ -1,5 +1,38 @@
 import apiClient from './api';
 
+export interface ProductFormData {
+  name: string;
+  code: string;
+  category?: string;
+  quantityStock?: number;
+  priceCost?: number;
+  priceSale?: number;
+  supplierId?: number;
+  minStock?: number;
+  unitType?: string;
+  categoryId?: number;
+  brandId?: number;
+  collectionId?: number;
+  barcode?: string;
+  observations?: string;
+  markup?: number;
+  maxStock?: number;
+  weight?: number;
+  height?: number;
+  width?: number;
+  depth?: number;
+  ncm?: string;
+  cest?: string;
+  cfop?: string;
+  icmsOrigin?: string;
+  icmsCst?: string;
+  ecommerceActive?: boolean;
+  ecommerceDescription?: string;
+  ecommerceSeoTitle?: string;
+  ecommerceSeoDescription?: string;
+  images?: string[];
+}
+
 export const authService = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiClient.post('/auth/register', {

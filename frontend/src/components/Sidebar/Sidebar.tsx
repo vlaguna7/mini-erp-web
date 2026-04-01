@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
 
   const menuItems = [
     { path: '/dashboard',  icon: BarChart3,    label: 'Dashboard'           },
-    { path: '/pdv',        icon: ShoppingCart, label: 'PDV'                 },
+    { path: '/pdv/produtos', icon: ShoppingCart, label: 'PDV'                 },
     { path: '/estoque',    icon: Package,      label: 'Controle de Estoque' },
     { path: '/vendas-e-clientes', icon: ShoppingCart,  label: 'Vendas e Clientes' },
     { path: '/financeiro', icon: DollarSign,   label: 'Financeiro'          },

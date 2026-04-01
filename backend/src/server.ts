@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import clientRoutes from './routes/clients';
+import productCategoryRoutes from './routes/productCategories';
+import productBrandRoutes from './routes/productBrands';
+import productCollectionRoutes from './routes/productCollections';
+import supplierRoutes from './routes/suppliers';
 
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 dotenv.config();
@@ -21,6 +25,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/product-categories', productCategoryRoutes);
+app.use('/api/product-brands', productBrandRoutes);
+app.use('/api/product-collections', productCollectionRoutes);
+app.use('/api/suppliers', supplierRoutes);
 
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK' });

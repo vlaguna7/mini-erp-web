@@ -16,13 +16,16 @@ model User {
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at")
 
-  company   Company?
-  products  Product[]
-  suppliers Supplier[]
-  clients   Client[]
-  entries   Entry[]
-  sales     Sale[]
-  returns   Return[]
+  company            Company?
+  products           Product[]
+  suppliers          Supplier[]
+  clients            Client[]
+  entries            Entry[]
+  sales              Sale[]
+  returns            Return[]
+  productCategories  ProductCategory[]
+  productBrands      ProductBrand[]
+  productCollections ProductCollection[]
 
   @@index([email], name: "idx_users_email")
   @@map("users")
@@ -75,16 +78,111 @@ model Product {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  supplier  Supplier?  @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-  saleItems SaleItem[]
-  entries   Entry[]
-  returns   Return[]
+  // Novos campos — Informações gerais
+  unitType     String? @map("unit_type") @db.VarChar(10)
+  categoryId   Int?    @map("category_id")
+  brandId      Int?    @map("brand_id")
+  collectionId Int?    @map("collection_id")
+  barcode      String? @db.VarChar(50)
+  observations String? @db.Text
+
+  // Valores
+  markup Decimal? @db.Decimal(10, 2)
+
+  // Estoque
+  maxStock Int? @map("max_stock")
+
+  // Pesos e dimensões
+  weight Decimal? @db.Decimal(10, 3)
+  height Decimal? @db.Decimal(10, 2)
+  width  Decimal? @db.Decimal(10, 2)
+  depth  Decimal? @db.Decimal(10, 2)
+
+  // Dados fiscais
+  ncm        String? @db.VarChar(10)
+  cest       String? @db.VarChar(10)
+  cfop       String? @db.VarChar(10)
+  icmsOrigin String? @map("icms_origin") @db.VarChar(10)
+  icmsCst    String? @map("icms_cst") @db.VarChar(10)
+
+  // E-commerce
+  ecommerceActive         Boolean @default(false) @map("ecommerce_active")
+  ecommerceDescription    String? @map("ecommerce_description") @db.Text
+  ecommerceSeoTitle       String? @map("ecommerce_seo_title") @db.VarChar(200)
+  ecommerceSeoDescription String? @map("ecommerce_seo_description") @db.VarChar(500)
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplier       Supplier?          @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  productCategory ProductCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  productBrand   ProductBrand?      @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  productCollection ProductCollection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  images         ProductImage[]
+  saleItems      SaleItem[]
+  entries        Entry[]
+  returns        Return[]
 
   @@unique([userId, code])
   @@index([userId], name: "idx_products_user_id")
   @@index([code], name: "idx_products_code")
   @@map("products")
+}
+
+model ProductCategory {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([userId, name])
+  @@index([userId], name: "idx_product_categories_user_id")
+  @@map("product_categories")
+}
+
+model ProductBrand {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([userId, name])
+  @@index([userId], name: "idx_product_brands_user_id")
+  @@map("product_brands")
+}
+
+model ProductCollection {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([userId, name])
+  @@index([userId], name: "idx_product_collections_user_id")
+  @@map("product_collections")
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  productId Int      @map("product_id")
+  url       String   @db.Text
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId], name: "idx_product_images_product_id")
+  @@map("product_images")
 }
 
 model Client {

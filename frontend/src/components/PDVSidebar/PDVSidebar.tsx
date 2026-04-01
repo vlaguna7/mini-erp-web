@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Package, Users, CreditCard, CheckCircle, RotateCcw, Settings, LogOut } from 'lucide-react';
 import styles from './PDVSidebar.module.css';
 
-type PDVSection = 'produtos' | 'cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
+type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
 
 interface PDVSidebarProps {
   activeSection: PDVSection;
@@ -36,7 +36,7 @@ const PDVSidebar: React.FC<PDVSidebarProps> = ({ activeSection }) => {
           {SECTIONS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              className={`${styles.navItem} ${activeSection === id ? styles.active : ''}`}
+              className={`${styles.navItem} ${activeSection === id || activeSection.startsWith(id + '/') ? styles.active : ''}`}
               onClick={() => handleNavigate(id)}
               title={label}
             >

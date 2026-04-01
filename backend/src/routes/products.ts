@@ -45,23 +45,28 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 router.post(
   '/',
   [
-    body('name').trim().notEmpty().withMessage('Product name is required'),
-    body('code').trim().notEmpty().withMessage('Product code is required'),
+    body('name').trim().notEmpty().withMessage('Nome do produto é obrigatório'),
+    body('code').trim().notEmpty().withMessage('Código do produto é obrigatório'),
     body('priceSale')
+      .optional()
       .isFloat({ min: 0 })
-      .withMessage('Price must be a positive number'),
+      .withMessage('Preço deve ser um número positivo'),
     body('priceCost')
       .optional()
       .isFloat({ min: 0 })
-      .withMessage('Price must be a positive number'),
+      .withMessage('Preço deve ser um número positivo'),
     body('quantityStock')
       .optional()
       .isInt({ min: 0 })
-      .withMessage('Quantity must be a positive integer'),
+      .withMessage('Quantidade deve ser um inteiro positivo'),
     body('minStock')
       .optional()
       .isInt({ min: 0 })
-      .withMessage('Min stock must be a positive integer'),
+      .withMessage('Estoque mínimo deve ser um inteiro positivo'),
+    body('maxStock')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Estoque máximo deve ser um inteiro positivo'),
   ],
   async (req: AuthRequest, res: Response) => {
     try {
@@ -70,28 +75,7 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const {
-        name,
-        code,
-        category,
-        priceSale,
-        priceCost,
-        quantityStock,
-        supplierId,
-        minStock,
-      } = req.body;
-
-      const product = await ProductService.createProduct(
-        req.user!.id,
-        name,
-        code,
-        category,
-        quantityStock || 0,
-        priceCost || 0,
-        priceSale,
-        supplierId,
-        minStock
-      );
+      const product = await ProductService.createProduct(req.user!.id, req.body);
 
       res.status(201).json(product);
     } catch (error: any) {
@@ -109,6 +93,7 @@ router.put(
     body('priceCost').optional().isFloat({ min: 0 }),
     body('quantityStock').optional().isInt({ min: 0 }),
     body('minStock').optional().isInt({ min: 0 }),
+    body('maxStock').optional().isInt({ min: 0 }),
   ],
   async (req: AuthRequest, res: Response) => {
     try {
@@ -118,20 +103,10 @@ router.put(
       }
 
       const productId = parseInt(req.params.id);
-      const updates = {
-        name: req.body.name,
-        code: req.body.code,
-        category: req.body.category,
-        priceSale: req.body.priceSale,
-        priceCost: req.body.priceCost,
-        quantityStock: req.body.quantityStock,
-        minStock: req.body.minStock,
-      };
-
       const product = await ProductService.updateProduct(
         req.user!.id,
         productId,
-        updates
+        req.body
       );
 
       res.status(200).json(product);

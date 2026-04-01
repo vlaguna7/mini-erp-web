@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, Filter, Download, Upload,
   Edit2, Trash2, Package, ScanLine, BarChart2, List, Camera,
@@ -24,6 +25,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const EstoquePage: React.FC = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -88,8 +90,7 @@ const EstoquePage: React.FC = () => {
   };
 
   const handleEdit = (product: any) => {
-    setEditingProduct(product);
-    setShowForm(true);
+    navigate(`/estoque/editar-produto/${product.id}`);
   };
 
   const handleExport = () => {
@@ -128,19 +129,31 @@ const EstoquePage: React.FC = () => {
 
       {/* ── Stats ── */}
       <div className={styles.estoqueStats}>
-        <div className={`${styles.estoqueStat} ${styles.blue}`}>
+        <div
+          className={`${styles.estoqueStat} ${styles.blue} ${statusFilter === '' ? styles.statActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === '' ? '' : '')}
+        >
           <span className={styles.estoqueStatValue}>{stats.total}</span>
           <span className={styles.estoqueStatLabel}>Total Produtos</span>
         </div>
-        <div className={`${styles.estoqueStat} ${styles.green}`}>
+        <div
+          className={`${styles.estoqueStat} ${styles.green} ${statusFilter === 'normal' ? styles.statActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'normal' ? '' : 'normal')}
+        >
           <span className={styles.estoqueStatValue}>{stats.normal}</span>
           <span className={styles.estoqueStatLabel}>Estoque Normal</span>
         </div>
-        <div className={`${styles.estoqueStat} ${styles.orange}`}>
+        <div
+          className={`${styles.estoqueStat} ${styles.orange} ${statusFilter === 'estoque-baixo' ? styles.statActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'estoque-baixo' ? '' : 'estoque-baixo')}
+        >
           <span className={styles.estoqueStatValue}>{stats.baixo}</span>
           <span className={styles.estoqueStatLabel}>Estoque Baixo</span>
         </div>
-        <div className={`${styles.estoqueStat} ${styles.red}`}>
+        <div
+          className={`${styles.estoqueStat} ${styles.red} ${statusFilter === 'sem-estoque' ? styles.statActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'sem-estoque' ? '' : 'sem-estoque')}
+        >
           <span className={styles.estoqueStatValue}>{stats.semEstoque}</span>
           <span className={styles.estoqueStatLabel}>Sem Estoque</span>
         </div>
@@ -219,7 +232,7 @@ const EstoquePage: React.FC = () => {
       <div className={styles.estoqueActions}>
         <button
           className={styles.estoqueBtnPrimary}
-          onClick={() => { setEditingProduct(null); setShowForm(true); }}
+          onClick={() => navigate('/estoque/criar-produto')}
         >
           <Plus size={18} /> Novo Produto
         </button>
@@ -259,9 +272,13 @@ const EstoquePage: React.FC = () => {
           <div className={styles.estoqueRowList}>
             {filtered.map((product) => (
               <div key={product.id} className={styles.estoqueRow}>
-                {/* Col 1: Image Placeholder */}
+                {/* Col 1: Image */}
                 <div className={styles.estoqueRowImg}>
-                  <Camera size={20} />
+                  {product.images && product.images.length > 0 ? (
+                    <img src={product.images[0].url} alt={product.name} className={styles.estoqueRowImgThumb} />
+                  ) : (
+                    <Camera size={20} />
+                  )}
                 </div>
 
                 {/* Col 2: Category + Name */}
@@ -283,7 +300,7 @@ const EstoquePage: React.FC = () => {
                       <rect x="13" y="0" width="1" height="12" fill="currentColor"/>
                       <rect x="15" y="0" width="1" height="12" fill="currentColor"/>
                     </svg>
-                    {product.code || '—'}
+                    {product.barcode || '—'}
                   </span>
                 </div>
 
@@ -294,7 +311,7 @@ const EstoquePage: React.FC = () => {
                   </span>
                   <span className={styles.estoqueRowQty}>
                     {product.quantityStock ?? 0}
-                    <span className={styles.estoqueRowUnit}>UN</span>
+                    <span className={styles.estoqueRowUnit}>{product.unitType || 'UN'}</span>
                   </span>
                 </div>
 

@@ -79,21 +79,22 @@
 
 .pdvProductCard:hover {
   background: #f8fafc;
-  border-top-color: #e2e8f0;
-  border-bottom-color: #e2e8f0;
+  border-top-color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .pdvProductCard.inCart {
-  background: #f0fdf4;
-  border-top-color: #10b981;
-  border-bottom-color: #10b981;
+  background: #dbeafe;
+  border-top-color: #3b82f6;
+  border-bottom-color: #3b82f6;
   cursor: pointer;
 }
 
 .pdvProductCard.inCart:hover {
-  background: #ecfdf5;
-  border-top-color: #10b981;
-  border-bottom-color: #10b981;
+  background: #dbeafe;
+  border-top-color: #3b82f6;
+  border-bottom-color: #3b82f6;
 }
 
 .pdvProductImagePlaceholder {
@@ -105,6 +106,13 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.pdvProductImgThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .pdvImageIcon {

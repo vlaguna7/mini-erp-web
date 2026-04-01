@@ -8,17 +8,21 @@ import PDVPayment from '../PDVPayment';
 import PDVFinalize from '../PDVFinalize';
 import PDVReturns from '../PDVReturns';
 import PDVSettings from '../PDVSettings';
+import CadastrarClientePage from '../CadastrarClientePage';
+import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVPage.module.css';
 
-type PDVSection = 'produtos' | 'cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
+type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
 
 const PDVPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeSection, setActiveSection] = useState<PDVSection>('produtos');
+  const { setSelectedClient } = usePDVStore();
 
   const getSectionFromPath = (): PDVSection => {
     const path = location.pathname.replace('/pdv/', '');
+    if (path === 'cliente/criar-cliente') return 'cliente/criar-cliente';
     if (['cliente', 'pagamento', 'finalizar', 'devolucoes', 'configuracoes'].includes(path)) {
       return path as PDVSection;
     }
@@ -30,8 +34,21 @@ const PDVPage: React.FC = () => {
     setActiveSection(section);
   }, [location.pathname]);
 
+  const handleClientCreated = (client: any) => {
+    setSelectedClient({
+      id: String(client.id),
+      name: client.name,
+      email: client.email || undefined,
+      cpf: client.cpfCnpj || undefined,
+      phone: client.phone || undefined,
+    });
+    navigate('/pdv/cliente');
+  };
+
   const renderContent = () => {
     switch (activeSection) {
+      case 'cliente/criar-cliente':
+        return <CadastrarClientePage onSave={handleClientCreated} cancelPath="/pdv/cliente" />;
       case 'cliente':
         return <PDVClient />;
       case 'pagamento':

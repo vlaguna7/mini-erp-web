@@ -12,6 +12,7 @@ import SalesAndClientsPage from './pages/SalesAndClientsPage';
 import BlankPage from './pages/BlankPage';
 import CadastrarClientePage from './pages/CadastrarClientePage';
 import ListaClientesPage from './pages/ListaClientesPage';
+import CriarProdutoPage from './pages/CriarProdutoPage';
 import { PDVLayout } from './layouts/PDVLayout';
 import styles from './App.module.css';
 
@@ -79,6 +80,8 @@ function App() {
           <Route path="/pdv/*" element={<PDVLayout isInitializing={isInitializing}><PDVPage /></PDVLayout>} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
+          <Route path="/estoque/criar-produto" element={<ProtectedLayout isInitializing={isInitializing}><CriarProdutoPage /></ProtectedLayout>} />
+          <Route path="/estoque/editar-produto/:id" element={<ProtectedLayout isInitializing={isInitializing}><CriarProdutoPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><SalesAndClientsPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/cadastrar-cliente" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><ListaClientesPage /></ProtectedLayout>} />
