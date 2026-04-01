@@ -21,34 +21,46 @@ const PDVFinalize: React.FC = () => {
     cart,
     selectedClient,
     selectedPayment,
+    payments,
     selectedSeller,
     setSelectedSeller,
     saleType,
     setSaleType,
     discount,
     setDiscount,
-    getCartTotal,
+    surcharge,
+    getTotalToPay,
+    getTotalPaid,
+    getSubtotal,
     resetPDV,
   } = usePDVStore();
 
   const [sellers] = useState(MOCK_SELLERS);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
 
-  const cartTotal = getCartTotal();
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalToPay = getTotalToPay();
+  const totalPaid = getTotalPaid();
+  const subtotal = getSubtotal();
+
+  const hasPayments = payments.length > 0;
+  const isPaymentComplete = hasPayments && Math.abs(totalPaid - totalToPay) <= 0.01;
 
   const handleSaveSale = async () => {
-    if (!selectedClient || !selectedPayment || !selectedSeller || cart.length === 0) {
+    if (!selectedClient || (!selectedPayment && payments.length === 0) || !selectedSeller || cart.length === 0) {
       alert('Por favor, preencha todos os campos: Cliente, Pagamento, Vendedor e produtos');
       return;
     }
 
-    setIsSaving(true);
+    if (!isPaymentComplete) {
+      alert('O valor pago deve ser igual ao valor total a pagar');
+      return;
+    }
+
     try {
       const saleData = {
         client_id: selectedClient.id,
         seller_id: selectedSeller.id,
-        payment_method: selectedPayment,
+        payments: payments.map((p) => ({ method: p.method, amount: p.amount })),
         sale_type: saleType,
         items: cart.map((item) => ({
           product_id: item.id,
@@ -57,7 +69,8 @@ const PDVFinalize: React.FC = () => {
         })),
         subtotal,
         discount,
-        total: cartTotal,
+        surcharge,
+        total: totalToPay,
       };
 
       console.log('Salvando venda:', saleData);
@@ -66,8 +79,6 @@ const PDVFinalize: React.FC = () => {
     } catch (error) {
       console.error('Erro ao salvar venda:', error);
       alert('Erro ao realizar venda');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -130,9 +141,13 @@ const PDVFinalize: React.FC = () => {
           </div>
 
           <div className={styles.pdvFinalizeInfoItem}>
-            <span className={styles.pdvFinalizeInfoLabel}>Forma de Pagamento:</span>
+            <span className={styles.pdvFinalizeInfoLabel}>Pagamentos:</span>
             <span className={styles.pdvFinalizeInfoValue}>
-              {selectedPayment ? PAYMENT_LABELS[selectedPayment as keyof typeof PAYMENT_LABELS] : 'Não selecionada'}
+              {payments.length > 0
+                ? payments.map((p) => `${p.label} (R$ ${p.amount.toFixed(2)})`).join(', ')
+                : selectedPayment
+                  ? PAYMENT_LABELS[selectedPayment as keyof typeof PAYMENT_LABELS]
+                  : 'Não selecionado'}
             </span>
           </div>
         </div>
@@ -164,30 +179,23 @@ const PDVFinalize: React.FC = () => {
             <span>R$ {subtotal.toFixed(2)}</span>
           </div>
 
-          <div className={styles.pdvFinalizeTotalRow}>
-            <label>
-              Desconto:
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Math.max(0, parseFloat(e.target.value) || 0))}
-                min="0"
-                step="0.01"
-                className={styles.pdvFinalizeDiscountInput}
-              />
-            </label>
-          </div>
-
           <div className={`${styles.pdvFinalizeTotalRow} ${styles.pdvFinalizeGrandTotal}`}>
             <span>Total a Pagar:</span>
-            <span className={styles.pdvFinalizeTotalValue}>R$ {cartTotal.toFixed(2)}</span>
+            <span className={styles.pdvFinalizeTotalValue}>R$ {totalToPay.toFixed(2)}</span>
           </div>
+
+          {payments.length > 0 && (
+            <div className={styles.pdvFinalizeTotalRow}>
+              <span>Valor Pago:</span>
+              <span>R$ {totalPaid.toFixed(2)}</span>
+            </div>
+          )}
         </div>
 
         <button
           className={styles.pdvFinalizeSaveBtn}
           onClick={handleSaveSale}
-          disabled={isSaving || cart.length === 0 || !selectedClient || !selectedPayment || !selectedSeller}
+          disabled={isSaving || cart.length === 0 || !selectedClient || !selectedSeller || !isPaymentComplete}
         >
           <Save size={18} />
           {isSaving ? 'Salvando...' : 'Salvar Venda'}

@@ -24,12 +24,24 @@ export interface Seller {
 
 export type PaymentMethod = 'cash' | 'pix' | 'credit' | 'debit';
 
+export interface PaymentEntry {
+  id: string;
+  method: PaymentMethod;
+  label: string;
+  amount: number;
+}
+
 interface PDVStore {
   cart: CartItem[];
   selectedClient: Client | null;
   selectedPayment: PaymentMethod | null;
   selectedSeller: Seller | null;
   discount: number;
+  discountType: 'value' | 'percent';
+  surcharge: number;
+  surchargeType: 'value' | 'percent';
+  coupon: string;
+  payments: PaymentEntry[];
   saleType: 'online' | 'inperson';
 
   addToCart: (item: CartItem) => void;
@@ -40,8 +52,18 @@ interface PDVStore {
   setSelectedPayment: (method: PaymentMethod | null) => void;
   setSelectedSeller: (seller: Seller | null) => void;
   setDiscount: (discount: number) => void;
+  setDiscountType: (type: 'value' | 'percent') => void;
+  setSurcharge: (surcharge: number) => void;
+  setSurchargeType: (type: 'value' | 'percent') => void;
+  setCoupon: (coupon: string) => void;
+  addPayment: (entry: PaymentEntry) => void;
+  removePayment: (id: string) => void;
+  clearPayments: () => void;
   setSaleType: (type: 'online' | 'inperson') => void;
   getCartTotal: () => number;
+  getSubtotal: () => number;
+  getTotalToPay: () => number;
+  getTotalPaid: () => number;
   resetPDV: () => void;
 }
 
@@ -51,6 +73,11 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
   selectedPayment: null,
   selectedSeller: null,
   discount: 0,
+  discountType: 'value',
+  surcharge: 0,
+  surchargeType: 'value',
+  coupon: '',
+  payments: [],
   saleType: 'inperson',
 
   addToCart: (item: CartItem) =>
@@ -96,7 +123,31 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
 
   setDiscount: (discount: number) => set({ discount }),
 
+  setDiscountType: (type: 'value' | 'percent') => set({ discountType: type }),
+
+  setSurcharge: (surcharge: number) => set({ surcharge }),
+
+  setSurchargeType: (type: 'value' | 'percent') => set({ surchargeType: type }),
+
+  setCoupon: (coupon: string) => set({ coupon }),
+
+  addPayment: (entry: PaymentEntry) =>
+    set((state) => ({ payments: [...state.payments, entry] })),
+
+  removePayment: (id: string) =>
+    set((state) => ({ payments: state.payments.filter((p) => p.id !== id) })),
+
+  clearPayments: () => set({ payments: [] }),
+
   setSaleType: (type: 'online' | 'inperson') => set({ saleType: type }),
+
+  getSubtotal: () => {
+    const state = get();
+    return state.cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+  },
 
   getCartTotal: () => {
     const state = get();
@@ -107,6 +158,28 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
     return Math.max(0, subtotal - state.discount);
   },
 
+  getTotalToPay: () => {
+    const state = get();
+    const subtotal = state.cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const discountValue =
+      state.discountType === 'percent'
+        ? subtotal * (state.discount / 100)
+        : state.discount;
+    const surchargeValue =
+      state.surchargeType === 'percent'
+        ? subtotal * (state.surcharge / 100)
+        : state.surcharge;
+    return Math.max(0, subtotal - discountValue + surchargeValue);
+  },
+
+  getTotalPaid: () => {
+    const state = get();
+    return state.payments.reduce((sum, p) => sum + p.amount, 0);
+  },
+
   resetPDV: () =>
     set({
       cart: [],
@@ -114,6 +187,11 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
       selectedPayment: null,
       selectedSeller: null,
       discount: 0,
+      discountType: 'value',
+      surcharge: 0,
+      surchargeType: 'value',
+      coupon: '',
+      payments: [],
       saleType: 'inperson',
     }),
 }));

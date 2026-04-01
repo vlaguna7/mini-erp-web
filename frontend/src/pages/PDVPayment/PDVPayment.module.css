@@ -1,116 +1,443 @@
-/* PDV PAYMENT & FINALIZE - CSS Module */
+/* PDV PAYMENT - CSS Module */
 
-.pdvPayment {
+/* ===== Layout principal ===== */
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: 100%;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+/* ===== Coluna Esquerda ===== */
+.leftColumn {
   display: flex;
   flex-direction: column;
-  height: 100%;
   gap: 1rem;
   overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
-.pdvPaymentHeader {
+.header {
   flex-shrink: 0;
 }
 
-.pdvPaymentTitle {
-  font-size: 1.3rem;
+.title {
+  font-size: 1.2rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
+  background: #3b1f6e;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
 }
 
-.pdvPaymentMethods {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  align-content: start;
-}
-
-.pdvPaymentCard {
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  color: #64748b;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  align-self: flex-start;
+}
+
+.clearBtn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* Toggle de seção */
+.sectionToggle {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #3b1f6e;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.sectionToggleText {
+  font-weight: 700;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+/* Cartões de método */
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.methodCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.2rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  color: #475569;
+}
+
+.methodCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.methodCardActive {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.methodLabel {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: inherit;
+}
+
+/* Input de valor */
+.amountInputRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.amountMethodName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #0f172a;
+  min-width: 100px;
+}
+
+.amountField {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.amountPrefix {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.amountInput {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+}
+
+.amountInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.amountAddBtn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.amountAddBtn:hover {
+  background: #2563eb;
+}
+
+.amountCancelBtn {
+  background: none;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.amountCancelBtn:hover {
+  background: #f1f5f9;
+}
+
+/* Lista de pagamentos */
+.paymentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.paymentItem {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.8rem;
-  position: relative;
-  text-align: left;
-  width: 100%;
-  flex-shrink: 0;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.pdvPaymentCard:hover {
-  border-color: #cbd5e1;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+.paymentItem:last-child {
+  border-bottom: none;
 }
 
-.pdvPaymentCard.selected {
-  border-color: #3b82f6;
-  background: #dbeafe;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.pdvPaymentIcon {
-  font-size: 1.3rem;
+.paymentItemInfo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.pdvPaymentLabel {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #0f172a;
+  justify-content: space-between;
   flex: 1;
-  text-align: left;
+  margin-right: 1rem;
 }
 
-.pdvPaymentCheck {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 24px;
-  height: 24px;
-  background: #10b981;
-  color: white;
-  border-radius: 50%;
+.paymentItemName {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.paymentItemAmount {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.paymentItemDelete {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.35rem;
+  color: #94a3b8;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.paymentItemDelete:hover {
+  color: #dc2626;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+/* ===== Coluna Direita - Resumo ===== */
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: #fff;
+  border-left: 1px solid #f1f5f9;
+  padding-left: 2rem;
+  align-self: start;
+  padding-top: 0.5rem;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summaryLabel {
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.summaryValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
+}
+
+.summaryValueBold {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: right;
+}
+
+.valueRemaining {
+  color: #dc2626;
+}
+
+.valueOk {
+  color: #10b981;
+}
+
+/* Input group (desconto/acréscimo) */
+.summaryInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 180px;
+}
+
+.typeToggle {
+  background: #eff6ff;
+  border: 1px solid #e2e8f0;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  padding: 0.45rem 0.6rem;
   font-weight: 700;
   font-size: 0.8rem;
+  color: #3b82f6;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: center;
 }
 
-.pdvPaymentInfo {
-  background: #f0fdf4;
-  border-left: 4px solid #10b981;
-  border-radius: 8px;
-  padding: 0.8rem;
-  flex-shrink: 0;
+.typeToggle:hover {
+  background: #dbeafe;
 }
 
-.pdvPaymentInfo p {
-  margin: 0 0 0.2rem;
+.typeToggleActive {
+  background: #eff6ff;
+}
+
+.summaryInput {
+  border: 1px solid #e2e8f0;
+  border-radius: 0 6px 6px 0;
+  padding: 0.45rem 0.6rem;
   font-size: 0.9rem;
-  color: #0f172a;
+  width: 100%;
+  text-align: right;
+  outline: none;
+  -moz-appearance: textfield;
 }
 
-.pdvPaymentInfo p:last-child {
+.summaryInput::-webkit-outer-spin-button,
+.summaryInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
-  font-weight: 600;
-  color: #10b981;
 }
 
-.pdvPaymentSelected {
+.summaryInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* Cupom */
+.couponGroup {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 220px;
+}
+
+.couponInput {
+  border: 1px solid #e2e8f0;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+  width: 100%;
+  outline: none;
+}
+
+.couponInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.couponBtn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 6px 6px 0;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+}
+
+.couponBtn:hover {
+  background: #e2e8f0;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 0.3rem 0;
+}
+
+/* Mensagens */
+.warningBox {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.successBox {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  color: #166534;
+  text-align: center;
   font-weight: 600;
-  color: #10b981;
+  margin-top: 0.5rem;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .rightColumn {
+    border-left: none;
+    border-top: 1px solid #f1f5f9;
+    padding-left: 0;
+    padding-top: 1rem;
+  }
 }
 
 .pdvFinalize {
