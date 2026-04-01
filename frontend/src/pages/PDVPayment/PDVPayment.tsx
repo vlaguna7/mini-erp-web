@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Smartphone, CreditCard, Trash2, ChevronRight } from 'lucide-react';
+import { DollarSign, Smartphone, CreditCard, Trash2 } from 'lucide-react';
 import { usePDVStore, PaymentMethod } from '../../store/pdvStore';
 import styles from './PDVPayment.module.css';
 
@@ -31,7 +31,6 @@ const PDVPayment: React.FC = () => {
     getTotalPaid,
   } = usePDVStore();
 
-  const [showMethods, setShowMethods] = useState(true);
   const [amountInput, setAmountInput] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
 
@@ -40,26 +39,28 @@ const PDVPayment: React.FC = () => {
   const totalPaid = getTotalPaid();
   const remaining = Math.max(0, totalToPay - totalPaid);
 
-  const formatCurrency = (value: number) =>
+  const fmt = (value: number) =>
     value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   const handleSelectMethod = (method: PaymentMethod) => {
     setSelectedMethod(method);
-    const remainingToPay = Math.max(0, totalToPay - totalPaid);
-    setAmountInput(remainingToPay > 0 ? remainingToPay.toFixed(2).replace('.', ',') : '');
+    const rest = Math.max(0, totalToPay - totalPaid);
+    setAmountInput(rest > 0 ? rest.toFixed(2).replace('.', ',') : '');
   };
 
   const handleAddPayment = () => {
     if (!selectedMethod) return;
     const parsed = parseFloat(amountInput.replace(',', '.'));
     if (isNaN(parsed) || parsed <= 0) return;
-
-    const methodInfo = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
+    const maxAllowed = Math.max(0, totalToPay - totalPaid);
+    const amount = Math.min(parsed, maxAllowed);
+    if (amount <= 0) return;
+    const info = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
     addPayment({
       id: `${selectedMethod}-${Date.now()}`,
       method: selectedMethod,
-      label: methodInfo?.label || selectedMethod,
-      amount: parsed,
+      label: info?.label || selectedMethod,
+      amount,
     });
     setSelectedMethod(null);
     setAmountInput('');
@@ -67,65 +68,46 @@ const PDVPayment: React.FC = () => {
 
   const handleAmountKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleAddPayment();
-    if (e.key === 'Escape') {
-      setSelectedMethod(null);
-      setAmountInput('');
-    }
+    if (e.key === 'Escape') { setSelectedMethod(null); setAmountInput(''); }
   };
 
   return (
-    <div className={styles.wrapper}>
-      {/* Coluna esquerda - Formas de pagamento */}
-      <div className={styles.leftColumn}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Escolher formas de pagamentos</h2>
+    <div className={styles.page}>
+      {/* ── SEÇÃO 1: FORMAS DE PAGAMENTO ── */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Formas de pagamento</h2>
+          {payments.length > 0 && (
+            <button className={styles.clearBtn} onClick={clearPayments}>
+              <Trash2 size={14} />
+              Limpar
+            </button>
+          )}
         </div>
 
-        {payments.length > 0 && (
-          <button className={styles.clearBtn} onClick={clearPayments}>
-            <Trash2 size={16} />
-            Remover todos os pagamentos
-          </button>
-        )}
-
-        <button
-          className={styles.sectionToggle}
-          onClick={() => setShowMethods(!showMethods)}
-        >
-          <span className={styles.sectionToggleText}>Formas de pagamento</span>
-          <ChevronRight
-            size={18}
-            className={`${styles.chevron} ${showMethods ? styles.chevronOpen : ''}`}
-          />
-        </button>
-
-        {showMethods && (
-          <div className={styles.methods}>
-            {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                className={`${styles.methodCard} ${
-                  selectedMethod === id ? styles.methodCardActive : ''
-                }`}
-                onClick={() => handleSelectMethod(id)}
-              >
-                <Icon size={28} strokeWidth={1.5} />
-                <span className={styles.methodLabel}>{label}</span>
-              </button>
-            ))}
-          </div>
-        )}
+        <div className={styles.methodsRow}>
+          {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              className={`${styles.methodCard} ${selectedMethod === id ? styles.methodActive : ''}`}
+              onClick={() => handleSelectMethod(id)}
+            >
+              <Icon size={24} strokeWidth={1.5} />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
 
         {selectedMethod && (
-          <div className={styles.amountInputRow}>
-            <span className={styles.amountMethodName}>
+          <div className={styles.addRow}>
+            <span className={styles.addLabel}>
               {PAYMENT_METHODS.find((m) => m.id === selectedMethod)?.label}
             </span>
-            <div className={styles.amountField}>
-              <span className={styles.amountPrefix}>R$</span>
+            <div className={styles.addField}>
+              <span className={styles.addPrefix}>R$</span>
               <input
+                className={styles.addInput}
                 type="text"
-                className={styles.amountInput}
                 value={amountInput}
                 onChange={(e) => setAmountInput(e.target.value)}
                 onKeyDown={handleAmountKeyDown}
@@ -133,155 +115,121 @@ const PDVPayment: React.FC = () => {
                 autoFocus
               />
             </div>
-            <button className={styles.amountAddBtn} onClick={handleAddPayment}>
-              Adicionar
-            </button>
-            <button
-              className={styles.amountCancelBtn}
-              onClick={() => {
-                setSelectedMethod(null);
-                setAmountInput('');
-              }}
-            >
-              Cancelar
-            </button>
+            <button className={styles.addConfirm} onClick={handleAddPayment}>Confirmar</button>
+            <button className={styles.addCancel} onClick={() => { setSelectedMethod(null); setAmountInput(''); }}>Cancelar</button>
           </div>
         )}
 
-        {/* Lista de pagamentos adicionados */}
-        <div className={styles.paymentsList}>
-          {payments.map((payment) => (
-            <div key={payment.id} className={styles.paymentItem}>
-              <div className={styles.paymentItemInfo}>
-                <span className={styles.paymentItemName}>{payment.label}</span>
-                <span className={styles.paymentItemAmount}>
-                  {formatCurrency(payment.amount)}
-                </span>
+        {payments.length > 0 && (
+          <div className={styles.paymentList}>
+            {payments.map((p) => (
+              <div key={p.id} className={styles.paymentRow}>
+                <span className={styles.paymentName}>{p.label}</span>
+                <span className={styles.paymentAmount}>{fmt(p.amount)}</span>
+                <button className={styles.paymentDel} onClick={() => removePayment(p.id)} title="Remover">
+                  <Trash2 size={14} />
+                </button>
               </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── SEÇÃO 2: RESUMO FINANCEIRO ── */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Resumo do pagamento</h2>
+
+        <div className={styles.summaryGrid}>
+          {/* Linha 1 */}
+          <div className={styles.summaryCell}>
+            <span className={styles.summaryLabel}>Subtotal</span>
+            <span className={styles.summaryVal}>{fmt(subtotal)}</span>
+          </div>
+
+          <div className={styles.summaryCell}>
+            <span className={styles.summaryLabel}>Desconto</span>
+            <div className={styles.inputCombo}>
               <button
-                className={styles.paymentItemDelete}
-                onClick={() => removePayment(payment.id)}
-                title="Remover pagamento"
+                className={styles.toggle}
+                onClick={() => setDiscountType(discountType === 'value' ? 'percent' : 'value')}
               >
-                <Trash2 size={16} />
+                {discountType === 'value' ? 'R$' : '%'}
               </button>
+              <input
+                type="number"
+                className={styles.numInput}
+                value={discount || ''}
+                onChange={(e) => setDiscount(Math.max(0, parseFloat(e.target.value) || 0))}
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+              />
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* Coluna direita - Resumo */}
-      <div className={styles.rightColumn}>
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Valor Total</span>
-          <span className={styles.summaryValue}>{formatCurrency(subtotal)}</span>
-        </div>
+          <div className={styles.summaryCell}>
+            <span className={styles.summaryLabel}>Acréscimo</span>
+            <div className={styles.inputCombo}>
+              <button
+                className={styles.toggle}
+                onClick={() => setSurchargeType(surchargeType === 'value' ? 'percent' : 'value')}
+              >
+                {surchargeType === 'value' ? 'R$' : '%'}
+              </button>
+              <input
+                type="number"
+                className={styles.numInput}
+                value={surcharge || ''}
+                onChange={(e) => setSurcharge(Math.max(0, parseFloat(e.target.value) || 0))}
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+              />
+            </div>
+          </div>
 
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Desconto</span>
-          <div className={styles.summaryInputGroup}>
-            <button
-              className={`${styles.typeToggle} ${
-                discountType === 'value' ? styles.typeToggleActive : ''
-              }`}
-              onClick={() =>
-                setDiscountType(discountType === 'value' ? 'percent' : 'value')
-              }
-            >
-              {discountType === 'value' ? 'R$' : '%'}
-            </button>
-            <input
-              type="number"
-              className={styles.summaryInput}
-              value={discount || ''}
-              onChange={(e) =>
-                setDiscount(Math.max(0, parseFloat(e.target.value) || 0))
-              }
-              min="0"
-              step="0.01"
-              placeholder="0,00"
-            />
+          <div className={styles.summaryCell}>
+            <span className={styles.summaryLabel}>Cupom</span>
+            <div className={styles.inputCombo}>
+              <input
+                type="text"
+                className={styles.couponInput}
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+                placeholder="Código"
+              />
+              <button className={styles.couponBtn}>Aplicar</button>
+            </div>
           </div>
         </div>
 
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Acréscimo de valor</span>
-          <div className={styles.summaryInputGroup}>
-            <button
-              className={`${styles.typeToggle} ${
-                surchargeType === 'value' ? styles.typeToggleActive : ''
-              }`}
-              onClick={() =>
-                setSurchargeType(surchargeType === 'value' ? 'percent' : 'value')
-              }
-            >
-              {surchargeType === 'value' ? 'R$' : '%'}
-            </button>
-            <input
-              type="number"
-              className={styles.summaryInput}
-              value={surcharge || ''}
-              onChange={(e) =>
-                setSurcharge(Math.max(0, parseFloat(e.target.value) || 0))
-              }
-              min="0"
-              step="0.01"
-              placeholder="0,00"
-            />
+        {/* Totais */}
+        <div className={styles.totalsBar}>
+          <div className={styles.totalItem}>
+            <span className={styles.totalLabel}>Total a pagar</span>
+            <span className={styles.totalVal}>{fmt(totalToPay)}</span>
           </div>
-        </div>
-
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Cupom</span>
-          <div className={styles.couponGroup}>
-            <input
-              type="text"
-              className={styles.couponInput}
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="Código do cupom"
-            />
-            <button className={styles.couponBtn} title="Aplicar cupom">
-              ➜
-            </button>
+          <div className={styles.totalDivider} />
+          <div className={styles.totalItem}>
+            <span className={styles.totalLabel}>Pago</span>
+            <span className={styles.totalVal}>{fmt(totalPaid)}</span>
           </div>
-        </div>
-
-        <div className={styles.divider} />
-
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Valor a pagar</span>
-          <span className={styles.summaryValueBold}>{formatCurrency(totalToPay)}</span>
-        </div>
-
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Valor Pago</span>
-          <span className={styles.summaryValueBold}>{formatCurrency(totalPaid)}</span>
-        </div>
-
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Valor Restante</span>
-          <span
-            className={`${styles.summaryValueBold} ${
-              remaining > 0 ? styles.valueRemaining : styles.valueOk
-            }`}
-          >
-            {formatCurrency(remaining)}
-          </span>
+          <div className={styles.totalDivider} />
+          <div className={styles.totalItem}>
+            <span className={styles.totalLabel}>Restante</span>
+            <span className={`${styles.totalVal} ${remaining > 0 ? styles.valRed : styles.valGreen}`}>
+              {fmt(remaining)}
+            </span>
+          </div>
         </div>
 
         {totalPaid > 0 && Math.abs(totalPaid - totalToPay) > 0.01 && (
-          <div className={styles.warningBox}>
-            O valor pago deve ser igual ao valor total a pagar
-          </div>
+          <div className={styles.warn}>O valor pago deve ser igual ao valor total a pagar</div>
         )}
-
         {totalPaid > 0 && Math.abs(totalPaid - totalToPay) <= 0.01 && (
-          <div className={styles.successBox}>
-            Pagamento completo!
-          </div>
+          <div className={styles.success}>Pagamento completo!</div>
         )}
-      </div>
+      </section>
     </div>
   );
 };

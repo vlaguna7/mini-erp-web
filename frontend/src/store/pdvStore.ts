@@ -121,13 +121,13 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
   setSelectedSeller: (seller: Seller | null) =>
     set({ selectedSeller: seller }),
 
-  setDiscount: (discount: number) => set({ discount }),
+  setDiscount: (discount: number) => set({ discount, payments: [] }),
 
-  setDiscountType: (type: 'value' | 'percent') => set({ discountType: type }),
+  setDiscountType: (type: 'value' | 'percent') => set({ discountType: type, payments: [] }),
 
-  setSurcharge: (surcharge: number) => set({ surcharge }),
+  setSurcharge: (surcharge: number) => set({ surcharge, payments: [] }),
 
-  setSurchargeType: (type: 'value' | 'percent') => set({ surchargeType: type }),
+  setSurchargeType: (type: 'value' | 'percent') => set({ surchargeType: type, payments: [] }),
 
   setCoupon: (coupon: string) => set({ coupon }),
 
