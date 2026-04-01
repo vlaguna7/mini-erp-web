@@ -4,13 +4,14 @@ import { productService } from '../../services/productService';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVProducts.module.css';
 
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 5;
 
 const PDVProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [outOfStockModal, setOutOfStockModal] = useState(false);
   const { addToCart, removeFromCart, cart } = usePDVStore();
 
   useEffect(() => {
@@ -61,6 +62,10 @@ const PDVProducts: React.FC = () => {
 
   const handleToggleProduct = (product: any) => {
     const id = String(product.id);
+    if (product.stock <= 0 && !isInCart(product.id)) {
+      setOutOfStockModal(true);
+      return;
+    }
     if (isInCart(product.id)) {
       removeFromCart(id);
       return;
@@ -113,7 +118,7 @@ const PDVProducts: React.FC = () => {
                 key={product.id}
                 className={`${styles.pdvProductCard} ${
                   isInCart(product.id) ? styles.inCart : ''
-                }`}
+                } ${product.stock <= 0 ? styles.outOfStock : ''}`}
                 onClick={() => handleToggleProduct(product)}
               >
                 <div className={styles.pdvProductImagePlaceholder}>
@@ -126,7 +131,7 @@ const PDVProducts: React.FC = () => {
 
                 <div className={styles.pdvProductCol}>
                   <span className={styles.pdvProductLabel}>NOME:</span>
-                  <span className={styles.pdvProductName}>{product.name}</span>
+                  <span className={styles.pdvProductName} title={product.name}>{product.name}</span>
                 </div>
 
                 <div className={styles.pdvProductCol}>
@@ -156,8 +161,8 @@ const PDVProducts: React.FC = () => {
                     R$ {parseFloat(product.priceSale || 0).toFixed(2)}
                   </span>
                   <div className={styles.pdvProductStock}>
-                    <span className={styles.pdvStockQuantity}>{product.stock}</span>
-                    <span className={styles.pdvStockUnit}>UN</span>
+                    <span className={`${styles.pdvStockQuantity} ${product.stock <= 0 ? styles.stockZero : ''}`}>{product.stock}</span>
+                    <span className={`${styles.pdvStockUnit} ${product.stock <= 0 ? styles.stockZero : ''}`}>UN</span>
                   </div>
                 </div>
               </button>
@@ -168,26 +173,74 @@ const PDVProducts: React.FC = () => {
             <div className={styles.pdvPagination}>
               <button
                 className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                «
+              </button>
+              <button
+                className={styles.pdvPageBtn}
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
-                ← Anterior
+                ‹
               </button>
 
-              <div className={styles.pdvPageInfo}>
-                Página {currentPage} de {totalPages}
-              </div>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  if (totalPages <= 7) return true;
+                  if (page === 1 || page === totalPages) return true;
+                  if (Math.abs(page - currentPage) <= 1) return true;
+                  return false;
+                })
+                .reduce<(number | string)[]>((acc, page, idx, arr) => {
+                  if (idx > 0 && typeof arr[idx - 1] === 'number' && (page as number) - (arr[idx - 1] as number) > 1) {
+                    acc.push('...');
+                  }
+                  acc.push(page);
+                  return acc;
+                }, [])
+                .map((page, idx) =>
+                  typeof page === 'string' ? (
+                    <span key={`dots-${idx}`} className={styles.pdvPageDots}>…</span>
+                  ) : (
+                    <button
+                      key={page}
+                      className={`${styles.pdvPageNum} ${currentPage === page ? styles.pdvPageActive : ''}`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
 
               <button
                 className={styles.pdvPageBtn}
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >
-                Próxima →
+                ›
+              </button>
+              <button
+                className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                »
               </button>
             </div>
           )}
         </>
+      )}
+      {outOfStockModal && (
+        <div className={styles.modalOverlay} onClick={() => setOutOfStockModal(false)}>
+          <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIcon}>!</div>
+            <h3 className={styles.modalTitle}>Produto sem estoque</h3>
+            <p className={styles.modalText}>Este produto está com <strong>0 unidades</strong> em estoque e não pode ser adicionado ao carrinho.</p>
+            <button className={styles.modalBtn} onClick={() => setOutOfStockModal(false)}>OK</button>
+          </div>
+        </div>
       )}
     </div>
   );
