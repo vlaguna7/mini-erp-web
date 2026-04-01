@@ -262,11 +262,6 @@ const EstoquePage: React.FC = () => {
           <div className={styles.estoqueEmpty}>
             <Package size={48} />
             <p>{products.length === 0 ? 'Nenhum produto cadastrado ainda.' : 'Nenhum produto encontrado com esses filtros.'}</p>
-            {products.length === 0 && (
-              <button className={styles.estoqueBtnPrimary} onClick={() => setShowForm(true)}>
-                <Plus size={16} /> Adicionar primeiro produto
-              </button>
-            )}
           </div>
         ) : viewMode === 'cards' ? (
           <div className={styles.estoqueRowList}>
