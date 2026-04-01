@@ -7,6 +7,8 @@ export interface CartItem {
   price: number;
   quantity: number;
   code?: string;
+  itemDiscount?: number;
+  itemDiscountType?: 'value' | 'percent';
 }
 
 export interface Client {
@@ -48,6 +50,7 @@ interface PDVStore {
   addToCart: (item: CartItem) => void;
   removeFromCart: (itemId: string) => void;
   updateCartQuantity: (itemId: string, quantity: number) => void;
+  updateItemDiscount: (itemId: string, discount: number, type: 'value' | 'percent') => void;
   clearCart: () => void;
   setSelectedClient: (client: Client | null) => void;
   setSelectedPayment: (method: PaymentMethod | null) => void;
@@ -113,6 +116,14 @@ export const usePDVStore = create<PDVStore>()(
             ),
     })),
 
+  updateItemDiscount: (itemId: string, discount: number, type: 'value' | 'percent') =>
+    set((state) => ({
+      cart: state.cart.map((i) =>
+        i.id === itemId ? { ...i, itemDiscount: discount, itemDiscountType: type } : i
+      ),
+      payments: [],
+    })),
+
   clearCart: () => set({ cart: [] }),
 
   setSelectedClient: (client: Client | null) =>
@@ -146,27 +157,23 @@ export const usePDVStore = create<PDVStore>()(
 
   getSubtotal: () => {
     const state = get();
-    return state.cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    return state.cart.reduce((sum, item) => {
+      const lineTotal = item.price * item.quantity;
+      const disc = item.itemDiscount || 0;
+      const discValue = item.itemDiscountType === 'percent' ? lineTotal * (disc / 100) : disc;
+      return sum + Math.max(0, lineTotal - discValue);
+    }, 0);
   },
 
   getCartTotal: () => {
     const state = get();
-    const subtotal = state.cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    const subtotal = get().getSubtotal();
     return Math.max(0, subtotal - state.discount);
   },
 
   getTotalToPay: () => {
     const state = get();
-    const subtotal = state.cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    const subtotal = get().getSubtotal();
     const discountValue =
       state.discountType === 'percent'
         ? subtotal * (state.discount / 100)
