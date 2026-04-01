@@ -1,10 +1,10 @@
 import React from 'react';
-import { Trash2, X } from 'lucide-react';
+import { Trash2, X, User } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVCart.module.css';
 
 const PDVCart: React.FC = () => {
-  const { cart, removeFromCart, updateCartQuantity, clearCart, getCartTotal } =
+  const { cart, selectedClient, setSelectedClient, removeFromCart, updateCartQuantity, clearCart, getCartTotal } =
     usePDVStore();
 
   const total = getCartTotal();
@@ -15,6 +15,18 @@ const PDVCart: React.FC = () => {
         <div className={styles.header}>
           <h3 className={styles.title}>Carrinho</h3>
         </div>
+        {selectedClient && (
+          <div className={styles.clientBadge}>
+            <div className={styles.clientIcon}><User size={14} /></div>
+            <div className={styles.clientInfo}>
+              <span className={styles.clientName}>{selectedClient.name}</span>
+              {selectedClient.cpf && <span className={styles.clientCpf}>{selectedClient.cpf}</span>}
+            </div>
+            <button className={styles.clientRemove} onClick={() => setSelectedClient(null)} title="Remover cliente">
+              <X size={14} />
+            </button>
+          </div>
+        )}
         <div className={styles.empty}>
           <p>Nenhum produto adicionado</p>
         </div>
@@ -36,6 +48,19 @@ const PDVCart: React.FC = () => {
           </button>
         )}
       </div>
+
+      {selectedClient && (
+        <div className={styles.clientBadge}>
+          <div className={styles.clientIcon}><User size={14} /></div>
+          <div className={styles.clientInfo}>
+            <span className={styles.clientName}>{selectedClient.name}</span>
+            {selectedClient.cpf && <span className={styles.clientCpf}>{selectedClient.cpf}</span>}
+          </div>
+          <button className={styles.clientRemove} onClick={() => setSelectedClient(null)} title="Remover cliente">
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       <div className={styles.items}>
         {cart.map((item) => (

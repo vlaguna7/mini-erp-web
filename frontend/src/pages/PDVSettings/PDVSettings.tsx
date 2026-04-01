@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Moon, Sun, Globe, LogOut } from 'lucide-react';
+import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVSettings.module.css';
 
 const PDVSettings: React.FC = () => {
   const navigate = useNavigate();
+  const resetPDV = usePDVStore((state) => state.resetPDV);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<'pt' | 'en' | 'es'>('pt');
 
@@ -12,6 +14,7 @@ const PDVSettings: React.FC = () => {
     if (
       window.confirm('Deseja sair do PDV? Carrinho não salvo será perdido.')
     ) {
+      resetPDV();
       navigate('/dashboard');
     }
   };

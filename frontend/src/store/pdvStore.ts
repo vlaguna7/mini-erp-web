@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface CartItem {
   id: string;
@@ -67,7 +68,9 @@ interface PDVStore {
   resetPDV: () => void;
 }
 
-export const usePDVStore = create<PDVStore>((set, get) => ({
+export const usePDVStore = create<PDVStore>()(
+  persist(
+    (set, get) => ({
   cart: [],
   selectedClient: null,
   selectedPayment: null,
@@ -194,4 +197,9 @@ export const usePDVStore = create<PDVStore>((set, get) => ({
       payments: [],
       saleType: 'inperson',
     }),
-}));
+}),
+    {
+      name: 'pdv-store',
+    }
+  )
+);

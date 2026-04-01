@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Package, Users, CreditCard, CheckCircle, RotateCcw, Settings, LogOut } from 'lucide-react';
+import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVSidebar.module.css';
 
 type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
@@ -20,9 +21,11 @@ const SECTIONS = [
 
 const PDVSidebar: React.FC<PDVSidebarProps> = ({ activeSection }) => {
   const navigate = useNavigate();
+  const resetPDV = usePDVStore((state) => state.resetPDV);
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'sair') {
+      resetPDV();
       navigate('/dashboard');
       return;
     }
