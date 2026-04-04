@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PDVSidebar from '../../components/PDVSidebar';
 import PDVCart from '../../components/PDVCart';
@@ -10,6 +10,7 @@ import PDVReturns from '../PDVReturns';
 import PDVSettings from '../PDVSettings';
 import PDVSuccess from '../PDVSuccess';
 import CadastrarClientePage from '../CadastrarClientePage';
+import ProcessingOverlay from '../../components/ProcessingOverlay';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVPage.module.css';
 
@@ -20,6 +21,15 @@ const PDVPage: React.FC = () => {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState<PDVSection>('produtos');
   const { setSelectedClient } = usePDVStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const hasLoaded = useRef(false);
+
+  useEffect(() => {
+    if (hasLoaded.current) return;
+    hasLoaded.current = true;
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getSectionFromPath = (): PDVSection => {
     const path = location.pathname.replace('/pdv/', '');
@@ -74,6 +84,13 @@ const PDVPage: React.FC = () => {
       <aside className={styles.pdvCartSidebar}>
         <PDVCart />
       </aside>
+
+      {isLoading && (
+        <ProcessingOverlay
+          message="Carregando PDV..."
+          subtitle="Preparando o ponto de venda"
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,185 @@
+/* ============================================================================
+   GESTÃO DE ESTOQUE PAGE - CSS Module
+   ============================================================================ */
+
+.page {
+  padding: 1.75rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.4px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── Sections ── */
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.sectionIcon {
+  color: #2563eb;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Action Cards ── */
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.actionGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.actionCard:hover:not(:disabled) {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.actionCard:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.actionIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.actionInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.actionLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.actionDesc {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.actionArrow {
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.actionCard:hover:not(:disabled) .actionArrow {
+  transform: translateX(3px);
+  color: #2563eb;
+}
+
+/* Coming Soon Badge */
+.comingSoon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .actionGrid3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .actionGrid,
+  .actionGrid3 {
+    grid-template-columns: 1fr;
+  }
+
+  .actionCard {
+    padding: 1rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0.75rem;
+  }
+
+  .sectionHeader {
+    padding-bottom: 0.5rem;
+  }
+}

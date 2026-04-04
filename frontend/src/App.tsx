@@ -13,6 +13,11 @@ import BlankPage from './pages/BlankPage';
 import CadastrarClientePage from './pages/CadastrarClientePage';
 import ListaClientesPage from './pages/ListaClientesPage';
 import CriarProdutoPage from './pages/CriarProdutoPage';
+import GestaoEstoquePage from './pages/GestaoEstoquePage';
+import CategoriasPage from './pages/CategoriasPage';
+import MarcasPage from './pages/MarcasPage';
+import ColecoesPage from './pages/ColecoesPage';
+import FornecedoresPage from './pages/FornecedoresPage';
 import { PDVLayout } from './layouts/PDVLayout';
 import styles from './App.module.css';
 
@@ -79,11 +84,17 @@ function App() {
           <Route path="/login" element={<AuthPage />} />
           <Route path="/pdv/*" element={<PDVLayout isInitializing={isInitializing}><PDVPage /></PDVLayout>} />
           <Route path="/dashboard" element={<ProtectedLayout isInitializing={isInitializing}><DashboardPage /></ProtectedLayout>} />
+          <Route path="/gestao-estoque" element={<ProtectedLayout isInitializing={isInitializing}><GestaoEstoquePage /></ProtectedLayout>} />
+          <Route path="/gestao-estoque/categorias" element={<ProtectedLayout isInitializing={isInitializing}><CategoriasPage /></ProtectedLayout>} />
+          <Route path="/gestao-estoque/marcas" element={<ProtectedLayout isInitializing={isInitializing}><MarcasPage /></ProtectedLayout>} />
+          <Route path="/gestao-estoque/colecoes" element={<ProtectedLayout isInitializing={isInitializing}><ColecoesPage /></ProtectedLayout>} />
+          <Route path="/gestao-estoque/fornecedores" element={<ProtectedLayout isInitializing={isInitializing}><FornecedoresPage /></ProtectedLayout>} />
           <Route path="/estoque"   element={<ProtectedLayout isInitializing={isInitializing}><EstoquePage /></ProtectedLayout>} />
           <Route path="/estoque/criar-produto" element={<ProtectedLayout isInitializing={isInitializing}><CriarProdutoPage /></ProtectedLayout>} />
           <Route path="/estoque/editar-produto/:id" element={<ProtectedLayout isInitializing={isInitializing}><CriarProdutoPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><SalesAndClientsPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/cadastrar-cliente" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/editar-cliente/:id" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><ListaClientesPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-venda" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Venda" /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Devolução de Venda" /></ProtectedLayout>} />

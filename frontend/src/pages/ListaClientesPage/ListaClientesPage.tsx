@@ -244,7 +244,7 @@ const ListaClientesPage: React.FC = () => {
                         <button
                           className={`${styles.iconBtn} ${styles.edit}`}
                           title="Editar"
-                          onClick={() => alert(`Editar cliente #${client.id} em breve!`)}
+                          onClick={() => navigate(`/vendas-e-clientes/editar-cliente/${client.id}`)}
                           type="button"
                         >
                           <Edit2 size={14} />

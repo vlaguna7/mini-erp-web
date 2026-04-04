@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   DollarSign,
   FileText,
+  Receipt,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -24,8 +25,8 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { path: '/dashboard',  icon: BarChart3,    label: 'Dashboard'           },
     { path: '/pdv/produtos', icon: ShoppingCart, label: 'PDV'                 },
-    { path: '/estoque',    icon: Package,      label: 'Controle de Estoque' },
-    { path: '/vendas-e-clientes', icon: ShoppingCart,  label: 'Vendas e Clientes' },
+    { path: '/gestao-estoque', icon: Package, label: 'Gestão de Estoque' },
+    { path: '/vendas-e-clientes', icon: Receipt,       label: 'Vendas e Clientes' },
     { path: '/financeiro', icon: DollarSign,   label: 'Financeiro'          },
     { path: '/relatorios', icon: FileText,     label: 'Relatórios'          },
   ];

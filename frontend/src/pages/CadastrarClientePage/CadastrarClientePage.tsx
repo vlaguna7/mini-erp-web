@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Camera } from 'lucide-react';
 import { clientService, ClientData } from '../../services/clientService';
 import styles from './CadastrarClientePage.module.css';
@@ -88,10 +88,13 @@ interface CadastrarClientePageProps {
 
 const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, cancelPath }) => {
   const navigate = useNavigate();
+  const { id: clientId } = useParams<{ id: string }>();
+  const isEditing = Boolean(clientId);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -109,6 +112,39 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Carregar dados do cliente no modo edição
+  useEffect(() => {
+    if (!clientId) return;
+    const loadClient = async () => {
+      setLoading(true);
+      try {
+        const c = await clientService.getClient(Number(clientId));
+        setName(c.name || '');
+        setPersonType(c.personType === 'juridica' ? 'juridica' : 'fisica');
+        setCpfCnpj(
+          c.cpfCnpj
+            ? c.personType === 'juridica'
+              ? maskCNPJ(c.cpfCnpj)
+              : maskCPF(c.cpfCnpj)
+            : ''
+        );
+        setGender(c.gender || '');
+        setBirthDate(c.birthDate || '');
+        setWhatsapp(c.whatsapp ? maskPhone(c.whatsapp) : '');
+        setInstagram(c.instagram || '');
+        setEmail(c.email || '');
+        setPhone(c.phone ? maskPhone(c.phone) : '');
+        setPhoto(c.photo || null);
+      } catch (err) {
+        console.error('Erro ao carregar cliente:', err);
+        setErrorMsg('Erro ao carregar dados do cliente.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadClient();
+  }, [clientId]);
 
   const handlePhotoClick = () => {
     fileInputRef.current?.click();
@@ -189,27 +225,34 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
         photo: photo || undefined,
       };
 
-      const created = await clientService.createClient(data);
-
-      if (onSave) {
-        onSave(created);
-        return;
+      if (isEditing) {
+        await clientService.updateClient(Number(clientId), data);
+      } else {
+        const created = await clientService.createClient(data);
+        if (onSave) {
+          onSave(created);
+          return;
+        }
       }
 
-      setSuccessMsg('Cliente cadastrado com sucesso!');
+      setSuccessMsg(isEditing ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
 
-      // Reset form
-      setName('');
-      setCpfCnpj('');
-      setGender('');
-      setBirthDate('');
-      setWhatsapp('');
-      setInstagram('');
-      setEmail('');
-      setPhone('');
-      setPhoto(null);
-      setErrors({});
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (isEditing) {
+        setTimeout(() => navigate('/vendas-e-clientes/lista-clientes'), 1000);
+      } else {
+        // Reset form
+        setName('');
+        setCpfCnpj('');
+        setGender('');
+        setBirthDate('');
+        setWhatsapp('');
+        setInstagram('');
+        setEmail('');
+        setPhone('');
+        setPhoto(null);
+        setErrors({});
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
     } catch (err: any) {
       const msg =
         err?.response?.data?.errors?.[0]?.msg ||
@@ -245,7 +288,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Cadastrar Cliente</h1>
+      <h1 className={styles.title}>{isEditing ? 'Editar Cliente' : 'Cadastrar Cliente'}</h1>
 
       {/* Tabs */}
       <div className={styles.tabs}>
@@ -409,8 +452,8 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
         <button className={styles.btnCancel} onClick={handleCancel} type="button">
           Cancelar
         </button>
-        <button className={styles.btnSave} onClick={handleSave} disabled={saving} type="button">
-          {saving ? 'Salvando...' : 'Salvar'}
+        <button className={styles.btnSave} onClick={handleSave} disabled={saving || loading} type="button">
+          {saving ? 'Salvando...' : isEditing ? 'Atualizar Cliente' : 'Salvar'}
         </button>
       </div>
     </div>
