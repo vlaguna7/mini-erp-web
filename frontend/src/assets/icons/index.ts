@@ -1,0 +1,12 @@
+export { default as iconPackage } from './package.png';
+export { default as iconMagnifyingGlass } from './magnifying-glass.png';
+export { default as iconCardIndexDividers } from './card-index-dividers.png';
+export { default as iconLabel } from './label.png';
+export { default as iconBooks } from './books.png';
+export { default as iconDepartmentStore } from './department-store.png';
+export { default as iconDeliveryTruck } from './delivery-truck.png';
+export { default as iconInboxTray } from './inbox-tray.png';
+export { default as iconBalanceScale } from './balance-scale.png';
+export { default as iconArtistPalette } from './artist-palette.png';
+export { default as iconControlKnobs } from './control-knobs.png';
+export { default as iconIdentificationCard } from './identification-card.png';

@@ -103,6 +103,12 @@
   height: 48px;
   border-radius: 12px;
   flex-shrink: 0;
+  background: #f3f4f6;
+}
+
+.actionIconWrap img {
+  pointer-events: none;
+  user-select: none;
 }
 
 .actionInfo {

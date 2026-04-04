@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  PackagePlus, FolderTree, Stamp, BookCopy, Truck, Scale, SplitSquareHorizontal,
-  ClipboardList, QrCode, FilePlus2, ShoppingCart, ChevronRight, Warehouse, Settings2,
-  LayoutGrid,
+  FolderTree, FilePlus2, ChevronRight, Settings2, LayoutGrid,
 } from 'lucide-react';
+import {
+  iconPackage, iconMagnifyingGlass, iconCardIndexDividers, iconLabel,
+  iconBooks, iconDepartmentStore, iconDeliveryTruck, iconInboxTray,
+  iconBalanceScale, iconArtistPalette, iconControlKnobs, iconIdentificationCard,
+} from '../../assets/icons';
 import { productService } from '../../services/productService';
 import { productCategoryService } from '../../services/productCategoryService';
 import { productBrandService } from '../../services/productBrandService';
@@ -58,8 +61,8 @@ const GestaoEstoquePage: React.FC = () => {
         </div>
         <div className={styles.actionGrid}>
           <button className={styles.actionCard} onClick={() => navigate('/estoque/criar-produto')}>
-            <div className={styles.actionIconWrap} style={{ background: '#dbeafe', color: '#2563eb' }}>
-              <PackagePlus size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconPackage} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Cadastrar Produtos</span>
@@ -69,8 +72,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} onClick={() => navigate('/estoque')}>
-            <div className={styles.actionIconWrap} style={{ background: '#d1fae5', color: '#10b981' }}>
-              <ClipboardList size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconMagnifyingGlass} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Ver Produtos</span>
@@ -89,8 +92,8 @@ const GestaoEstoquePage: React.FC = () => {
         </div>
         <div className={styles.actionGrid3}>
           <button className={styles.actionCard} onClick={() => navigate('/gestao-estoque/categorias')}>
-            <div className={styles.actionIconWrap} style={{ background: '#dbeafe', color: '#2563eb' }}>
-              <FolderTree size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconCardIndexDividers} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Categorias</span>
@@ -100,8 +103,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} onClick={() => navigate('/gestao-estoque/marcas')}>
-            <div className={styles.actionIconWrap} style={{ background: '#ede9fe', color: '#8b5cf6' }}>
-              <Stamp size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconLabel} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Marcas</span>
@@ -111,8 +114,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} onClick={() => navigate('/gestao-estoque/colecoes')}>
-            <div className={styles.actionIconWrap} style={{ background: '#fef3c7', color: '#f59e0b' }}>
-              <BookCopy size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconBooks} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Coleções</span>
@@ -131,8 +134,8 @@ const GestaoEstoquePage: React.FC = () => {
         </div>
         <div className={styles.actionGrid}>
           <button className={styles.actionCard} onClick={() => navigate('/estoque')}>
-            <div className={styles.actionIconWrap} style={{ background: '#dbeafe', color: '#2563eb' }}>
-              <Warehouse size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconDepartmentStore} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Controle de Estoque</span>
@@ -142,8 +145,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} onClick={() => navigate('/gestao-estoque/fornecedores')}>
-            <div className={styles.actionIconWrap} style={{ background: '#d1fae5', color: '#10b981' }}>
-              <Truck size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconDeliveryTruck} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Fornecedores</span>
@@ -153,8 +156,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} onClick={() => alert('Lançar Compra de Mercadoria — em breve!')}>
-            <div className={styles.actionIconWrap} style={{ background: '#fef3c7', color: '#f59e0b' }}>
-              <ShoppingCart size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconInboxTray} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Lançar Compra de Mercadoria</span>
@@ -164,8 +167,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} disabled>
-            <div className={styles.actionIconWrap} style={{ background: '#fed7aa', color: '#f59e0b' }}>
-              <Scale size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconBalanceScale} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Unidades</span>
@@ -175,8 +178,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} disabled>
-            <div className={styles.actionIconWrap} style={{ background: '#e0e7ff', color: '#6366f1' }}>
-              <SplitSquareHorizontal size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconArtistPalette} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Variações</span>
@@ -195,8 +198,8 @@ const GestaoEstoquePage: React.FC = () => {
         </div>
         <div className={styles.actionGrid}>
           <button className={styles.actionCard} disabled>
-            <div className={styles.actionIconWrap} style={{ background: '#fce7f3', color: '#ec4899' }}>
-              <Settings2 size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconControlKnobs} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>Atributos</span>
@@ -206,8 +209,8 @@ const GestaoEstoquePage: React.FC = () => {
           </button>
 
           <button className={styles.actionCard} disabled>
-            <div className={styles.actionIconWrap} style={{ background: '#dbeafe', color: '#2563eb' }}>
-              <QrCode size={22} />
+            <div className={styles.actionIconWrap}>
+              <img src={iconIdentificationCard} alt="" width={28} height={28} />
             </div>
             <div className={styles.actionInfo}>
               <span className={styles.actionLabel}>SKUs</span>
