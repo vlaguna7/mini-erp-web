@@ -10,6 +10,17 @@ const PAYMENT_METHODS = [
   { id: 'debit' as PaymentMethod, label: 'Cartão de Débito', icon: CreditCard },
 ];
 
+const CARD_BRANDS = [
+  { id: 'visa', label: 'Visa', icon: '𝗩', color: '#1a1f71' },
+  { id: 'mastercard', label: 'Mastercard', icon: '𝗠', color: '#eb001b' },
+  { id: 'elo', label: 'Elo', icon: '𝗘', color: '#00a4e0' },
+  { id: 'amex', label: 'American Express', icon: '𝗔', color: '#006fcf' },
+  { id: 'hipercard', label: 'Hipercard', icon: '𝗛', color: '#822124' },
+  { id: 'diners', label: 'Diners Club', icon: '𝗗', color: '#0079be' },
+];
+
+const MAX_INSTALLMENTS = 12;
+
 const PDVPayment: React.FC = () => {
   const {
     payments,
@@ -33,6 +44,8 @@ const PDVPayment: React.FC = () => {
 
   const [amountInput, setAmountInput] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
+  const [selectedInstallments, setSelectedInstallments] = useState(1);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
   const subtotal = getSubtotal();
   const totalToPay = getTotalToPay();
@@ -42,8 +55,12 @@ const PDVPayment: React.FC = () => {
   const fmt = (value: number) =>
     value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+  const parsedAmount = parseFloat((amountInput || '0').replace(',', '.')) || 0;
+
   const handleSelectMethod = (method: PaymentMethod) => {
     setSelectedMethod(method);
+    setSelectedInstallments(1);
+    setSelectedBrand(null);
     const rest = Math.max(0, totalToPay - totalPaid);
     setAmountInput(rest > 0 ? rest.toFixed(2).replace('.', ',') : '');
   };
@@ -55,21 +72,53 @@ const PDVPayment: React.FC = () => {
     const maxAllowed = Math.max(0, totalToPay - totalPaid);
     const amount = Math.min(parsed, maxAllowed);
     if (amount <= 0) return;
+
+    if (selectedMethod === 'credit' && !selectedBrand) return;
+
     const info = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
+    const brandLabel = selectedBrand ? CARD_BRANDS.find((b) => b.id === selectedBrand)?.label : undefined;
+
+    let label = info?.label || selectedMethod;
+    if (selectedMethod === 'credit' && selectedInstallments > 1) {
+      label = `${info?.label} ${selectedInstallments}x`;
+    }
+    if (brandLabel) {
+      label += ` (${brandLabel})`;
+    }
+
     addPayment({
       id: `${selectedMethod}-${Date.now()}`,
       method: selectedMethod,
-      label: info?.label || selectedMethod,
+      label,
       amount,
+      installments: selectedMethod === 'credit' ? selectedInstallments : undefined,
+      cardBrand: selectedBrand || undefined,
     });
     setSelectedMethod(null);
     setAmountInput('');
+    setSelectedInstallments(1);
+    setSelectedBrand(null);
+  };
+
+  const handleCancel = () => {
+    setSelectedMethod(null);
+    setAmountInput('');
+    setSelectedInstallments(1);
+    setSelectedBrand(null);
   };
 
   const handleAmountKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleAddPayment();
-    if (e.key === 'Escape') { setSelectedMethod(null); setAmountInput(''); }
+    if (e.key === 'Escape') handleCancel();
   };
+
+  const isCredit = selectedMethod === 'credit';
+
+  const installmentOptions = Array.from({ length: MAX_INSTALLMENTS }, (_, i) => {
+    const n = i + 1;
+    const installmentValue = parsedAmount > 0 ? parsedAmount / n : 0;
+    return { n, value: installmentValue };
+  });
 
   return (
     <div className={styles.page}>
@@ -100,23 +149,69 @@ const PDVPayment: React.FC = () => {
 
         {selectedMethod && (
           <div className={styles.addRow}>
-            <span className={styles.addLabel}>
-              {PAYMENT_METHODS.find((m) => m.id === selectedMethod)?.label}
-            </span>
-            <div className={styles.addField}>
-              <span className={styles.addPrefix}>R$</span>
-              <input
-                className={styles.addInput}
-                type="text"
-                value={amountInput}
-                onChange={(e) => setAmountInput(e.target.value)}
-                onKeyDown={handleAmountKeyDown}
-                placeholder="0,00"
-                autoFocus
-              />
+            <div className={styles.addRowTop}>
+              <span className={styles.addLabel}>
+                {PAYMENT_METHODS.find((m) => m.id === selectedMethod)?.label}
+              </span>
+              <div className={styles.addField}>
+                <span className={styles.addPrefix}>R$</span>
+                <input
+                  className={styles.addInput}
+                  type="text"
+                  value={amountInput}
+                  onChange={(e) => setAmountInput(e.target.value)}
+                  onKeyDown={handleAmountKeyDown}
+                  placeholder="0,00"
+                  autoFocus
+                />
+              </div>
             </div>
-            <button className={styles.addConfirm} onClick={handleAddPayment}>Confirmar</button>
-            <button className={styles.addCancel} onClick={() => { setSelectedMethod(null); setAmountInput(''); }}>Cancelar</button>
+
+            {isCredit && (
+              <div className={styles.creditSelects}>
+                <div className={styles.creditField}>
+                  <label className={styles.creditFieldLabel}>Parcelas</label>
+                  <select
+                    className={styles.creditSelect}
+                    value={selectedInstallments}
+                    onChange={(e) => setSelectedInstallments(Number(e.target.value))}
+                  >
+                    {installmentOptions.map(({ n, value }) => (
+                      <option key={n} value={n}>
+                        {n}x de {fmt(value)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.creditField}>
+                  <label className={styles.creditFieldLabel}>Bandeira</label>
+                  <select
+                    className={styles.creditSelect}
+                    value={selectedBrand || ''}
+                    onChange={(e) => setSelectedBrand(e.target.value || null)}
+                  >
+                    <option value="">Selecione a bandeira</option>
+                    {CARD_BRANDS.map((brand) => (
+                      <option key={brand.id} value={brand.id}>
+                        {brand.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            <div className={styles.addRowActions}>
+              <button
+                className={styles.addConfirm}
+                onClick={handleAddPayment}
+                disabled={isCredit && !selectedBrand}
+              >
+                Confirmar
+              </button>
+              <button className={styles.addCancel} onClick={handleCancel}>Cancelar</button>
+            </div>
           </div>
         )}
 

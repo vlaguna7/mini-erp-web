@@ -32,6 +32,8 @@ export interface PaymentEntry {
   method: PaymentMethod;
   label: string;
   amount: number;
+  installments?: number;
+  cardBrand?: string;
 }
 
 interface PDVStore {
@@ -46,6 +48,10 @@ interface PDVStore {
   coupon: string;
   payments: PaymentEntry[];
   saleType: 'online' | 'inperson';
+  presenceIndicator: string;
+  saleCategory: string;
+  observation: string;
+  printExchangeReceipt: boolean;
 
   addToCart: (item: CartItem) => void;
   removeFromCart: (itemId: string) => void;
@@ -64,6 +70,10 @@ interface PDVStore {
   removePayment: (id: string) => void;
   clearPayments: () => void;
   setSaleType: (type: 'online' | 'inperson') => void;
+  setPresenceIndicator: (value: string) => void;
+  setSaleCategory: (value: string) => void;
+  setObservation: (value: string) => void;
+  setPrintExchangeReceipt: (value: boolean) => void;
   getCartTotal: () => number;
   getSubtotal: () => number;
   getTotalToPay: () => number;
@@ -85,6 +95,10 @@ export const usePDVStore = create<PDVStore>()(
   coupon: '',
   payments: [],
   saleType: 'inperson',
+  presenceIndicator: 'presencial',
+  saleCategory: 'presencial',
+  observation: '',
+  printExchangeReceipt: false,
 
   addToCart: (item: CartItem) =>
     set((state) => {
@@ -96,14 +110,16 @@ export const usePDVStore = create<PDVStore>()(
               ? { ...i, quantity: i.quantity + item.quantity }
               : i
           ),
+          payments: [],
         };
       }
-      return { cart: [...state.cart, item] };
+      return { cart: [...state.cart, item], payments: [] };
     }),
 
   removeFromCart: (itemId: string) =>
     set((state) => ({
       cart: state.cart.filter((i) => i.id !== itemId),
+      payments: [],
     })),
 
   updateCartQuantity: (itemId: string, quantity: number) =>
@@ -114,6 +130,7 @@ export const usePDVStore = create<PDVStore>()(
           : state.cart.map((i) =>
               i.id === itemId ? { ...i, quantity } : i
             ),
+      payments: [],
     })),
 
   updateItemDiscount: (itemId: string, discount: number, type: 'value' | 'percent') =>
@@ -124,7 +141,7 @@ export const usePDVStore = create<PDVStore>()(
       payments: [],
     })),
 
-  clearCart: () => set({ cart: [] }),
+  clearCart: () => set({ cart: [], payments: [] }),
 
   setSelectedClient: (client: Client | null) =>
     set({ selectedClient: client }),
@@ -154,6 +171,14 @@ export const usePDVStore = create<PDVStore>()(
   clearPayments: () => set({ payments: [] }),
 
   setSaleType: (type: 'online' | 'inperson') => set({ saleType: type }),
+
+  setPresenceIndicator: (value: string) => set({ presenceIndicator: value }),
+
+  setSaleCategory: (value: string) => set({ saleCategory: value }),
+
+  setObservation: (value: string) => set({ observation: value }),
+
+  setPrintExchangeReceipt: (value: boolean) => set({ printExchangeReceipt: value }),
 
   getSubtotal: () => {
     const state = get();
@@ -203,6 +228,10 @@ export const usePDVStore = create<PDVStore>()(
       coupon: '',
       payments: [],
       saleType: 'inperson',
+      presenceIndicator: 'presencial',
+      saleCategory: 'presencial',
+      observation: '',
+      printExchangeReceipt: false,
     }),
 }),
     {

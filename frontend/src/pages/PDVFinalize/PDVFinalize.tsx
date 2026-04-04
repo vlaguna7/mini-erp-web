@@ -1,22 +1,34 @@
-import React, { useState, useMemo } from 'react';
-import { Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Save, ChevronDown, ChevronRight, User } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
+import { clientService } from '../../services/clientService';
 import styles from './PDVFinalize.module.css';
 
-const MOCK_SELLERS = [
-  { id: '1', name: 'João Pedro', email: 'joao@loja.com' },
-  { id: '2', name: 'Maria Silva', email: 'maria@loja.com' },
-  { id: '3', name: 'Carlos Santos', email: 'carlos@loja.com' },
-];
-
-const PAYMENT_LABELS = {
+const PAYMENT_LABELS: Record<string, string> = {
   cash: 'Dinheiro',
   pix: 'Pix',
   credit: 'Cartão de Crédito',
   debit: 'Cartão de Débito',
 };
 
+const PRESENCE_OPTIONS = [
+  { value: 'presencial', label: 'Venda presencial' },
+  { value: 'entrega_domicilio', label: 'Venda com entrega em domicílio' },
+  { value: 'internet', label: 'Venda pela internet' },
+  { value: 'nao_presencial', label: 'Operação não presencial, outros' },
+];
+
+const SALE_CATEGORY_OPTIONS = [
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'facebook', label: 'Facebook' },
+  { value: 'presencial', label: 'Presencial' },
+  { value: 'tele', label: 'Tele' },
+];
+
 const PDVFinalize: React.FC = () => {
+  const navigate = useNavigate();
   const {
     cart,
     selectedClient,
@@ -24,10 +36,15 @@ const PDVFinalize: React.FC = () => {
     payments,
     selectedSeller,
     setSelectedSeller,
-    saleType,
-    setSaleType,
+    presenceIndicator,
+    setPresenceIndicator,
+    saleCategory,
+    setSaleCategory,
+    observation,
+    setObservation,
+    printExchangeReceipt,
+    setPrintExchangeReceipt,
     discount,
-    setDiscount,
     surcharge,
     getTotalToPay,
     getTotalPaid,
@@ -35,19 +52,40 @@ const PDVFinalize: React.FC = () => {
     resetPDV,
   } = usePDVStore();
 
-  const [sellers] = useState(MOCK_SELLERS);
-  const [isSaving] = useState(false);
+  const [sellers, setSellers] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showObservation, setShowObservation] = useState(!!observation);
 
   const totalToPay = getTotalToPay();
   const totalPaid = getTotalPaid();
   const subtotal = getSubtotal();
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const hasPayments = payments.length > 0;
   const isPaymentComplete = hasPayments && Math.abs(totalPaid - totalToPay) <= 0.01;
 
+  useEffect(() => {
+    loadSellers();
+  }, []);
+
+  const loadSellers = async () => {
+    try {
+      const data = await clientService.getClients(1, 200);
+      const list = Array.isArray(data) ? data : data?.clients ?? [];
+      setSellers(list);
+    } catch (error) {
+      console.error('Erro ao carregar cadastros:', error);
+    }
+  };
+
+  const fmt = (value: number) =>
+    value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+
+
   const handleSaveSale = async () => {
-    if (!selectedClient || (!selectedPayment && payments.length === 0) || !selectedSeller || cart.length === 0) {
-      alert('Por favor, preencha todos os campos: Cliente, Pagamento, Vendedor e produtos');
+    if (!selectedClient || (!selectedPayment && payments.length === 0) || cart.length === 0) {
+      alert('Por favor, preencha todos os campos: Cliente, Pagamento e produtos');
       return;
     }
 
@@ -56,12 +94,16 @@ const PDVFinalize: React.FC = () => {
       return;
     }
 
+    setIsSaving(true);
     try {
       const saleData = {
         client_id: selectedClient.id,
-        seller_id: selectedSeller.id,
+        seller_id: selectedSeller?.id || null,
         payments: payments.map((p) => ({ method: p.method, amount: p.amount })),
-        sale_type: saleType,
+        presence_indicator: presenceIndicator,
+        sale_category: saleCategory,
+        observation,
+        print_exchange_receipt: printExchangeReceipt,
         items: cart.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
@@ -79,128 +121,210 @@ const PDVFinalize: React.FC = () => {
     } catch (error) {
       console.error('Erro ao salvar venda:', error);
       alert('Erro ao realizar venda');
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className={styles.pdvFinalize}>
-      <div className={styles.pdvFinalizeHeader}>
-        <h2 className={styles.pdvFinalizeTitle}>Finalizar Venda</h2>
-      </div>
+    <div className={styles.page}>
+      {/* ── INFORMAÇÕES ADICIONAIS ── */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Informações Adicionais</h2>
 
-      <div className={styles.pdvFinalizeContent}>
-        <div className={styles.pdvFinalizeSection}>
-          <label className={styles.pdvFinalizeLabel}>Vendedor</label>
-          <select
-            value={selectedSeller?.id || ''}
-            onChange={(e) => {
-              const seller = sellers.find((s) => s.id === e.target.value);
-              setSelectedSeller(seller || null);
-            }}
-            className={styles.pdvFinalizeSelect}
-          >
-            <option value="">Selecione um vendedor</option>
-            {sellers.map((seller) => (
-              <option key={seller.id} value={seller.id}>
-                {seller.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.pdvFinalizeSection}>
-          <label className={styles.pdvFinalizeLabel}>Tipo de Venda</label>
-          <div className={styles.pdvFinalizeRadioGroup}>
-            <label className={styles.pdvFinalizeRadio}>
-              <input
-                type="radio"
-                value="inperson"
-                checked={saleType === 'inperson'}
-                onChange={(e) => setSaleType(e.target.value as any)}
-              />
-              <span>Presencial</span>
+        <div className={styles.fieldsRow}>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>
+              Vendedor <span className={styles.infoIcon} title="Selecione o vendedor responsável">&#9432;</span>
             </label>
-            <label className={styles.pdvFinalizeRadio}>
-              <input
-                type="radio"
-                value="online"
-                checked={saleType === 'online'}
-                onChange={(e) => setSaleType(e.target.value as any)}
-              />
-              <span>Online</span>
-            </label>
-          </div>
-        </div>
-
-        <div className={styles.pdvFinalizeInfoBox}>
-          <div className={styles.pdvFinalizeInfoItem}>
-            <span className={styles.pdvFinalizeInfoLabel}>Cliente:</span>
-            <span className={styles.pdvFinalizeInfoValue}>
-              {selectedClient?.name || 'Não selecionado'}
-            </span>
-          </div>
-
-          <div className={styles.pdvFinalizeInfoItem}>
-            <span className={styles.pdvFinalizeInfoLabel}>Pagamentos:</span>
-            <span className={styles.pdvFinalizeInfoValue}>
-              {payments.length > 0
-                ? payments.map((p) => `${p.label} (R$ ${p.amount.toFixed(2)})`).join(', ')
-                : selectedPayment
-                  ? PAYMENT_LABELS[selectedPayment as keyof typeof PAYMENT_LABELS]
-                  : 'Não selecionado'}
-            </span>
-          </div>
-        </div>
-
-        {cart.length > 0 && (
-          <div className={styles.pdvFinalizeItems}>
-            <h3 className={styles.pdvFinalizeItemsTitle}>Produtos</h3>
-            <div className={styles.pdvFinalizeItemsList}>
-              {cart.map((item) => (
-                <div key={item.id} className={styles.pdvFinalizeItem}>
-                  <div className={styles.pdvFinalizeItemInfo}>
-                    <span className={styles.pdvFinalizeItemName}>{item.name}</span>
-                    <span className={styles.pdvFinalizeItemQty}>
-                      {item.quantity}x R$ {item.price.toFixed(2)}
-                    </span>
-                  </div>
-                  <span className={styles.pdvFinalizeItemTotal}>
-                    R$ {(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </div>
+            <select
+              value={selectedSeller?.id || ''}
+              onChange={(e) => {
+                const seller = sellers.find((s) => String(s.id) === e.target.value);
+                if (seller) {
+                  setSelectedSeller({ id: String(seller.id), name: seller.name, email: seller.email });
+                } else {
+                  setSelectedSeller(null);
+                }
+              }}
+              className={styles.select}
+            >
+              <option value="">Selecione um cadastro</option>
+              {sellers.map((s) => (
+                <option key={s.id} value={String(s.id)}>
+                  {s.name}
+                </option>
               ))}
-            </div>
-          </div>
-        )}
-
-        <div className={styles.pdvFinalizeTotals}>
-          <div className={styles.pdvFinalizeTotalRow}>
-            <span>Subtotal:</span>
-            <span>R$ {subtotal.toFixed(2)}</span>
+            </select>
           </div>
 
-          <div className={`${styles.pdvFinalizeTotalRow} ${styles.pdvFinalizeGrandTotal}`}>
-            <span>Total a Pagar:</span>
-            <span className={styles.pdvFinalizeTotalValue}>R$ {totalToPay.toFixed(2)}</span>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Indicador de presença</label>
+            <select
+              value={presenceIndicator}
+              onChange={(e) => setPresenceIndicator(e.target.value)}
+              className={styles.select}
+            >
+              {PRESENCE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {payments.length > 0 && (
-            <div className={styles.pdvFinalizeTotalRow}>
-              <span>Valor Pago:</span>
-              <span>R$ {totalPaid.toFixed(2)}</span>
-            </div>
-          )}
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Categoria da venda</label>
+            <select
+              value={saleCategory}
+              onChange={(e) => setSaleCategory(e.target.value)}
+              className={styles.select}
+            >
+              {SALE_CATEGORY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <button
-          className={styles.pdvFinalizeSaveBtn}
-          onClick={handleSaveSale}
-          disabled={isSaving || cart.length === 0 || !selectedClient || !selectedSeller || !isPaymentComplete}
-        >
-          <Save size={18} />
-          {isSaving ? 'Salvando...' : 'Salvar Venda'}
-        </button>
-      </div>
+        <div className={styles.extraOptions}>
+          <button
+            type="button"
+            className={styles.toggleObservation}
+            onClick={() => setShowObservation(!showObservation)}
+          >
+            {showObservation ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            Adicionar Observação
+          </button>
+
+          {showObservation && (
+            <textarea
+              className={styles.observationInput}
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              placeholder="Digite uma observação..."
+              rows={3}
+            />
+          )}
+
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              checked={printExchangeReceipt}
+              onChange={(e) => setPrintExchangeReceipt(e.target.checked)}
+              className={styles.checkbox}
+            />
+            Imprimir comprovante de troca
+          </label>
+        </div>
+      </section>
+
+      {/* ── CLIENTE ── */}
+      <section className={styles.section}>
+        <div className={styles.clientRow}>
+          <h2 className={styles.sectionTitle}>Cliente</h2>
+          <button
+            type="button"
+            className={styles.changeLink}
+            onClick={() => navigate('/pdv/cliente')}
+          >
+            (alterar)
+          </button>
+        </div>
+        <div className={styles.clientInfo}>
+          <User size={18} className={styles.clientIcon} />
+          <span className={styles.clientName}>
+            {selectedClient?.name || 'Nenhum cliente selecionado'}
+          </span>
+        </div>
+      </section>
+
+      {/* ── PAGAMENTO ── */}
+      <section className={styles.section}>
+        <div className={styles.clientRow}>
+          <h2 className={styles.sectionTitle}>Pagamento</h2>
+          <button
+            type="button"
+            className={styles.changeLink}
+            onClick={() => navigate('/pdv/pagamento')}
+          >
+            (alterar)
+          </button>
+        </div>
+
+        {payments.length > 0 ? (
+          <div className={styles.paymentsList}>
+            {payments.map((p, idx) => (
+              <div key={p.id} className={styles.paymentItem}>
+                <span className={styles.paymentIndex}>{idx + 1}.</span>
+                <span className={styles.paymentMethod}>{p.label}</span>
+                <span className={styles.paymentCondition}>à vista</span>
+                <span className={styles.paymentAmount}>{fmt(p.amount)}</span>
+              </div>
+            ))}
+            <div className={styles.paymentTotal}>
+              <span>Total</span>
+              <span>{fmt(totalPaid)}</span>
+            </div>
+          </div>
+        ) : (
+          <p className={styles.emptyMsg}>Nenhum pagamento adicionado</p>
+        )}
+      </section>
+
+      {/* ── PRODUTOS ── */}
+      <section className={styles.section}>
+        <div className={styles.clientRow}>
+          <h2 className={styles.sectionTitle}>
+            Produtos ({totalItems} {totalItems === 1 ? 'item' : 'itens'})
+          </h2>
+          <button
+            type="button"
+            className={styles.changeLink}
+            onClick={() => navigate('/pdv/produtos')}
+          >
+            (alterar)
+          </button>
+        </div>
+
+        {cart.length > 0 ? (
+          <div className={styles.productsTable}>
+            <div className={styles.tableHeader}>
+              <span className={styles.colHash}>#</span>
+              <span className={styles.colItem}>Item</span>
+              <span className={styles.colQty}>Qtd.</span>
+              <span className={styles.colTotal}>Total</span>
+            </div>
+            {cart.map((item, index) => (
+              <div key={item.id} className={styles.tableRow}>
+                <span className={styles.colHash}>{index + 1}</span>
+                <span className={styles.colItem}>{item.name}</span>
+                <span className={styles.colQty}>{item.quantity}</span>
+                <span className={styles.colTotal}>{fmt(item.price * item.quantity)}</span>
+              </div>
+            ))}
+            <div className={styles.tableFooter}>
+              <span className={styles.footerLabel}>Total dos produtos</span>
+              <span className={styles.colQty}>{totalItems}</span>
+              <span className={styles.colTotal}>{fmt(subtotal)}</span>
+            </div>
+          </div>
+        ) : (
+          <p className={styles.emptyMsg}>Nenhum produto no carrinho</p>
+        )}
+      </section>
+
+      {/* ── BOTÃO SALVAR ── */}
+      <button
+        className={styles.saveBtn}
+        onClick={handleSaveSale}
+        disabled={isSaving || cart.length === 0 || !selectedClient || !isPaymentComplete}
+      >
+        <Save size={18} />
+        {isSaving ? 'Salvando...' : 'Salvar Venda'}
+      </button>
     </div>
   );
 };

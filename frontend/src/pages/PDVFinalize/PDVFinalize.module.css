@@ -1,226 +1,323 @@
-/* PDV FINALIZE - CSS Module (extends pdv-payment) */
+/* PDV FINALIZE - CSS Module */
 
-.pdvFinalize {
+/* ===== Page ===== */
+.page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  gap: 1rem;
+  gap: 1.25rem;
   overflow-y: auto;
+  padding-bottom: 1.5rem;
 }
 
-.pdvFinalizeHeader {
-  flex-shrink: 0;
+/* ===== Section ===== */
+.section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.pdvFinalizeTitle {
-  font-size: 1.3rem;
+.sectionTitle {
+  font-size: 1rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
 
-.pdvFinalizeContent {
+/* ===== Campos em linha (Vendedor / Indicador / Categoria) ===== */
+.fieldsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.field {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  flex: 1;
-}
-
-.pdvFinalizeSection {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  flex-shrink: 0;
-}
-
-.pdvFinalizeLabel {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #0f172a;
-}
-
-.pdvFinalizeSelect {
-  padding: 0.75rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: white;
-  color: #0f172a;
-  cursor: pointer;
-}
-
-.pdvFinalizeSelect:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.pdvFinalizeRadioGroup {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.pdvFinalizeRadio {
-  display: flex;
-  align-items: center;
   gap: 0.4rem;
-  font-size: 0.9rem;
+}
+
+.fieldLabel {
+  font-weight: 600;
+  font-size: 0.85rem;
   color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.infoIcon {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  cursor: help;
+}
+
+.select {
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  background: #fff;
+  color: #0f172a;
+  cursor: pointer;
+  appearance: auto;
+  transition: border-color 0.15s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ===== Opções extras (observação + checkbox) ===== */
+.extraOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toggleObservation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  width: fit-content;
+}
+
+.toggleObservation:hover {
+  color: #1d4ed8;
+}
+
+.observationInput {
+  padding: 0.65rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #fff;
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.observationInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: #0f172a;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox {
+  accent-color: #2563eb;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
 }
 
-.pdvFinalizeRadio input[type="radio"] {
-  accent-color: #3b82f6;
-}
-
-.pdvFinalizeInfoBox {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
+/* ===== Cliente ===== */
+.clientRow {
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.pdvFinalizeInfoItem {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
-}
-
-.pdvFinalizeInfoLabel {
-  color: #64748b;
-  font-weight: 500;
-}
-
-.pdvFinalizeInfoValue {
-  color: #0f172a;
-  font-weight: 600;
-}
-
-.pdvFinalizeItems {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.pdvFinalizeItemsTitle {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 0.75rem 0;
-}
-
-.pdvFinalizeItemsList {
-  display: flex;
-  flex-direction: column;
   gap: 0.5rem;
 }
 
-.pdvFinalizeItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f1f5f9;
+.changeLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
-.pdvFinalizeItem:last-child {
+.changeLink:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.clientInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clientIcon {
+  color: #64748b;
+}
+
+.clientName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ===== Pagamento lista ===== */
+.paymentsList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.paymentItem {
+  display: grid;
+  grid-template-columns: 30px 1fr auto auto;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+  color: #0f172a;
+  align-items: center;
+  background: #fff;
+}
+
+.paymentItem:last-of-type {
   border-bottom: none;
 }
 
-.pdvFinalizeItemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+.paymentIndex {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 500;
 }
 
-.pdvFinalizeItemName {
-  font-size: 0.9rem;
+.paymentMethod {
   font-weight: 600;
+}
+
+.paymentCondition {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.paymentAmount {
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.paymentTotal {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: #f8fafc;
+  border-top: 2px solid #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: #0f172a;
 }
 
-.pdvFinalizeItemQty {
-  font-size: 0.8rem;
+/* ===== Tabela de Produtos ===== */
+.productsTable {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 50px 1fr 100px 120px;
+  padding: 0.65rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 50px 1fr 100px 120px;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+  color: #0f172a;
+  align-items: center;
+  background: #fff;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableFooter {
+  display: grid;
+  grid-template-columns: 1fr 100px 120px;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-top: 2px solid #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.footerLabel {
+  font-weight: 700;
+}
+
+.colHash {
+  text-align: center;
   color: #64748b;
 }
 
-.pdvFinalizeItemTotal {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #059669;
+.colItem {
+  font-weight: 500;
 }
 
-.pdvFinalizeTotals {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+.colQty {
+  text-align: center;
 }
 
-.pdvFinalizeTotalRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #0f172a;
-}
-
-.pdvFinalizeTotalRow label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.pdvFinalizeDiscountInput {
-  width: 100px;
-  padding: 0.4rem 0.6rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 0.85rem;
+.colTotal {
   text-align: right;
-  color: #0f172a;
+  font-weight: 600;
 }
 
-.pdvFinalizeDiscountInput:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.emptyMsg {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
 }
 
-.pdvFinalizeGrandTotal {
-  border-top: 2px solid #e2e8f0;
-  padding-top: 0.6rem;
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.pdvFinalizeTotalValue {
-  color: #059669;
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.pdvFinalizeSaveBtn {
+/* ===== Botão Salvar ===== */
+.saveBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   background: #10b981;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 0.85rem;
@@ -229,49 +326,49 @@
   cursor: pointer;
   width: 100%;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.pdvFinalizeSaveBtn:hover {
+.saveBtn:hover {
   background: #059669;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
-.pdvFinalizeSaveBtn:disabled {
+.saveBtn:disabled {
   background: #cbd5e1;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.pdvFinalizeSummary {
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 0.8rem;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #0f172a;
+/* ===== Responsivo ===== */
+@media (max-width: 900px) {
+  .fieldsRow {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 40px 1fr 70px 90px;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .tableFooter {
+    grid-template-columns: 1fr 70px 90px;
+    padding: 0.6rem;
+    font-size: 0.82rem;
+  }
 }
 
-.pdvFinalizeActionBtn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.2s ease;
-}
+@media (max-width: 600px) {
+  .section {
+    padding: 1rem;
+  }
 
-.pdvFinalizeActionBtn:hover {
-  background: #2563eb;
-}
-
-.pdvFinalizeActionBtn:disabled {
-  background: #cbd5e1;
-  cursor: not-allowed;
+  .fieldsRow {
+    grid-template-columns: 1fr;
+  }
 }
