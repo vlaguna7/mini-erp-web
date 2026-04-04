@@ -122,12 +122,30 @@ export class SaleService {
     });
   }
 
-  static async getSalesByUser(userId: number, limit: number = 20, offset: number = 0) {
+  static async getSalesByUser(
+    userId: number,
+    limit: number = 20,
+    offset: number = 0,
+    dateFrom?: string,
+    dateTo?: string
+  ) {
     const safeLimit = Math.min(Math.max(1, limit), 100);
+
+    const where: any = { userId };
+
+    if (dateFrom || dateTo) {
+      where.saleDate = {};
+      if (dateFrom) where.saleDate.gte = new Date(dateFrom);
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setDate(end.getDate() + 1);
+        where.saleDate.lt = end;
+      }
+    }
 
     const [sales, total] = await Promise.all([
       prisma.sale.findMany({
-        where: { userId },
+        where,
         include: {
           client: { select: { id: true, name: true } },
           _count: { select: { items: true } },
@@ -136,7 +154,7 @@ export class SaleService {
         take: safeLimit,
         skip: offset,
       }),
-      prisma.sale.count({ where: { userId } }),
+      prisma.sale.count({ where }),
     ]);
 
     return { sales, total };

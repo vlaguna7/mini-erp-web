@@ -51,8 +51,10 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
     const offset = (page - 1) * limit;
+    const dateFrom = req.query.date_from as string | undefined;
+    const dateTo = req.query.date_to as string | undefined;
 
-    const result = await SaleService.getSalesByUser(userId, limit, offset);
+    const result = await SaleService.getSalesByUser(userId, limit, offset, dateFrom, dateTo);
 
     return res.json({
       sales: result.sales,

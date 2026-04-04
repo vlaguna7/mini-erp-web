@@ -20,7 +20,7 @@ export const dashboardService = {
         ? response.data
         : response.data.sales ?? [];
       const total = sales.reduce(
-        (sum: number, s: any) => sum + parseFloat(s.total_value || 0),
+        (sum: number, s: any) => sum + parseFloat(s.totalValue || s.total_value || 0),
         0
       );
       return { total, count: sales.length };
@@ -45,7 +45,7 @@ export const dashboardService = {
         ? response.data
         : response.data.sales ?? [];
       const total = sales.reduce(
-        (sum: number, s: any) => sum + parseFloat(s.total_value || 0),
+        (sum: number, s: any) => sum + parseFloat(s.totalValue || s.total_value || 0),
         0
       );
       return { total, count: sales.length };
