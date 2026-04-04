@@ -8,6 +8,7 @@ import productCategoryRoutes from './routes/productCategories';
 import productBrandRoutes from './routes/productBrands';
 import productCollectionRoutes from './routes/productCollections';
 import supplierRoutes from './routes/suppliers';
+import employeeRoutes from './routes/employees';
 import salesRoutes from './routes/sales';
 
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
@@ -30,6 +31,7 @@ app.use('/api/product-categories', productCategoryRoutes);
 app.use('/api/product-brands', productBrandRoutes);
 app.use('/api/product-collections', productCollectionRoutes);
 app.use('/api/suppliers', supplierRoutes);
+app.use('/api/employees', employeeRoutes);
 app.use('/api/sales', salesRoutes);
 
 app.get('/health', (req: Request, res: Response) => {

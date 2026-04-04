@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, ChevronDown, ChevronRight, User } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
-import { clientService } from '../../services/clientService';
+import { employeeService, EmployeeData } from '../../services/employeeService';
 import { saleService } from '../../services/saleService';
 import styles from './PDVFinalize.module.css';
 
@@ -54,9 +54,14 @@ const PDVFinalize: React.FC = () => {
     setLastSaleId,
   } = usePDVStore();
 
-  const [sellers, setSellers] = useState<any[]>([]);
+  const [sellers, setSellers] = useState<EmployeeData[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [showObservation, setShowObservation] = useState(!!observation);
+  const [showSellerModal, setShowSellerModal] = useState(false);
+  const [newSellerName, setNewSellerName] = useState('');
+  const [newSellerPhone, setNewSellerPhone] = useState('');
+  const [isCreatingSeller, setIsCreatingSeller] = useState(false);
+  const [sellerModalError, setSellerModalError] = useState('');
 
   const totalToPay = getTotalToPay();
   const totalPaid = getTotalPaid();
@@ -72,12 +77,40 @@ const PDVFinalize: React.FC = () => {
 
   const loadSellers = async () => {
     try {
-      const data = await clientService.getClients(1, 200);
-      const list = Array.isArray(data) ? data : data?.clients ?? [];
+      const list = await employeeService.getAll();
       setSellers(list);
     } catch (error) {
-      console.error('Erro ao carregar cadastros:', error);
+      console.error('Erro ao carregar vendedores:', error);
     }
+  };
+
+  const handleCreateSeller = async () => {
+    if (!newSellerName.trim()) { setSellerModalError('Nome é obrigatório'); return; }
+    setIsCreatingSeller(true);
+    setSellerModalError('');
+    try {
+      const created = await employeeService.create({
+        name: newSellerName.trim(),
+        phone: newSellerPhone.trim() || undefined,
+      });
+      setSellers((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setSelectedSeller({ id: String(created.id), name: created.name, email: created.email });
+      setNewSellerName('');
+      setNewSellerPhone('');
+      setSellerModalError('');
+      setShowSellerModal(false);
+    } catch (error: any) {
+      setSellerModalError(error?.response?.data?.error || 'Erro ao criar vendedor');
+    } finally {
+      setIsCreatingSeller(false);
+    }
+  };
+
+  const closeSellerModal = () => {
+    setShowSellerModal(false);
+    setNewSellerName('');
+    setNewSellerPhone('');
+    setSellerModalError('');
   };
 
   const fmt = (value: number) =>
@@ -149,6 +182,10 @@ const PDVFinalize: React.FC = () => {
             <select
               value={selectedSeller?.id || ''}
               onChange={(e) => {
+                if (e.target.value === '__create__') {
+                  setShowSellerModal(true);
+                  return;
+                }
                 const seller = sellers.find((s) => String(s.id) === e.target.value);
                 if (seller) {
                   setSelectedSeller({ id: String(seller.id), name: seller.name, email: seller.email });
@@ -158,12 +195,13 @@ const PDVFinalize: React.FC = () => {
               }}
               className={styles.select}
             >
-              <option value="">Selecione um cadastro</option>
+              <option value="">Selecione um vendedor</option>
               {sellers.map((s) => (
                 <option key={s.id} value={String(s.id)}>
                   {s.name}
                 </option>
               ))}
+              <option value="__create__">+ Criar novo</option>
             </select>
           </div>
 
@@ -334,6 +372,41 @@ const PDVFinalize: React.FC = () => {
         <Save size={18} />
         {isSaving ? 'Salvando...' : 'Salvar Venda'}
       </button>
+
+      {/* ── MODAL: Novo Vendedor ── */}
+      {showSellerModal && (
+        <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) closeSellerModal(); }}>
+          <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>Novo Vendedor</h3>
+            {sellerModalError && <div className={styles.modalError}>{sellerModalError}</div>}
+            <div className={styles.modalField}>
+              <label>Nome *</label>
+              <input
+                value={newSellerName}
+                onChange={(e) => setNewSellerName(e.target.value)}
+                placeholder="Nome do vendedor"
+                autoFocus
+                onKeyDown={(e) => { if (e.key === 'Enter') handleCreateSeller(); }}
+              />
+            </div>
+            <div className={styles.modalField}>
+              <label>Telefone</label>
+              <input
+                value={newSellerPhone}
+                onChange={(e) => setNewSellerPhone(e.target.value)}
+                placeholder="(00) 00000-0000"
+                onKeyDown={(e) => { if (e.key === 'Enter') handleCreateSeller(); }}
+              />
+            </div>
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={closeSellerModal} type="button">Cancelar</button>
+              <button className={styles.modalBtnSave} onClick={handleCreateSeller} disabled={isCreatingSeller} type="button">
+                {isCreatingSeller ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

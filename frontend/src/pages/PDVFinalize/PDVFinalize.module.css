@@ -75,6 +75,120 @@
 }
 
 /* ===== Opções extras (observação + checkbox) ===== */
+
+/* ===== Modal: Novo Vendedor ===== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modalTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px;
+}
+
+.modalError {
+  padding: 10px 14px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.modalField label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.modalField input {
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modalField input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modalBtnCancel {
+  padding: 10px 24px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modalBtnCancel:hover {
+  background: #f8fafc;
+}
+
+.modalBtnSave {
+  padding: 10px 24px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.modalBtnSave:hover {
+  background: #1d4ed8;
+}
+
+.modalBtnSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Opções extras (observação + checkbox) – original ===== */
 .extraOptions {
   display: flex;
   flex-direction: column;
