@@ -1,0 +1,103 @@
+/* ===== Processing Overlay – Componente reutilizável ===== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  animation: overlayIn 0.25s ease;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem 3rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(37, 99, 235, 0.08);
+  animation: cardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Spinner duplo ===== */
+.spinnerWrapper {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+
+.spinner {
+  position: absolute;
+  inset: 0;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.spinnerInner {
+  position: absolute;
+  inset: 8px;
+  border: 3px solid #e2e8f0;
+  border-bottom-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1.4s linear infinite reverse;
+}
+
+/* ===== Texto ===== */
+.message {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: -0.5rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* ===== Animações ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===== Acessibilidade – reduzir animações ===== */
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .spinnerInner {
+    animation-duration: 2s;
+  }
+
+  .overlay,
+  .card {
+    animation: none;
+  }
+}

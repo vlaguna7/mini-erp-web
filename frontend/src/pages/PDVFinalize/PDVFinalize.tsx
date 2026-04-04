@@ -4,6 +4,7 @@ import { Save, ChevronDown, ChevronRight, User } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
 import { employeeService, EmployeeData } from '../../services/employeeService';
 import { saleService } from '../../services/saleService';
+import ProcessingOverlay from '../../components/ProcessingOverlay';
 import styles from './PDVFinalize.module.css';
 
 const PAYMENT_LABELS: Record<string, string> = {
@@ -56,6 +57,7 @@ const PDVFinalize: React.FC = () => {
 
   const [sellers, setSellers] = useState<EmployeeData[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [showObservation, setShowObservation] = useState(!!observation);
   const [showSellerModal, setShowSellerModal] = useState(false);
   const [newSellerName, setNewSellerName] = useState('');
@@ -130,6 +132,10 @@ const PDVFinalize: React.FC = () => {
     }
 
     setIsSaving(true);
+    setIsProcessing(true);
+
+    const minDelay = new Promise((r) => setTimeout(r, 2000));
+
     try {
       const saleData = {
         client_id: Number(selectedClient.id),
@@ -155,11 +161,17 @@ const PDVFinalize: React.FC = () => {
         total: totalToPay,
       };
 
-      const sale = await saleService.createSale(saleData);
+      const [sale] = await Promise.all([
+        saleService.createSale(saleData),
+        minDelay,
+      ]);
+
       setLastSaleId(sale.id);
+      setIsProcessing(false);
       resetPDV();
       navigate('/pdv/sucesso');
     } catch (error: any) {
+      setIsProcessing(false);
       console.error('Erro ao salvar venda:', error);
       const msg = error.response?.data?.error || 'Erro ao realizar venda';
       alert(msg);
@@ -406,6 +418,14 @@ const PDVFinalize: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── OVERLAY: Processando venda ── */}
+      {isProcessing && (
+        <ProcessingOverlay
+          message="Salvando venda..."
+          subtitle="Aguarde enquanto processamos seu pedido"
+        />
       )}
     </div>
   );
