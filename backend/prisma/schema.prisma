@@ -202,8 +202,9 @@ model Client {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sales Sale[]
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salesAsClient  Sale[] @relation("SaleClient")
+  salesAsSeller  Sale[] @relation("SaleSeller")
 
   @@index([userId], name: "idx_clients_user_id")
   @@map("clients")
@@ -231,19 +232,27 @@ model Entry {
 }
 
 model Sale {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  clientId   Int?     @map("client_id")
-  totalValue Decimal  @map("total_value") @db.Decimal(10, 2)
-  discount   Decimal  @default(0) @db.Decimal(10, 2)
-  saleDate   DateTime @map("sale_date") @db.Date
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  id                Int      @id @default(autoincrement())
+  userId            Int      @map("user_id")
+  clientId          Int?     @map("client_id")
+  sellerId          Int?     @map("seller_id")
+  totalValue        Decimal  @map("total_value") @db.Decimal(10, 2)
+  subtotal          Decimal  @default(0) @db.Decimal(10, 2)
+  discount          Decimal  @default(0) @db.Decimal(10, 2)
+  surcharge         Decimal  @default(0) @db.Decimal(10, 2)
+  presenceIndicator String?  @map("presence_indicator") @db.VarChar(50)
+  saleCategory      String?  @map("sale_category") @db.VarChar(50)
+  observation       String?  @db.Text
+  saleDate          DateTime @map("sale_date") @db.Date
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client  Client?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  items   SaleItem[]
-  returns Return[]
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client   Client?       @relation("SaleClient", fields: [clientId], references: [id], onDelete: SetNull)
+  seller   Client?       @relation("SaleSeller", fields: [sellerId], references: [id], onDelete: SetNull)
+  items    SaleItem[]
+  payments SalePayment[]
+  returns  Return[]
 
   @@index([userId], name: "idx_sales_user_id")
   @@index([clientId], name: "idx_sales_client_id")
@@ -264,6 +273,22 @@ model SaleItem {
 
   @@index([saleId], name: "idx_sale_items_sale_id")
   @@map("sale_items")
+}
+
+model SalePayment {
+  id           Int      @id @default(autoincrement())
+  saleId       Int      @map("sale_id")
+  method       String   @db.VarChar(20)
+  label        String   @db.VarChar(100)
+  amount       Decimal  @db.Decimal(10, 2)
+  installments Int?
+  cardBrand    String?  @map("card_brand") @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  sale Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@index([saleId], name: "idx_sale_payments_sale_id")
+  @@map("sale_payments")
 }
 
 model Return {

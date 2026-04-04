@@ -4,7 +4,7 @@ import { Package, Users, CreditCard, CheckCircle, RotateCcw, Settings, LogOut } 
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVSidebar.module.css';
 
-type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
+type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes' | 'sucesso';
 
 interface PDVSidebarProps {
   activeSection: PDVSection;

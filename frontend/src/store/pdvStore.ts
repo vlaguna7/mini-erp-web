@@ -47,6 +47,7 @@ interface PDVStore {
   surchargeType: 'value' | 'percent';
   coupon: string;
   payments: PaymentEntry[];
+  lastSaleId: number | null;
   saleType: 'online' | 'inperson';
   presenceIndicator: string;
   saleCategory: string;
@@ -74,6 +75,7 @@ interface PDVStore {
   setSaleCategory: (value: string) => void;
   setObservation: (value: string) => void;
   setPrintExchangeReceipt: (value: boolean) => void;
+  setLastSaleId: (id: number | null) => void;
   getCartTotal: () => number;
   getSubtotal: () => number;
   getTotalToPay: () => number;
@@ -94,6 +96,7 @@ export const usePDVStore = create<PDVStore>()(
   surchargeType: 'value',
   coupon: '',
   payments: [],
+  lastSaleId: null,
   saleType: 'inperson',
   presenceIndicator: 'presencial',
   saleCategory: 'presencial',
@@ -179,6 +182,8 @@ export const usePDVStore = create<PDVStore>()(
   setObservation: (value: string) => set({ observation: value }),
 
   setPrintExchangeReceipt: (value: boolean) => set({ printExchangeReceipt: value }),
+
+  setLastSaleId: (id: number | null) => set({ lastSaleId: id }),
 
   getSubtotal: () => {
     const state = get();

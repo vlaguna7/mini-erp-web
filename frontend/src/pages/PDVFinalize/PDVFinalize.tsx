@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Save, ChevronDown, ChevronRight, User } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
 import { clientService } from '../../services/clientService';
+import { saleService } from '../../services/saleService';
 import styles from './PDVFinalize.module.css';
 
 const PAYMENT_LABELS: Record<string, string> = {
@@ -50,6 +51,7 @@ const PDVFinalize: React.FC = () => {
     getTotalPaid,
     getSubtotal,
     resetPDV,
+    setLastSaleId,
   } = usePDVStore();
 
   const [sellers, setSellers] = useState<any[]>([]);
@@ -97,15 +99,20 @@ const PDVFinalize: React.FC = () => {
     setIsSaving(true);
     try {
       const saleData = {
-        client_id: selectedClient.id,
-        seller_id: selectedSeller?.id || null,
-        payments: payments.map((p) => ({ method: p.method, amount: p.amount })),
+        client_id: Number(selectedClient.id),
+        seller_id: selectedSeller?.id ? Number(selectedSeller.id) : null,
+        payments: payments.map((p) => ({
+          method: p.method,
+          label: p.label,
+          amount: p.amount,
+          installments: p.installments,
+          cardBrand: p.cardBrand,
+        })),
         presence_indicator: presenceIndicator,
         sale_category: saleCategory,
         observation,
-        print_exchange_receipt: printExchangeReceipt,
         items: cart.map((item) => ({
-          product_id: item.id,
+          product_id: Number(item.id),
           quantity: item.quantity,
           unit_price: item.price,
         })),
@@ -115,12 +122,14 @@ const PDVFinalize: React.FC = () => {
         total: totalToPay,
       };
 
-      console.log('Salvando venda:', saleData);
+      const sale = await saleService.createSale(saleData);
+      setLastSaleId(sale.id);
       resetPDV();
-      alert('Venda realizada com sucesso!');
-    } catch (error) {
+      navigate('/pdv/sucesso');
+    } catch (error: any) {
       console.error('Erro ao salvar venda:', error);
-      alert('Erro ao realizar venda');
+      const msg = error.response?.data?.error || 'Erro ao realizar venda';
+      alert(msg);
     } finally {
       setIsSaving(false);
     }

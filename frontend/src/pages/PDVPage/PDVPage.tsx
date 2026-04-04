@@ -8,11 +8,12 @@ import PDVPayment from '../PDVPayment';
 import PDVFinalize from '../PDVFinalize';
 import PDVReturns from '../PDVReturns';
 import PDVSettings from '../PDVSettings';
+import PDVSuccess from '../PDVSuccess';
 import CadastrarClientePage from '../CadastrarClientePage';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVPage.module.css';
 
-type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes';
+type PDVSection = 'produtos' | 'cliente' | 'cliente/criar-cliente' | 'pagamento' | 'finalizar' | 'devolucoes' | 'configuracoes' | 'sucesso';
 
 const PDVPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const PDVPage: React.FC = () => {
   const getSectionFromPath = (): PDVSection => {
     const path = location.pathname.replace('/pdv/', '');
     if (path === 'cliente/criar-cliente') return 'cliente/criar-cliente';
-    if (['cliente', 'pagamento', 'finalizar', 'devolucoes', 'configuracoes'].includes(path)) {
+    if (['cliente', 'pagamento', 'finalizar', 'devolucoes', 'configuracoes', 'sucesso'].includes(path)) {
       return path as PDVSection;
     }
     return 'produtos';
@@ -59,6 +60,8 @@ const PDVPage: React.FC = () => {
         return <PDVReturns />;
       case 'configuracoes':
         return <PDVSettings />;
+      case 'sucesso':
+        return <PDVSuccess />;
       default:
         return <PDVProducts />;
     }
