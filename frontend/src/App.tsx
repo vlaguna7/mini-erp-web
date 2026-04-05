@@ -56,12 +56,6 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
       <div className={styles.flexRow}>
         <Sidebar />
 
-        <div
-          className={`${styles.sidebarBackdrop} ${isOpen ? styles.visible : ''}`}
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-
         <main className={`${styles.mainContent} ${!isMobile ? (isOpen ? styles.sidebarOpen : '') : ''}`}>
           {children}
         </main>
