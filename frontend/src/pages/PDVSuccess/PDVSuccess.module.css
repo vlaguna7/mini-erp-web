@@ -138,6 +138,7 @@
 @media (max-width: 600px) {
   .page {
     padding: 1.5rem 1rem;
+    padding-bottom: 80px; /* space for tab bar */
   }
 
   .title {
@@ -146,5 +147,26 @@
 
   .summaryCard {
     padding: 1rem;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    min-height: 52px;
+    border-radius: 12px;
+    font-size: 1rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btnPrimary:active {
+    transform: scale(0.98);
+  }
+
+  .btnSecondary:active {
+    transform: scale(0.98);
+  }
+
+  .successIcon {
+    width: 56px;
+    height: 56px;
   }
 }

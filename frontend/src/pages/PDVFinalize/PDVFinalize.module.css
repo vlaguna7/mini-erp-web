@@ -477,12 +477,113 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .page {
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+
   .section {
     padding: 1rem;
+    border-radius: 10px;
   }
 
   .fieldsRow {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .select {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 0.7rem 0.75rem;
+    min-height: 44px;
+  }
+
+  .observationInput {
+    font-size: 16px; /* prevent iOS zoom */
+    min-height: 80px;
+    padding: 0.75rem;
+  }
+
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 30px 1fr auto;
+    gap: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  /* Hide qty column on very narrow, combine into item */
+  .tableHeader > *:nth-child(3),
+  .tableRow > *:nth-child(3) {
+    display: none;
+  }
+
+  .tableFooter {
+    grid-template-columns: 1fr auto;
+    padding: 0.65rem;
+    font-size: 0.85rem;
+  }
+
+  .tableFooter > *:nth-child(2) {
+    display: none;
+  }
+
+  .paymentItem {
+    grid-template-columns: 24px 1fr auto;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .paymentCondition {
+    display: none;
+  }
+
+  .saveBtn {
+    min-height: 52px;
+    font-size: 1rem;
+    border-radius: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .saveBtn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .modal {
+    width: 95%;
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  .modalField input {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .modalActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modalBtnCancel,
+  .modalBtnSave {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+  }
+
+  .checkboxLabel {
+    font-size: 0.9rem;
+    gap: 0.6rem;
+    min-height: 44px;
+    align-items: center;
   }
 }

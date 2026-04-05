@@ -30,6 +30,15 @@
   flex-shrink: 0;
 }
 
+.pdvClientSearch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-shrink: 0;
+}
+
 .pdvClientSearchInput {
   flex: 1 1 0%;
   min-width: 0;
@@ -59,9 +68,9 @@
   justify-content: center;
   gap: 0.4rem;
   padding: 0.65rem 1rem;
-  background: #2563eb !important;
-  color: #fff !important;
-  border: 1.5px solid #2563eb !important;
+  background: #2563eb;
+  color: #fff;
+  border: 1.5px solid #2563eb;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -72,8 +81,8 @@
 }
 
 .pdvAddClientBtn:hover {
-  background: #1d4ed8 !important;
-  border-color: #1d4ed8 !important;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .pdvClientsList {
@@ -245,27 +254,6 @@
   text-align: center;
 }
 
-.pdvAddClientBtn {
-  padding: 0.7rem 1rem;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-  margin-top: 0.5rem;
-}
-
-.pdvAddClientBtn:hover {
-  background: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-}
-
 @media (max-width: 1024px) {
   .pdvClientTitle {
     font-size: 1.1rem;
@@ -278,15 +266,69 @@
 
 @media (max-width: 768px) {
   .pdvClientTitle {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .pdvClientSearchInput {
-    font-size: 0.85rem;
-    padding: 0.6rem 0.8rem;
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
   }
 
   .pdvClientItem {
-    padding: 0.7rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+    min-height: 64px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pdvClientItem:hover {
+    transform: none;
+  }
+
+  .pdvClientItem:active {
+    transform: scale(0.985);
+  }
+
+  .pdvClientItemPhoto {
+    width: 42px;
+    height: 42px;
+  }
+
+  .pdvClientItemCol:first-of-type {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pdvClientItemCol:not(:first-of-type) {
+    display: none;
+  }
+
+  .pdvClientItemName {
+    font-size: 0.92rem;
+  }
+
+  /* Show CPF below name on mobile */
+  .pdvClientItem .pdvClientItemCol:nth-of-type(2) {
+    display: flex;
+    flex-basis: 100%;
+    margin-left: 52px; /* align with name after photo */
+    margin-top: -0.35rem;
+  }
+
+  .pdvClientItemLabel {
+    font-size: 0.6rem;
+  }
+
+  .pdvClientItemValue {
+    font-size: 0.82rem;
+  }
+
+  .pdvAddClientBtn {
+    min-height: 48px;
+    border-radius: 10px;
   }
 }

@@ -151,12 +151,7 @@
 /* ===== Responsivo ===== */
 @media (max-width: 1024px) {
   .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 170px;
-    z-index: 999;
-    height: 100vh;
   }
 
   .navLabel {
@@ -164,26 +159,184 @@
   }
 }
 
+/* ===== MOBILE TAB BAR ===== */
+
+.mobileTabBar,
+.mobileTab,
+.mobileTabActive,
+.mobileTabIconWrap,
+.mobileTabLabel,
+.mobileStatusDot,
+.dotComplete,
+.dotPending,
+.moreBackdrop,
+.moreMenu,
+.moreMenuItem,
+.moreMenuActive,
+.moreMenuExit {
+  /* Hidden on desktop */
+}
+
 @media (max-width: 768px) {
   .sidebar {
-    width: 150px;
+    display: none;
   }
 
-  .content {
-    padding: 0.75rem 0.5rem;
+  .mobileTabBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: stretch;
+    background: linear-gradient(180deg, #334155 0%, #2c3e50 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    height: 64px;
+    padding: 0 4px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.2);
   }
 
-  .navItem {
-    padding: 0.6rem 0.65rem;
-    gap: 0.5rem;
+  .mobileTab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: rgba(238, 243, 246, 0.55);
+    cursor: pointer;
+    padding: 6px 2px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s ease;
+    min-width: 0;
   }
 
-  .navLabel {
-    font-size: 0.75rem;
+  .mobileTab:active {
+    color: rgba(238, 243, 246, 0.8);
   }
 
-  .statusIcon {
-    width: 18px;
-    height: 18px;
+  .mobileTabActive {
+    color: #fff;
+  }
+
+  .mobileTabActive::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: #60a5fa;
+    border-radius: 0 0 3px 3px;
+  }
+
+  .mobileTabIconWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+
+  .mobileTabLabel {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .mobileStatusDot {
+    position: absolute;
+    top: -1px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid #334155;
+  }
+
+  .dotComplete {
+    background: #4ade80;
+  }
+
+  .dotPending {
+    background: #fb923c;
+  }
+
+  /* ---- More menu ---- */
+  .moreBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .moreMenu {
+    position: fixed;
+    bottom: 68px;
+    right: 8px;
+    z-index: 1001;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 180px;
+    animation: moreMenuIn 0.15s ease-out;
+  }
+
+  @keyframes moreMenuIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .moreMenuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+
+  .moreMenuItem:active {
+    background: #f1f5f9;
+  }
+
+  .moreMenuActive {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  .moreMenuExit {
+    color: #ef4444;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 2px;
+    padding-top: 0.85rem;
+  }
+
+  .moreMenuExit:active {
+    background: #fef2f2;
   }
 }

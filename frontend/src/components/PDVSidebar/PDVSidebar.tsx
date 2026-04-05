@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, Users, CreditCard, CheckCircle, RotateCcw, Settings, LogOut, AlertCircle, Check } from 'lucide-react';
+import { Package, Users, CreditCard, CheckCircle, RotateCcw, Settings, LogOut, AlertCircle, Check, MoreHorizontal, X } from 'lucide-react';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVSidebar.module.css';
 
@@ -19,14 +19,26 @@ const FLOW_SECTIONS = [
 
 const OTHER_SECTIONS = [
   { id: 'devolucoes', label: 'Devoluções', icon: RotateCcw },
-  { id: 'configuracoes', label: 'Configurações', icon: Settings },
+  { id: 'configuracoes', label: 'Config.', icon: Settings },
 ];
+
+const useIsMobile = (breakpoint = 768) => {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= breakpoint);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [breakpoint]);
+  return isMobile;
+};
 
 type StepStatus = 'pending' | 'complete';
 
 const PDVSidebar: React.FC<PDVSidebarProps> = ({ activeSection }) => {
   const navigate = useNavigate();
   const { cart, selectedClient, payments, resetPDV, getTotalToPay, getTotalPaid } = usePDVStore();
+  const isMobile = useIsMobile();
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const totalToPay = getTotalToPay();
   const totalPaid = getTotalPaid();
@@ -61,6 +73,7 @@ const PDVSidebar: React.FC<PDVSidebarProps> = ({ activeSection }) => {
       return;
     }
     navigate(`/pdv/${sectionId}`);
+    setShowMoreMenu(false);
   };
 
   const renderStatusIcon = (status: StepStatus | null) => {
@@ -79,6 +92,76 @@ const PDVSidebar: React.FC<PDVSidebarProps> = ({ activeSection }) => {
     );
   };
 
+  const renderMobileStatusDot = (status: StepStatus | null) => {
+    if (status === null) return null;
+    return <span className={`${styles.mobileStatusDot} ${status === 'complete' ? styles.dotComplete : styles.dotPending}`} />;
+  };
+
+  /* ── MOBILE: bottom tab bar ── */
+  if (isMobile) {
+    return (
+      <>
+        <nav className={styles.mobileTabBar}>
+          {FLOW_SECTIONS.map(({ id, label, icon: Icon }) => {
+            const isActive = activeSection === id || activeSection.startsWith(id + '/');
+            const status = getStepStatus(id);
+            return (
+              <button
+                key={id}
+                className={`${styles.mobileTab} ${isActive ? styles.mobileTabActive : ''}`}
+                onClick={() => handleNavigate(id)}
+              >
+                <div className={styles.mobileTabIconWrap}>
+                  <Icon size={20} />
+                  {renderMobileStatusDot(status)}
+                </div>
+                <span className={styles.mobileTabLabel}>{label}</span>
+              </button>
+            );
+          })}
+          <button
+            className={`${styles.mobileTab} ${showMoreMenu ? styles.mobileTabActive : ''}`}
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+          >
+            <div className={styles.mobileTabIconWrap}>
+              {showMoreMenu ? <X size={20} /> : <MoreHorizontal size={20} />}
+            </div>
+            <span className={styles.mobileTabLabel}>Mais</span>
+          </button>
+        </nav>
+
+        {showMoreMenu && (
+          <>
+            <div className={styles.moreBackdrop} onClick={() => setShowMoreMenu(false)} />
+            <div className={styles.moreMenu}>
+              {OTHER_SECTIONS.map(({ id, label, icon: Icon }) => {
+                const isActive = activeSection === id;
+                return (
+                  <button
+                    key={id}
+                    className={`${styles.moreMenuItem} ${isActive ? styles.moreMenuActive : ''}`}
+                    onClick={() => handleNavigate(id)}
+                  >
+                    <Icon size={20} />
+                    <span>{label}</span>
+                  </button>
+                );
+              })}
+              <button
+                className={`${styles.moreMenuItem} ${styles.moreMenuExit}`}
+                onClick={() => handleNavigate('sair')}
+              >
+                <LogOut size={20} />
+                <span>Sair do PDV</span>
+              </button>
+            </div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  /* ── DESKTOP: sidebar original ── */
   return (
     <aside className={styles.sidebar}>
       <div className={styles.content}>

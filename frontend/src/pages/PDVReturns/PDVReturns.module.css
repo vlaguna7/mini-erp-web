@@ -301,3 +301,50 @@
   background: #cbd5e1;
   cursor: not-allowed;
 }
+
+/* ===== Responsivo ===== */
+@media (max-width: 768px) {
+  .pdvReturnsTitle {
+    font-size: 1.1rem;
+  }
+
+  .pdvReturnsSearchInput {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
+  }
+
+  .pdvReturnsContent {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 0.65rem;
+  }
+
+  .pdvReturnsList {
+    max-height: 35vh;
+    overflow-y: auto;
+  }
+
+  .pdvReturnsSaleCard {
+    padding: 0.85rem;
+    border-radius: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pdvReturnsSaleCard:active {
+    transform: scale(0.985);
+  }
+
+  .pdvReturnsReverseBtn,
+  .pdvReturnsActionBtn {
+    min-height: 48px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pdvReturnsReverseBtn:active:not(:disabled),
+  .pdvReturnsActionBtn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}

@@ -72,18 +72,18 @@ const PDVClient: React.FC = () => {
         <h2 className={styles.pdvClientTitle}>Cliente</h2>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', width: '100%' }}>
+      <div className={styles.pdvClientSearch}>
         <input
           type="text"
           placeholder="Buscar por nome, email, CPF ou telefone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flex: 1, minWidth: 0, padding: '0.65rem 0.9rem', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', background: 'white', color: '#0f172a' }}
+          className={styles.pdvClientSearchInput}
         />
         <button
           onClick={() => navigate('/pdv/cliente/criar-cliente')}
           type="button"
-          style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.65rem 1rem', background: '#2563eb', color: '#fff', border: '1.5px solid #2563eb', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          className={styles.pdvAddClientBtn}
         >
           <Plus size={16} />
           Adicionar Cliente
