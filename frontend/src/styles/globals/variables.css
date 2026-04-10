@@ -103,13 +103,4 @@
   --z-tooltip: 1002;
 }
 
-/* ==================== DARK MODE (Futuro) ==================== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-slate-50: #0f172a;
-    --color-slate-100: #1e293b;
-    --color-slate-200: #334155;
-    --color-slate-500: #94a3b8;
-    --color-slate-900: #f8fafc;
-  }
-}
+/* ==================== DARK MODE (Desativado) ==================== */

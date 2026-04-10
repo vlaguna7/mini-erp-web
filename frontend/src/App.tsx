@@ -19,6 +19,18 @@ import MarcasPage from './pages/MarcasPage';
 import ColecoesPage from './pages/ColecoesPage';
 import FornecedoresPage from './pages/FornecedoresPage';
 import RelatoriosPage from './pages/RelatoriosPage';
+import VendasReport from './pages/RelatoriosPage/reports/VendasReport';
+import ComissoesReport from './pages/RelatoriosPage/reports/ComissoesReport';
+import CanaisVendasReport from './pages/RelatoriosPage/reports/CanaisVendasReport';
+import CaixasReport from './pages/RelatoriosPage/reports/CaixasReport';
+import FormasPagamentoReport from './pages/RelatoriosPage/reports/FormasPagamentoReport';
+import DFCReport from './pages/RelatoriosPage/reports/DFCReport';
+import DesempenhoProdutoReport from './pages/RelatoriosPage/reports/DesempenhoProdutoReport';
+import VendasCategoriasReport from './pages/RelatoriosPage/reports/VendasCategoriasReport';
+import InventarioReport from './pages/RelatoriosPage/reports/InventarioReport';
+import ClientesReport from './pages/RelatoriosPage/reports/ClientesReport';
+import CicloVidaReport from './pages/RelatoriosPage/reports/CicloVidaReport';
+import CreditoClientesReport from './pages/RelatoriosPage/reports/CreditoClientesReport';
 import { PDVLayout } from './layouts/PDVLayout';
 import styles from './App.module.css';
 
@@ -95,6 +107,18 @@ function App() {
           <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Devolução de Venda" /></ProtectedLayout>} />
           <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Financeiro" /></ProtectedLayout>} />
           <Route path="/relatorios" element={<ProtectedLayout isInitializing={isInitializing}><RelatoriosPage /></ProtectedLayout>} />
+          <Route path="/relatorios/vendas" element={<ProtectedLayout isInitializing={isInitializing}><VendasReport /></ProtectedLayout>} />
+          <Route path="/relatorios/comissoes" element={<ProtectedLayout isInitializing={isInitializing}><ComissoesReport /></ProtectedLayout>} />
+          <Route path="/relatorios/canais-vendas" element={<ProtectedLayout isInitializing={isInitializing}><CanaisVendasReport /></ProtectedLayout>} />
+          <Route path="/relatorios/caixas" element={<ProtectedLayout isInitializing={isInitializing}><CaixasReport /></ProtectedLayout>} />
+          <Route path="/relatorios/formas-pagamento" element={<ProtectedLayout isInitializing={isInitializing}><FormasPagamentoReport /></ProtectedLayout>} />
+          <Route path="/relatorios/dfc" element={<ProtectedLayout isInitializing={isInitializing}><DFCReport /></ProtectedLayout>} />
+          <Route path="/relatorios/desempenho-produto" element={<ProtectedLayout isInitializing={isInitializing}><DesempenhoProdutoReport /></ProtectedLayout>} />
+          <Route path="/relatorios/vendas-categorias" element={<ProtectedLayout isInitializing={isInitializing}><VendasCategoriasReport /></ProtectedLayout>} />
+          <Route path="/relatorios/inventario" element={<ProtectedLayout isInitializing={isInitializing}><InventarioReport /></ProtectedLayout>} />
+          <Route path="/relatorios/clientes" element={<ProtectedLayout isInitializing={isInitializing}><ClientesReport /></ProtectedLayout>} />
+          <Route path="/relatorios/ciclo-vida" element={<ProtectedLayout isInitializing={isInitializing}><CicloVidaReport /></ProtectedLayout>} />
+          <Route path="/relatorios/credito-clientes" element={<ProtectedLayout isInitializing={isInitializing}><CreditoClientesReport /></ProtectedLayout>} />
           <Route path="/configuracoes" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Configurações" /></ProtectedLayout>} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>

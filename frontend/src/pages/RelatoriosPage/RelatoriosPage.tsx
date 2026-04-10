@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, X } from 'lucide-react';
 import {
@@ -219,8 +220,24 @@ const shimmerVariants = {
 };
 
 /* ═══════════════════════ COMPONENTE ═══════════════════════ */
+const routeMap: Record<string, string> = {
+  'vendas-geral': '/relatorios/vendas',
+  'comissoes': '/relatorios/comissoes',
+  'canais': '/relatorios/canais-vendas',
+  'caixas': '/relatorios/caixas',
+  'formas-pgto': '/relatorios/formas-pagamento',
+  'dfc': '/relatorios/dfc',
+  'desempenho-produto': '/relatorios/desempenho-produto',
+  'vendas-categorias': '/relatorios/vendas-categorias',
+  'inventario': '/relatorios/inventario',
+  'clientes-geral': '/relatorios/clientes',
+  'ciclo-vida': '/relatorios/ciclo-vida',
+  'credito-clientes': '/relatorios/credito-clientes',
+};
+
 const RelatoriosPage: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleToggle = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -324,7 +341,7 @@ const RelatoriosPage: React.FC = () => {
                           <h3 className={styles.cardTitle}>{sub.title}</h3>
                           <p className={styles.cardDesc}>{sub.description}</p>
 
-                          <button className={styles.cardAction}>
+                          <button className={styles.cardAction} onClick={() => navigate(routeMap[sub.id] || '/relatorios')}>
                             Acessar relatório
                             <ChevronRight size={16} />
                           </button>
