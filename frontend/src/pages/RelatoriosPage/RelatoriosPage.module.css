@@ -1,0 +1,348 @@
+/* ═══════════════════════════════════════════════════════════
+   RelatoriosPage – layout & visual design
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── page scaffold ── */
+.page {
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-3xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── header ── */
+.header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── grid de categorias ── */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ── wrapper de cada categoria ── */
+.categoryWrapper {
+  border-radius: var(--radius-xl);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Botão da Categoria
+   ═══════════════════════════════════════════════════════════ */
+.categoryBtn {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: 20px 24px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: var(--radius-xl);
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.35s ease,
+    background 0.3s ease;
+}
+
+.categoryBtn:hover {
+  border-color: var(--cat-accent);
+  box-shadow: 0 0 0 3px var(--cat-glow), 0 8px 24px var(--cat-glow);
+}
+
+.categoryBtnActive {
+  border-color: var(--cat-accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--cat-glow), 0 8px 24px var(--cat-glow);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* shimmer streak */
+.shimmer {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* icon wrap – fundo claro com borda suave */
+.categoryIconWrap {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.categoryBtn:hover .categoryIconWrap {
+  transform: scale(1.08) rotate(-2deg);
+  background: #e2e8f0;
+}
+
+.categoryLabel {
+  flex: 1;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: #0f172a;
+  text-align: left;
+}
+
+.chevron {
+  display: grid;
+  place-items: center;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.categoryBtnActive .chevron {
+  color: var(--cat-accent);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Painel expandido
+   ═══════════════════════════════════════════════════════════ */
+.panel {
+  overflow: hidden;
+  border: 1.5px solid #e2e8f0;
+  border-top: none;
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
+  background: #f8fafc;
+  padding: 0 4px;
+}
+
+.cardsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Card de sub-relatório
+   ═══════════════════════════════════════════════════════════ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px 22px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
+  cursor: default;
+}
+
+.card:hover {
+  border-color: var(--cat-accent);
+}
+
+/* número decorativo */
+.cardNumber {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1;
+  color: #f1f5f9;
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.3s;
+}
+
+.card:hover .cardNumber {
+  color: #e2e8f0;
+}
+
+/* barra superior accent */
+.cardTopBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--cat-accent);
+  border-radius: 16px 16px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .cardTopBar {
+  opacity: 1;
+}
+
+/* ícone com pulsação */
+.cardIconArea {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+}
+
+.cardRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--cat-accent);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.35s, transform 0.35s;
+  animation: none;
+}
+
+.card:hover .cardRing {
+  opacity: 0.35;
+  transform: scale(1);
+  animation: ringPulse 1.8s ease-out infinite;
+}
+
+@keyframes ringPulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* Círculo do ícone – fundo claro, sem gradiente */
+.cardIconCircle {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card:hover .cardIconCircle {
+  transform: scale(1.1) rotate(6deg);
+  background: #e2e8f0;
+}
+
+.cardTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: #0f172a;
+  margin: 0 0 8px;
+  line-height: var(--line-height-tight);
+}
+
+.cardDesc {
+  font-size: var(--font-size-sm);
+  color: #64748b;
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 auto;
+  padding-bottom: 18px;
+}
+
+/* botão "Acessar relatório" */
+.cardAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--cat-accent);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s, transform 0.3s, gap 0.25s;
+}
+
+.card:hover .cardAction {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardAction:hover {
+  gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Responsivo
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .cardsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-2xl);
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .categoryBtn {
+    padding: 16px 18px;
+  }
+
+  .categoryIconWrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .categoryLabel {
+    font-size: var(--font-size-base);
+  }
+
+  .cardsRow {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .card {
+    padding: 22px 18px 18px;
+  }
+
+  .cardNumber {
+    font-size: 40px;
+  }
+}
