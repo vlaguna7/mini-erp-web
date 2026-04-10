@@ -162,7 +162,7 @@ const PDVProducts: React.FC = () => {
                   </span>
                   <div className={styles.pdvProductStock}>
                     <span className={`${styles.pdvStockQuantity} ${product.stock <= 0 ? styles.stockZero : ''}`}>{product.stock}</span>
-                    <span className={`${styles.pdvStockUnit} ${product.stock <= 0 ? styles.stockZero : ''}`}>UN</span>
+                    <span className={`${styles.pdvStockUnit} ${product.stock <= 0 ? styles.stockZero : ''}`}>{product.unitType || 'UN'}</span>
                   </div>
                 </div>
               </button>
