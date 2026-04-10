@@ -44,8 +44,8 @@ const categories: ReportCategory[] = [
     id: 'vendas',
     icon: iconBarChart,
     label: 'Relatório de Vendas',
-    accentColor: '#6366f1',
-    glowColor: 'rgba(99,102,241,.18)',
+    accentColor: '#2563eb',
+    glowColor: 'rgba(37,99,235,.15)',
     subReports: [
       {
         id: 'vendas-geral',
@@ -74,8 +74,8 @@ const categories: ReportCategory[] = [
     id: 'financeiro',
     icon: iconMoneyBag,
     label: 'Relatório do Financeiro',
-    accentColor: '#10b981',
-    glowColor: 'rgba(16,185,129,.18)',
+    accentColor: '#2563eb',
+    glowColor: 'rgba(37,99,235,.15)',
     subReports: [
       {
         id: 'caixas',
@@ -104,8 +104,8 @@ const categories: ReportCategory[] = [
     id: 'estoque',
     icon: iconPackage,
     label: 'Relatório do Estoque',
-    accentColor: '#f59e0b',
-    glowColor: 'rgba(245,158,11,.18)',
+    accentColor: '#2563eb',
+    glowColor: 'rgba(37,99,235,.15)',
     subReports: [
       {
         id: 'desempenho-produto',
@@ -134,8 +134,8 @@ const categories: ReportCategory[] = [
     id: 'clientes',
     icon: iconPeople,
     label: 'Relatório de Clientes',
-    accentColor: '#ec4899',
-    glowColor: 'rgba(236,72,153,.18)',
+    accentColor: '#2563eb',
+    glowColor: 'rgba(37,99,235,.15)',
     subReports: [
       {
         id: 'clientes-geral',
