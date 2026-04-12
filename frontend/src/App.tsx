@@ -31,6 +31,11 @@ import InventarioReport from './pages/RelatoriosPage/reports/InventarioReport';
 import ClientesReport from './pages/RelatoriosPage/reports/ClientesReport';
 import CicloVidaReport from './pages/RelatoriosPage/reports/CicloVidaReport';
 import CreditoClientesReport from './pages/RelatoriosPage/reports/CreditoClientesReport';
+import FinanceiroPage from './pages/FinanceiroPage';
+import LancarDespesaPage from './pages/FinanceiroPage/pages/LancarDespesaPage';
+import DespesaRecorrentePage from './pages/FinanceiroPage/pages/DespesaRecorrentePage';
+import LancarEntradaPage from './pages/FinanceiroPage/pages/LancarEntradaPage';
+import RenegociacaoDividaPage from './pages/FinanceiroPage/pages/RenegociacaoDividaPage';
 import { PDVLayout } from './layouts/PDVLayout';
 import styles from './App.module.css';
 
@@ -105,7 +110,11 @@ function App() {
           <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><ListaClientesPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-venda" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Venda" /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Devolução de Venda" /></ProtectedLayout>} />
-          <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Financeiro" /></ProtectedLayout>} />
+          <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><FinanceiroPage /></ProtectedLayout>} />
+          <Route path="/financeiro/lancar-despesa" element={<ProtectedLayout isInitializing={isInitializing}><LancarDespesaPage /></ProtectedLayout>} />
+          <Route path="/financeiro/despesa-recorrente" element={<ProtectedLayout isInitializing={isInitializing}><DespesaRecorrentePage /></ProtectedLayout>} />
+          <Route path="/financeiro/lancar-entrada" element={<ProtectedLayout isInitializing={isInitializing}><LancarEntradaPage /></ProtectedLayout>} />
+          <Route path="/financeiro/renegociacao-divida" element={<ProtectedLayout isInitializing={isInitializing}><RenegociacaoDividaPage /></ProtectedLayout>} />
           <Route path="/relatorios" element={<ProtectedLayout isInitializing={isInitializing}><RelatoriosPage /></ProtectedLayout>} />
           <Route path="/relatorios/vendas" element={<ProtectedLayout isInitializing={isInitializing}><VendasReport /></ProtectedLayout>} />
           <Route path="/relatorios/comissoes" element={<ProtectedLayout isInitializing={isInitializing}><ComissoesReport /></ProtectedLayout>} />

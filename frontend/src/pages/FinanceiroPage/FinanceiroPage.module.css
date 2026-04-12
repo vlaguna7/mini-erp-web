@@ -1,0 +1,268 @@
+/* ═══════════════════════════════════════════════════════════
+   FinanceiroPage – layout & visual design (mesmo padrão de RelatoriosPage)
+   ═══════════════════════════════════════════════════════════ */
+
+.page {
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-3xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── header ── */
+.header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── grid de ações ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Card de ação
+   ═══════════════════════════════════════════════════════════ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px 22px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: #3b82f6;
+}
+
+.cardLocked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cardLocked:hover {
+  border-color: #e2e8f0;
+}
+
+/* número decorativo */
+.cardNumber {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1;
+  color: #f1f5f9;
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.3s;
+}
+
+.card:hover .cardNumber {
+  color: #e2e8f0;
+}
+
+.cardLocked:hover .cardNumber {
+  color: #f1f5f9;
+}
+
+/* barra superior accent */
+.cardTopBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 16px 16px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .cardTopBar {
+  opacity: 1;
+}
+
+.cardLocked:hover .cardTopBar {
+  opacity: 0;
+}
+
+/* ícone com pulsação */
+.cardIconArea {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+}
+
+.cardRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid #3b82f6;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.35s, transform 0.35s;
+  animation: none;
+}
+
+.card:hover .cardRing {
+  opacity: 0.35;
+  transform: scale(1);
+  animation: ringPulse 1.8s ease-out infinite;
+}
+
+.cardLocked:hover .cardRing {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes ringPulse {
+  0% { opacity: 0.35; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+.cardIconCircle {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #2563eb;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card:hover .cardIconCircle {
+  transform: scale(1.1) rotate(6deg);
+  background: #e2e8f0;
+}
+
+.cardLocked:hover .cardIconCircle {
+  transform: none;
+  background: #f1f5f9;
+}
+
+.cardIconLocked {
+  color: #94a3b8;
+}
+
+.lockBadge {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+}
+
+.cardTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: #0f172a;
+  margin: 0 0 8px;
+  line-height: var(--line-height-tight);
+}
+
+.cardDesc {
+  font-size: var(--font-size-sm);
+  color: #64748b;
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 auto;
+  padding-bottom: 18px;
+}
+
+/* botão "Acessar" */
+.cardAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #2563eb;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s, transform 0.3s, gap 0.25s;
+}
+
+.card:hover .cardAction {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardAction:hover {
+  gap: 10px;
+}
+
+.lockLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #94a3b8;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Responsivo
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-2xl);
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .card {
+    padding: 22px 18px 18px;
+  }
+
+  .cardNumber {
+    font-size: 40px;
+  }
+}

@@ -24,9 +24,11 @@ model User {
   entries            Entry[]
   sales              Sale[]
   returns            Return[]
-  productCategories  ProductCategory[]
-  productBrands      ProductBrand[]
-  productCollections ProductCollection[]
+  productCategories      ProductCategory[]
+  productBrands          ProductBrand[]
+  productCollections     ProductCollection[]
+  financialTransactions  FinancialTransaction[]
+  recurringExpenses      RecurringExpense[]
 
   @@index([email], name: "idx_users_email")
   @@map("users")
@@ -326,4 +328,45 @@ model Return {
 
   @@index([userId], name: "idx_returns_user_id")
   @@map("returns")
+}
+
+model FinancialTransaction {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  type          String   @db.VarChar(30) // DESPESA, RECEITA, RENEGOCIACAO
+  category      String?  @db.VarChar(100)
+  description   String   @db.VarChar(255)
+  value         Decimal  @db.Decimal(10, 2)
+  date          DateTime @db.Date
+  paymentMethod String?  @map("payment_method") @db.VarChar(50)
+  status        String   @default("PAGO") @db.VarChar(20)
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "idx_financial_transactions_user_id")
+  @@map("financial_transactions")
+}
+
+model RecurringExpense {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  description String    @db.VarChar(255)
+  category    String?   @db.VarChar(100)
+  value       Decimal   @db.Decimal(10, 2)
+  frequency   String    @db.VarChar(20) // MENSAL, SEMANAL, QUINZENAL, ANUAL
+  dayOfMonth  Int?      @map("day_of_month")
+  startDate   DateTime  @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  active      Boolean   @default(true)
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "idx_recurring_expenses_user_id")
+  @@map("recurring_expenses")
 }
