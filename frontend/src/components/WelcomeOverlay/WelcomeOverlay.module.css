@@ -1,0 +1,197 @@
+/* ═══════════════════════════════════════════════════════════
+   WelcomeOverlay — full-screen login entrance animation
+   ═══════════════════════════════════════════════════════════ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0f172a 100%);
+  overflow: hidden;
+}
+
+/* ── Particle field ── */
+.particleField {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 6px 2px rgba(59, 130, 246, 0.4);
+}
+
+/* ── Radial glow ── */
+.glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Center content ── */
+.center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* ── Logo ── */
+.logoWrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: grid;
+  place-items: center;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+  position: relative;
+  z-index: 1;
+}
+
+.logoRing {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  animation: ringRotate 3s linear infinite;
+}
+
+.logoRing::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 12px 4px rgba(59, 130, 246, 0.6);
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Text ── */
+.textBlock {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.welcomeTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin: 0;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.welcomeName {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
+}
+
+/* ── Progress bar ── */
+.progressTrack {
+  width: 180px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  transform-origin: center;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+  background-size: 200% 100%;
+  animation: shimmerBar 1.2s ease infinite;
+  transform-origin: left;
+}
+
+@keyframes shimmerBar {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Curtains ── */
+.curtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0f172a 100%);
+  z-index: 3;
+}
+
+.curtainTop {
+  top: 0;
+}
+
+.curtainBottom {
+  bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .welcomeName {
+    font-size: 1.6rem;
+  }
+
+  .welcomeTitle {
+    font-size: 0.85rem;
+  }
+
+  .logoWrap {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .progressTrack {
+    width: 140px;
+  }
+}

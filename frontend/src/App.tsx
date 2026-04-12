@@ -37,6 +37,8 @@ import DespesaRecorrentePage from './pages/FinanceiroPage/pages/DespesaRecorrent
 import LancarEntradaPage from './pages/FinanceiroPage/pages/LancarEntradaPage';
 import RenegociacaoDividaPage from './pages/FinanceiroPage/pages/RenegociacaoDividaPage';
 import { PDVLayout } from './layouts/PDVLayout';
+import WelcomeOverlay from './components/WelcomeOverlay';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './App.module.css';
 
 const useIsMobile = (breakpoint = 768) => {
@@ -56,8 +58,18 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
   isInitializing,
 }) => {
   const user = useAuthStore((state) => state.user);
+  const justLoggedIn = useAuthStore((state) => state.justLoggedIn);
   const { isOpen, setIsOpen } = useSidebar();
   const isMobile = useIsMobile();
+  const [showEntrance, setShowEntrance] = useState(justLoggedIn);
+
+  useEffect(() => {
+    if (justLoggedIn) {
+      setShowEntrance(true);
+      const timer = setTimeout(() => setShowEntrance(false), 2900);
+      return () => clearTimeout(timer);
+    }
+  }, [justLoggedIn]);
 
   if (isInitializing) {
     return (
@@ -70,15 +82,29 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode; isInitializing: boo
   if (!user) return <Navigate to="/login" />;
 
   return (
-    <div className={styles.flexLayout}>
-      <div className={styles.flexRow}>
-        <Sidebar />
+    <>
+      <WelcomeOverlay />
+      <div className={styles.flexLayout}>
+        <div className={styles.flexRow}>
+          <motion.div
+            initial={showEntrance ? { x: -260, opacity: 0 } : false}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: showEntrance ? 2.2 : 0, duration: 0.5, type: 'spring', stiffness: 120, damping: 18 }}
+          >
+            <Sidebar />
+          </motion.div>
 
-        <main className={`${styles.mainContent} ${!isMobile ? (isOpen ? styles.sidebarOpen : '') : ''}`}>
-          {children}
-        </main>
+          <motion.main
+            className={`${styles.mainContent} ${!isMobile ? (isOpen ? styles.sidebarOpen : '') : ''}`}
+            initial={showEntrance ? { opacity: 0, y: 30 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: showEntrance ? 2.4 : 0, duration: 0.6, ease: 'easeOut' }}
+          >
+            {children}
+          </motion.main>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
