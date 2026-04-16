@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Camera, CheckCircle } from 'lucide-react';
 import { clientService, ClientData } from '../../services/clientService';
 import styles from './CadastrarClientePage.module.css';
 
@@ -97,6 +98,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [redirecting, setRedirecting] = useState(false);
 
   // Form fields
   const [personType, setPersonType] = useState<'fisica' | 'juridica'>('fisica');
@@ -236,7 +238,8 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
       }
 
       setSuccessMsg(isEditing ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
-      setTimeout(() => navigate('/vendas-e-clientes/lista-clientes'), 1000);
+      setRedirecting(true);
+      setTimeout(() => navigate('/vendas-e-clientes/lista-clientes'), 1800);
     } catch (err: any) {
       const msg =
         err?.response?.data?.errors?.[0]?.msg ||
@@ -272,6 +275,57 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
 
   return (
     <div className={styles.container}>
+      {/* Overlay de sucesso animado */}
+      <AnimatePresence>
+        {redirecting && (
+          <motion.div
+            className={styles.successOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
+            <motion.div
+              className={styles.successCard}
+              initial={{ scale: 0.5, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.1 }}
+            >
+              <motion.div
+                className={styles.successIconWrap}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.3 }}
+              >
+                <CheckCircle size={48} />
+              </motion.div>
+              <motion.h2
+                className={styles.successTitle}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+              >
+                {successMsg}
+              </motion.h2>
+              <motion.p
+                className={styles.successSubtitle}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.3 }}
+              >
+                Redirecionando para a lista de clientes…
+              </motion.p>
+              <motion.div
+                className={styles.successBar}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.4, delay: 0.3, ease: 'easeInOut' }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <h1 className={styles.title}>{isEditing ? 'Editar Cliente' : 'Cadastrar Cliente'}</h1>
 
       {/* Tabs */}
@@ -288,7 +342,6 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
       </div>
 
       {/* Feedback */}
-      {successMsg && <div className={styles.successMsg}>{successMsg}</div>}
       {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
 
       {/* Content */}
