@@ -236,23 +236,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
       }
 
       setSuccessMsg(isEditing ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
-
-      if (isEditing) {
-        setTimeout(() => navigate('/vendas-e-clientes/lista-clientes'), 1000);
-      } else {
-        // Reset form
-        setName('');
-        setCpfCnpj('');
-        setGender('');
-        setBirthDate('');
-        setWhatsapp('');
-        setInstagram('');
-        setEmail('');
-        setPhone('');
-        setPhoto(null);
-        setErrors({});
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      }
+      setTimeout(() => navigate('/vendas-e-clientes/lista-clientes'), 1000);
     } catch (err: any) {
       const msg =
         err?.response?.data?.errors?.[0]?.msg ||
