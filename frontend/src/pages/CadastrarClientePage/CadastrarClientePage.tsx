@@ -252,7 +252,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   };
 
   const handleCancel = () => {
-    navigate(cancelPath || '/vendas-e-clientes');
+    navigate(cancelPath || '/vendas-e-clientes/lista-clientes');
   };
 
   const handleCpfCnpjChange = (value: string) => {
