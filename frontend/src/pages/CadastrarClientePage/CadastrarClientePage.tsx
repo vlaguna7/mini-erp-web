@@ -99,6 +99,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [redirecting, setRedirecting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   // Form fields
   const [personType, setPersonType] = useState<'fisica' | 'juridica'>('fisica');
@@ -252,7 +253,9 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   };
 
   const handleCancel = () => {
-    navigate(cancelPath || '/vendas-e-clientes/lista-clientes');
+    const target = cancelPath || '/vendas-e-clientes/lista-clientes';
+    setLeaving(true);
+    setTimeout(() => navigate(target), 350);
   };
 
   const handleCpfCnpjChange = (value: string) => {
@@ -274,7 +277,11 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   };
 
   return (
-    <div className={styles.container}>
+    <motion.div
+      className={styles.container}
+      animate={leaving ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+    >
       {/* Overlay de sucesso animado */}
       <AnimatePresence>
         {redirecting && (
@@ -493,7 +500,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
           {saving ? 'Salvando...' : isEditing ? 'Atualizar Cliente' : 'Salvar'}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
