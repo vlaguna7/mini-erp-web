@@ -215,6 +215,8 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
 
     if (!name.trim()) {
       newErrors.name = 'Nome é obrigatório';
+    } else if (name.length > 100) {
+      newErrors.name = 'Nome deve ter no máximo 100 caracteres';
     }
 
     if (cpfCnpj.trim()) {
@@ -229,8 +231,25 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
       }
     }
 
-    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'E-mail inválido';
+    if (email.trim()) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        newErrors.email = 'E-mail inválido';
+      } else if (email.length > 100) {
+        newErrors.email = 'E-mail deve ter no máximo 100 caracteres';
+      }
+    }
+
+    if (instagram.length > 100) newErrors.instagram = 'Instagram deve ter no máximo 100 caracteres';
+    if (street.length > 200) newErrors.street = 'Rua deve ter no máximo 200 caracteres';
+    if (addressNumber.length > 20) newErrors.number = 'Número deve ter no máximo 20 caracteres';
+    if (complement.length > 100) newErrors.complement = 'Complemento deve ter no máximo 100 caracteres';
+    if (neighborhood.length > 100) newErrors.neighborhood = 'Bairro deve ter no máximo 100 caracteres';
+    if (city.length > 100) newErrors.city = 'Cidade deve ter no máximo 100 caracteres';
+    if (observations.length > 2000) newErrors.observations = 'Observações deve ter no máximo 2000 caracteres';
+
+    // Foto base64 — limitar a ~7MB para evitar payloads enormes
+    if (photo && photo.length > 7 * 1024 * 1024) {
+      newErrors.photo = 'Foto muito grande. Use uma imagem menor que 5MB.';
     }
 
     setErrors(newErrors);
@@ -455,6 +474,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
               placeholder="Nome completo"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              maxLength={100}
               className={errors.name ? styles.error : ''}
             />
             {errors.name && <span className={styles.errorText}>{errors.name}</span>}
@@ -501,6 +521,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
               placeholder="@usuario"
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
+              maxLength={100}
             />
           </div>
 
@@ -512,6 +533,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
               placeholder="email@exemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              maxLength={100}
               className={errors.email ? styles.error : ''}
             />
             {errors.email && <span className={styles.errorText}>{errors.email}</span>}
@@ -562,6 +584,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
                 placeholder="Cidade"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                maxLength={100}
               />
             </div>
 
@@ -572,6 +595,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
                 placeholder="Bairro"
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}
+                maxLength={100}
               />
             </div>
 
@@ -582,6 +606,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
                 placeholder="Rua, Avenida, etc."
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
+                maxLength={200}
               />
             </div>
 
@@ -592,6 +617,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
                 placeholder="Nº"
                 value={addressNumber}
                 onChange={(e) => setAddressNumber(e.target.value)}
+                maxLength={20}
               />
             </div>
 
@@ -602,6 +628,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
                 placeholder="Apto, Bloco, Sala..."
                 value={complement}
                 onChange={(e) => setComplement(e.target.value)}
+                maxLength={100}
               />
             </div>
           </div>
@@ -619,6 +646,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
               value={observations}
               onChange={(e) => setObservations(e.target.value)}
               rows={8}
+              maxLength={2000}
             />
           </div>
         </div>
