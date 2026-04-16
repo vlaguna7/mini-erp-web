@@ -314,18 +314,73 @@ const CriarProdutoPage: React.FC = () => {
   };
 
   // ── Validação ──
-  const validate = (): boolean => {
+  const validate = (): Record<string, string> | null => {
     const newErrors: Record<string, string> = {};
+
+    // Informações gerais
     if (!name.trim()) newErrors.name = 'Nome do produto é obrigatório';
+    if (name.length > 100) newErrors.name = 'Nome deve ter no máximo 100 caracteres';
     if (!code.trim()) newErrors.code = 'Código do produto (SKU) é obrigatório';
+    if (code.length > 50) newErrors.code = 'Código deve ter no máximo 50 caracteres';
+
+    // Valores
+    const parsedPriceCost = parseFloat(priceCost);
+    const parsedPriceSale = parseFloat(priceSale);
+    const parsedMarkup = parseFloat(markup);
+    if (priceCost && (isNaN(parsedPriceCost) || parsedPriceCost < 0 || parsedPriceCost > 99999999.99))
+      newErrors.priceCost = 'Valor de custo deve ser entre 0 e 99.999.999,99';
+    if (priceSale && (isNaN(parsedPriceSale) || parsedPriceSale < 0 || parsedPriceSale > 99999999.99))
+      newErrors.priceSale = 'Valor de venda deve ser entre 0 e 99.999.999,99';
+    if (markup && (isNaN(parsedMarkup) || parsedMarkup < -100 || parsedMarkup > 99999.99))
+      newErrors.markup = 'Markup deve ser entre -100% e 99.999,99%';
+
+    // Estoque
+    const parsedStock = parseInt(quantityStock);
+    const parsedMinStock = parseInt(minStock);
+    const parsedMaxStock = parseInt(maxStock);
+    if (quantityStock && (isNaN(parsedStock) || parsedStock < 0 || parsedStock > 9999999))
+      newErrors.quantityStock = 'Estoque deve ser entre 0 e 9.999.999';
+    if (minStock && (isNaN(parsedMinStock) || parsedMinStock < 0 || parsedMinStock > 9999999))
+      newErrors.minStock = 'Estoque mínimo deve ser entre 0 e 9.999.999';
+    if (maxStock && (isNaN(parsedMaxStock) || parsedMaxStock < 0 || parsedMaxStock > 9999999))
+      newErrors.maxStock = 'Estoque máximo deve ser entre 0 e 9.999.999';
+    if (minStock && maxStock && !isNaN(parsedMinStock) && !isNaN(parsedMaxStock) && parsedMinStock > parsedMaxStock)
+      newErrors.minStock = 'Estoque mínimo não pode ser maior que o máximo';
+
+    // Pesos e dimensões
+    const parsedWeight = parseFloat(weight);
+    const parsedHeight = parseFloat(height);
+    const parsedWidth = parseFloat(width);
+    const parsedDepth = parseFloat(depth);
+    if (weight && (isNaN(parsedWeight) || parsedWeight < 0 || parsedWeight > 9999999.999))
+      newErrors.weight = 'Peso deve ser entre 0 e 9.999.999,999 kg';
+    if (height && (isNaN(parsedHeight) || parsedHeight < 0 || parsedHeight > 99999.99))
+      newErrors.height = 'Altura deve ser entre 0 e 99.999,99 cm';
+    if (width && (isNaN(parsedWidth) || parsedWidth < 0 || parsedWidth > 99999.99))
+      newErrors.width = 'Largura deve ser entre 0 e 99.999,99 cm';
+    if (depth && (isNaN(parsedDepth) || parsedDepth < 0 || parsedDepth > 99999.99))
+      newErrors.depth = 'Profundidade deve ser entre 0 e 99.999,99 cm';
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (Object.keys(newErrors).length === 0) return null;
+    return newErrors;
+  };
+
+  // Mapeia campo com erro para a aba correspondente
+  const getTabForError = (field: string): number => {
+    if (['name', 'code'].includes(field)) return 0;
+    if (['priceCost', 'priceSale', 'markup'].includes(field)) return 2;
+    if (['quantityStock', 'minStock', 'maxStock'].includes(field)) return 3;
+    if (['weight', 'height', 'width', 'depth'].includes(field)) return 5;
+    return 0;
   };
 
   // ── Salvar ──
   const handleSave = async () => {
-    if (!validate()) {
-      setActiveTab(0);
+    const validationErrors = validate();
+    if (validationErrors) {
+      const firstErrorField = Object.keys(validationErrors)[0];
+      setActiveTab(getTabForError(firstErrorField));
       return;
     }
 
@@ -419,6 +474,7 @@ const CriarProdutoPage: React.FC = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Nome do produto"
+          maxLength={100}
           className={errors.name ? styles.error : ''}
         />
         {errors.name && <span className={styles.errorText}>{errors.name}</span>}
@@ -508,6 +564,7 @@ const CriarProdutoPage: React.FC = () => {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="Ex: PROD-001"
+          maxLength={50}
           className={errors.code ? styles.error : ''}
         />
         {errors.code && <span className={styles.errorText}>{errors.code}</span>}
@@ -519,6 +576,7 @@ const CriarProdutoPage: React.FC = () => {
           value={barcode}
           onChange={(e) => setBarcode(e.target.value)}
           placeholder="Gerado automaticamente se vazio"
+          maxLength={50}
         />
       </div>
 
@@ -528,6 +586,7 @@ const CriarProdutoPage: React.FC = () => {
           value={observations}
           onChange={(e) => setObservations(e.target.value)}
           placeholder="Observações sobre o produto..."
+          maxLength={2000}
         />
       </div>
     </div>
@@ -548,10 +607,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.01"
           min="0"
+          max="99999999.99"
           value={priceCost}
           onChange={(e) => handlePriceCostChange(e.target.value)}
           placeholder="0,00"
+          className={errors.priceCost ? styles.error : ''}
         />
+        {errors.priceCost && <span className={styles.errorText}>{errors.priceCost}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -559,10 +621,14 @@ const CriarProdutoPage: React.FC = () => {
         <input
           type="number"
           step="0.01"
+          min="-100"
+          max="99999.99"
           value={markup}
           onChange={(e) => handleMarkupChange(e.target.value)}
           placeholder="0,00"
+          className={errors.markup ? styles.error : ''}
         />
+        {errors.markup && <span className={styles.errorText}>{errors.markup}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -571,10 +637,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.01"
           min="0"
+          max="99999999.99"
           value={priceSale}
           onChange={(e) => handlePriceSaleChange(e.target.value)}
           placeholder="0,00"
+          className={errors.priceSale ? styles.error : ''}
         />
+        {errors.priceSale && <span className={styles.errorText}>{errors.priceSale}</span>}
       </div>
     </div>
   );
@@ -586,10 +655,12 @@ const CriarProdutoPage: React.FC = () => {
         <input
           type="number"
           min="0"
+          max="9999999"
           value={quantityStock}
           onChange={(e) => setQuantityStock(e.target.value)}
           placeholder="0"
         />
+        {errors.quantityStock && <span className={styles.errorText}>{errors.quantityStock}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -597,10 +668,12 @@ const CriarProdutoPage: React.FC = () => {
         <input
           type="number"
           min="0"
+          max="9999999"
           value={minStock}
           onChange={(e) => setMinStock(e.target.value)}
           placeholder="0"
         />
+        {errors.minStock && <span className={styles.errorText}>{errors.minStock}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -608,10 +681,12 @@ const CriarProdutoPage: React.FC = () => {
         <input
           type="number"
           min="0"
+          max="9999999"
           value={maxStock}
           onChange={(e) => setMaxStock(e.target.value)}
           placeholder="0"
         />
+        {errors.maxStock && <span className={styles.errorText}>{errors.maxStock}</span>}
       </div>
     </div>
   );
@@ -649,10 +724,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.001"
           min="0"
+          max="9999999.999"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
           placeholder="0,000"
+          className={errors.weight ? styles.error : ''}
         />
+        {errors.weight && <span className={styles.errorText}>{errors.weight}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -661,10 +739,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.01"
           min="0"
+          max="99999.99"
           value={height}
           onChange={(e) => setHeight(e.target.value)}
           placeholder="0,00"
+          className={errors.height ? styles.error : ''}
         />
+        {errors.height && <span className={styles.errorText}>{errors.height}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -673,10 +754,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.01"
           min="0"
+          max="99999.99"
           value={width}
           onChange={(e) => setWidth(e.target.value)}
           placeholder="0,00"
+          className={errors.width ? styles.error : ''}
         />
+        {errors.width && <span className={styles.errorText}>{errors.width}</span>}
       </div>
 
       <div className={styles.fieldGroup}>
@@ -685,10 +769,13 @@ const CriarProdutoPage: React.FC = () => {
           type="number"
           step="0.01"
           min="0"
+          max="99999.99"
           value={depth}
           onChange={(e) => setDepth(e.target.value)}
           placeholder="0,00"
+          className={errors.depth ? styles.error : ''}
         />
+        {errors.depth && <span className={styles.errorText}>{errors.depth}</span>}
       </div>
     </div>
   );
@@ -773,6 +860,7 @@ const CriarProdutoPage: React.FC = () => {
           value={ecommerceDescription}
           onChange={(e) => setEcommerceDescription(e.target.value)}
           placeholder="Descrição detalhada do produto para a loja virtual..."
+          maxLength={5000}
         />
       </div>
 
