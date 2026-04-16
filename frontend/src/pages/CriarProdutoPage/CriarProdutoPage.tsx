@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera, Package } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Camera, Package, CheckCircle } from 'lucide-react';
 import { productService, ProductFormData } from '../../services/productService';
 import { productCategoryService, ProductCategoryData } from '../../services/productCategoryService';
 import { productBrandService, ProductBrandData } from '../../services/productBrandService';
@@ -147,6 +148,8 @@ const CriarProdutoPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [redirecting, setRedirecting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   // Lookups
   const [categories, setCategories] = useState<ProductCategoryData[]>([]);
@@ -427,7 +430,9 @@ const CriarProdutoPage: React.FC = () => {
       } else {
         await productService.createProduct(data);
       }
-      navigate('/estoque');
+      setSuccessMsg(isEditing ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!');
+      setRedirecting(true);
+      setTimeout(() => navigate('/estoque'), 1800);
     } catch (err: any) {
       const msg =
         err?.response?.data?.errors?.[0]?.msg ||
@@ -886,8 +891,68 @@ const CriarProdutoPage: React.FC = () => {
     </div>
   );
 
+  const handleCancel = () => {
+    setLeaving(true);
+    setTimeout(() => navigate('/estoque'), 350);
+  };
+
   return (
-    <div className={styles.container}>
+    <motion.div
+      className={styles.container}
+      animate={leaving ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+    >
+      {/* Overlay de sucesso animado */}
+      <AnimatePresence>
+        {redirecting && (
+          <motion.div
+            className={styles.successOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
+            <motion.div
+              className={styles.successCard}
+              initial={{ scale: 0.5, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.1 }}
+            >
+              <motion.div
+                className={styles.successIconWrap}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.3 }}
+              >
+                <CheckCircle size={48} />
+              </motion.div>
+              <motion.h2
+                className={styles.successTitle}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+              >
+                {successMsg}
+              </motion.h2>
+              <motion.p
+                className={styles.successSubtitle}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.3 }}
+              >
+                Redirecionando para o estoque…
+              </motion.p>
+              <motion.div
+                className={styles.successBar}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.4, delay: 0.3, ease: 'easeInOut' }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <h1 className={styles.title}>{isEditing ? 'Editar Produto' : 'Cadastrar Produto'}</h1>
 
       {/* Tabs */}
@@ -905,7 +970,6 @@ const CriarProdutoPage: React.FC = () => {
       </div>
 
       {/* Feedback */}
-      {successMsg && <div className={styles.successMsg}>{successMsg}</div>}
       {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
 
       {/* Tab content */}
@@ -913,7 +977,7 @@ const CriarProdutoPage: React.FC = () => {
 
       {/* Footer */}
       <div className={styles.footer}>
-        <button className={styles.btnCancel} onClick={() => navigate('/estoque')} type="button">
+        <button className={styles.btnCancel} onClick={handleCancel} type="button">
           Cancelar
         </button>
         <button className={styles.btnSave} onClick={handleSave} disabled={saving || loading} type="button">
@@ -968,7 +1032,7 @@ const CriarProdutoPage: React.FC = () => {
           onClose={() => setShowSupplierModal(false)}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 
