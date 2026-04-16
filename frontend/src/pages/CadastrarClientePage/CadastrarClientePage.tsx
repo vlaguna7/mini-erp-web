@@ -80,6 +80,16 @@ function maskPhone(value: string): string {
     .replace(/(\d{5})(\d)/, '$1-$2');
 }
 
+function maskCEP(value: string): string {
+  const d = value.replace(/\D/g, '').slice(0, 8);
+  return d.replace(/(\d{5})(\d)/, '$1-$2');
+}
+
+const UF_OPTIONS = [
+  'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG',
+  'PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO',
+];
+
 const TABS = ['Dados gerais', 'Endereço', 'Observações'];
 
 interface CadastrarClientePageProps {
@@ -93,7 +103,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   const isEditing = Boolean(clientId);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [activeTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -112,6 +122,18 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
+
+  // Address fields
+  const [zipCode, setZipCode] = useState('');
+  const [street, setStreet] = useState('');
+  const [addressNumber, setAddressNumber] = useState('');
+  const [complement, setComplement] = useState('');
+  const [neighborhood, setNeighborhood] = useState('');
+  const [city, setCity] = useState('');
+  const [addressState, setAddressState] = useState('');
+
+  // Observations
+  const [observations, setObservations] = useState('');
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -139,6 +161,14 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
         setEmail(c.email || '');
         setPhone(c.phone ? maskPhone(c.phone) : '');
         setPhoto(c.photo || null);
+        setZipCode(c.zipCode ? maskCEP(c.zipCode) : '');
+        setStreet(c.street || '');
+        setAddressNumber(c.number || '');
+        setComplement(c.complement || '');
+        setNeighborhood(c.neighborhood || '');
+        setCity(c.city || '');
+        setAddressState(c.state || '');
+        setObservations(c.observations || '');
       } catch (err) {
         console.error('Erro ao carregar cliente:', err);
         setErrorMsg('Erro ao carregar dados do cliente.');
@@ -226,6 +256,14 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
         instagram: instagram.trim() || undefined,
         email: email.trim() || undefined,
         photo: photo || undefined,
+        zipCode: zipCode.replace(/\D/g, '') || undefined,
+        street: street.trim() || undefined,
+        number: addressNumber.trim() || undefined,
+        complement: complement.trim() || undefined,
+        neighborhood: neighborhood.trim() || undefined,
+        city: city.trim() || undefined,
+        state: addressState || undefined,
+        observations: observations.trim() || undefined,
       };
 
       if (isEditing) {
@@ -340,8 +378,8 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
         {TABS.map((tab, idx) => (
           <button
             key={tab}
-            className={`${styles.tab} ${idx === activeTab ? styles.active : styles.disabled}`}
-            disabled={idx !== activeTab}
+            className={`${styles.tab} ${idx === activeTab ? styles.active : ''}`}
+            onClick={() => setActiveTab(idx)}
           >
             {tab}
           </button>
@@ -352,6 +390,7 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
       {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
 
       {/* Content */}
+      {activeTab === 0 && (
       <div className={styles.content}>
         {/* Photo upload */}
         <div className={styles.photoSection}>
@@ -490,6 +529,100 @@ const CadastrarClientePage: React.FC<CadastrarClientePageProps> = ({ onSave, can
           </div>
         </div>
       </div>
+      )}
+
+      {/* Aba Endereço */}
+      {activeTab === 1 && (
+        <div className={styles.addressContent}>
+          <div className={styles.formGrid}>
+            <div className={styles.fieldGroup}>
+              <label>CEP</label>
+              <input
+                type="text"
+                placeholder="00000-000"
+                value={zipCode}
+                onChange={(e) => setZipCode(maskCEP(e.target.value))}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label>Estado</label>
+              <select value={addressState} onChange={(e) => setAddressState(e.target.value)}>
+                <option value="">Selecione</option>
+                {UF_OPTIONS.map((uf) => (
+                  <option key={uf} value={uf}>{uf}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label>Cidade</label>
+              <input
+                type="text"
+                placeholder="Cidade"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label>Bairro</label>
+              <input
+                type="text"
+                placeholder="Bairro"
+                value={neighborhood}
+                onChange={(e) => setNeighborhood(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label>Rua / Logradouro</label>
+              <input
+                type="text"
+                placeholder="Rua, Avenida, etc."
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label>Número</label>
+              <input
+                type="text"
+                placeholder="Nº"
+                value={addressNumber}
+                onChange={(e) => setAddressNumber(e.target.value)}
+              />
+            </div>
+
+            <div className={`${styles.fieldGroup} ${styles.fieldFull}`}>
+              <label>Complemento</label>
+              <input
+                type="text"
+                placeholder="Apto, Bloco, Sala..."
+                value={complement}
+                onChange={(e) => setComplement(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Aba Observações */}
+      {activeTab === 2 && (
+        <div className={styles.addressContent}>
+          <div className={styles.fieldGroup}>
+            <label>Observações</label>
+            <textarea
+              className={styles.textarea}
+              placeholder="Anotações, preferências, informações adicionais sobre o cliente..."
+              value={observations}
+              onChange={(e) => setObservations(e.target.value)}
+              rows={8}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div className={styles.footer}>
