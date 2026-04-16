@@ -12,6 +12,14 @@ export interface ClientData {
   email?: string;
   category?: string;
   photo?: string;
+  zipCode?: string;
+  street?: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  observations?: string;
 }
 
 export const clientService = {
