@@ -15,6 +15,14 @@ export class ClientService {
       email?: string;
       category?: string;
       photo?: string;
+      zipCode?: string;
+      street?: string;
+      number?: string;
+      complement?: string;
+      neighborhood?: string;
+      city?: string;
+      state?: string;
+      observations?: string;
     }
   ) {
     return await prisma.client.create({
@@ -31,6 +39,14 @@ export class ClientService {
         email: data.email || null,
         category: data.category || null,
         photo: data.photo || null,
+        zipCode: data.zipCode || null,
+        street: data.street || null,
+        number: data.number || null,
+        complement: data.complement || null,
+        neighborhood: data.neighborhood || null,
+        city: data.city || null,
+        state: data.state || null,
+        observations: data.observations || null,
       },
     });
   }
@@ -76,6 +92,14 @@ export class ClientService {
       email?: string;
       category?: string;
       photo?: string;
+      zipCode?: string;
+      street?: string;
+      number?: string;
+      complement?: string;
+      neighborhood?: string;
+      city?: string;
+      state?: string;
+      observations?: string;
     }
   ) {
     await this.getClientById(userId, clientId);
@@ -94,6 +118,14 @@ export class ClientService {
         ...(updates.email !== undefined && { email: updates.email }),
         ...(updates.category !== undefined && { category: updates.category }),
         ...(updates.photo !== undefined && { photo: updates.photo }),
+        ...(updates.zipCode !== undefined && { zipCode: updates.zipCode }),
+        ...(updates.street !== undefined && { street: updates.street }),
+        ...(updates.number !== undefined && { number: updates.number }),
+        ...(updates.complement !== undefined && { complement: updates.complement }),
+        ...(updates.neighborhood !== undefined && { neighborhood: updates.neighborhood }),
+        ...(updates.city !== undefined && { city: updates.city }),
+        ...(updates.state !== undefined && { state: updates.state }),
+        ...(updates.observations !== undefined && { observations: updates.observations }),
       },
     });
   }
