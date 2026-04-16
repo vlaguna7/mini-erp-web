@@ -5,11 +5,14 @@ import { clientService } from '../../services/clientService';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVClient.module.css';
 
+const ITEMS_PER_PAGE = 5;
+
 const PDVClient: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [clients, setClients] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const { selectedClient, setSelectedClient } = usePDVStore();
 
   useEffect(() => {
@@ -39,6 +42,12 @@ const PDVClient: React.FC = () => {
           c.phone?.includes(searchTerm)
       ),
     [clients, searchTerm]
+  );
+
+  const totalPages = Math.ceil(filteredClients.length / ITEMS_PER_PAGE);
+  const paginatedClients = filteredClients.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   );
 
   const handleSelectClient = (client: any) => {
@@ -77,7 +86,10 @@ const PDVClient: React.FC = () => {
           type="text"
           placeholder="Buscar por nome, email, CPF ou telefone..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
           className={styles.pdvClientSearchInput}
         />
         <button
@@ -95,8 +107,9 @@ const PDVClient: React.FC = () => {
           <p>{clients.length === 0 ? 'Nenhum cliente cadastrado' : 'Nenhum cliente encontrado'}</p>
         </div>
       ) : (
+        <>
         <div className={styles.pdvClientsList}>
-          {filteredClients.map((client) => (
+          {paginatedClients.map((client) => (
             <button
               key={client.id}
               className={`${styles.pdvClientItem} ${
@@ -134,7 +147,68 @@ const PDVClient: React.FC = () => {
             </button>
           ))}
         </div>
-      )}
+          {totalPages > 1 && (
+            <div className={styles.pdvPagination}>
+              <button
+                className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                «
+              </button>
+              <button
+                className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+              >
+                ‹
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  if (totalPages <= 7) return true;
+                  if (page === 1 || page === totalPages) return true;
+                  if (Math.abs(page - currentPage) <= 1) return true;
+                  return false;
+                })
+                .reduce<(number | string)[]>((acc, page, idx, arr) => {
+                  if (idx > 0 && typeof arr[idx - 1] === 'number' && (page as number) - (arr[idx - 1] as number) > 1) {
+                    acc.push('...');
+                  }
+                  acc.push(page);
+                  return acc;
+                }, [])
+                .map((page, idx) =>
+                  typeof page === 'string' ? (
+                    <span key={`dots-${idx}`} className={styles.pdvPageDots}>…</span>
+                  ) : (
+                    <button
+                      key={page}
+                      className={`${styles.pdvPageNum} ${currentPage === page ? styles.pdvPageActive : ''}`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+
+              <button
+                className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+              >
+                ›
+              </button>
+              <button
+                className={styles.pdvPageBtn}
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                »
+              </button>
+            </div>
+          )}
+        </>      )}
     </div>
   );
 };
