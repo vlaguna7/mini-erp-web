@@ -13,9 +13,11 @@ const productValidationRules = (isCreate = false) => [
   isCreate
     ? body('name').trim().notEmpty().withMessage('Nome do produto é obrigatório').isLength({ max: 100 }).withMessage('Nome deve ter no máximo 100 caracteres')
     : body('name').optional().trim().notEmpty().withMessage('Nome não pode ser vazio').isLength({ max: 100 }).withMessage('Nome deve ter no máximo 100 caracteres'),
-  isCreate
-    ? body('code').trim().notEmpty().withMessage('Código do produto é obrigatório').isLength({ max: 50 }).withMessage('Código deve ter no máximo 50 caracteres')
-    : body('code').optional().trim().notEmpty().withMessage('Código não pode ser vazio').isLength({ max: 50 }).withMessage('Código deve ter no máximo 50 caracteres'),
+  // SKU: no create é sempre gerado pelo backend (qualquer valor enviado é ignorado).
+  // Em update, permanece opcional/editável para permitir correções pelo usuário.
+  ...(isCreate
+    ? []
+    : [body('code').optional().trim().notEmpty().withMessage('Código não pode ser vazio').isLength({ max: 50 }).withMessage('Código deve ter no máximo 50 caracteres')]),
   body('barcode').optional().isLength({ max: 50 }).withMessage('Código de barras deve ter no máximo 50 caracteres'),
   body('observations').optional().isLength({ max: 2000 }).withMessage('Observações deve ter no máximo 2000 caracteres'),
   body('unitType').optional().isLength({ max: 10 }).withMessage('Tipo de unidade deve ter no máximo 10 caracteres'),

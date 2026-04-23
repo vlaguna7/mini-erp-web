@@ -15,9 +15,56 @@ function generateEAN13(): string {
   return digits + checkDigit.toString();
 }
 
+const SKU_SEQ_PAD = 6;
+const SKU_DEFAULT_PREFIX = 'PRD';
+
+function normalizeSkuPrefix(raw: string): string {
+  const cleaned = raw
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toUpperCase()
+    .slice(0, 3);
+  return cleaned.length === 0 ? SKU_DEFAULT_PREFIX : cleaned.padEnd(3, 'X');
+}
+
+async function generateSKU(userId: number, categoryId?: number | null): Promise<string> {
+  let prefix = SKU_DEFAULT_PREFIX;
+
+  if (categoryId) {
+    const category = await prisma.productCategory.findFirst({
+      where: { id: categoryId, userId },
+      select: { name: true },
+    });
+    if (category) {
+      prefix = normalizeSkuPrefix(category.name);
+    }
+  }
+
+  const pattern = `${prefix}-`;
+  const last = await prisma.product.findFirst({
+    where: {
+      userId,
+      code: { startsWith: pattern },
+    },
+    select: { code: true },
+    orderBy: { code: 'desc' },
+  });
+
+  let nextNum = 1;
+  if (last) {
+    const match = last.code.match(new RegExp(`^${prefix}-(\\d+)$`));
+    if (match) {
+      nextNum = parseInt(match[1], 10) + 1;
+    }
+  }
+
+  return `${prefix}-${String(nextNum).padStart(SKU_SEQ_PAD, '0')}`;
+}
+
 interface ProductData {
   name: string;
-  code: string;
+  code?: string;
   category?: string;
   quantityStock?: number;
   priceCost?: number;
@@ -50,65 +97,73 @@ interface ProductData {
 
 export class ProductService {
   static async createProduct(userId: number, data: ProductData) {
-    try {
-      const barcode = data.barcode || generateEAN13();
+    const barcode = data.barcode || generateEAN13();
 
-      const product = await prisma.product.create({
-        data: {
-          userId,
-          name: data.name,
-          code: data.code,
-          category: data.category || null,
-          quantityStock: data.quantityStock || 0,
-          priceCost: data.priceCost ?? null,
-          priceSale: data.priceSale ?? null,
-          supplierId: data.supplierId || null,
-          minStock: data.minStock ?? null,
-          unitType: data.unitType || null,
-          categoryId: data.categoryId || null,
-          brandId: data.brandId || null,
-          collectionId: data.collectionId || null,
-          barcode,
-          observations: data.observations || null,
-          markup: data.markup ?? null,
-          maxStock: data.maxStock ?? null,
-          weight: data.weight ?? null,
-          height: data.height ?? null,
-          width: data.width ?? null,
-          depth: data.depth ?? null,
-          ncm: data.ncm || null,
-          cest: data.cest || null,
-          cfop: data.cfop || null,
-          icmsOrigin: data.icmsOrigin || null,
-          icmsCst: data.icmsCst || null,
-          ecommerceActive: data.ecommerceActive ?? false,
-          ecommerceDescription: data.ecommerceDescription || null,
-          ecommerceSeoTitle: data.ecommerceSeoTitle || null,
-          ecommerceSeoDescription: data.ecommerceSeoDescription || null,
-        },
-        include: { images: true },
-      });
+    const MAX_ATTEMPTS = 5;
 
-      if (data.images && data.images.length > 0) {
-        await prisma.productImage.createMany({
-          data: data.images.map((url, index) => ({
-            productId: product.id,
-            url,
-            position: index,
-          })),
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const generatedCode = await generateSKU(userId, data.categoryId ?? null);
+
+      try {
+        const product = await prisma.product.create({
+          data: {
+            userId,
+            name: data.name,
+            code: generatedCode,
+            category: data.category || null,
+            quantityStock: data.quantityStock || 0,
+            priceCost: data.priceCost ?? null,
+            priceSale: data.priceSale ?? null,
+            supplierId: data.supplierId || null,
+            minStock: data.minStock ?? null,
+            unitType: data.unitType || null,
+            categoryId: data.categoryId || null,
+            brandId: data.brandId || null,
+            collectionId: data.collectionId || null,
+            barcode,
+            observations: data.observations || null,
+            markup: data.markup ?? null,
+            maxStock: data.maxStock ?? null,
+            weight: data.weight ?? null,
+            height: data.height ?? null,
+            width: data.width ?? null,
+            depth: data.depth ?? null,
+            ncm: data.ncm || null,
+            cest: data.cest || null,
+            cfop: data.cfop || null,
+            icmsOrigin: data.icmsOrigin || null,
+            icmsCst: data.icmsCst || null,
+            ecommerceActive: data.ecommerceActive ?? false,
+            ecommerceDescription: data.ecommerceDescription || null,
+            ecommerceSeoTitle: data.ecommerceSeoTitle || null,
+            ecommerceSeoDescription: data.ecommerceSeoDescription || null,
+          },
+          include: { images: true },
         });
-      }
 
-      return await prisma.product.findUnique({
-        where: { id: product.id },
-        include: { images: { orderBy: { position: 'asc' } } },
-      });
-    } catch (error: any) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new Error('Código do produto já existe para este usuário');
+        if (data.images && data.images.length > 0) {
+          await prisma.productImage.createMany({
+            data: data.images.map((url, index) => ({
+              productId: product.id,
+              url,
+              position: index,
+            })),
+          });
+        }
+
+        return await prisma.product.findUnique({
+          where: { id: product.id },
+          include: { images: { orderBy: { position: 'asc' } } },
+        });
+      } catch (error: any) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+          continue;
+        }
+        throw error;
       }
-      throw error;
     }
+
+    throw new Error('Não foi possível gerar um SKU único após múltiplas tentativas');
   }
 
   static async getProductsByUser(userId: number, limit: number = 100, offset: number = 0) {

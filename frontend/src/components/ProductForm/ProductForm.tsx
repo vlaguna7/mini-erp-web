@@ -49,15 +49,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
     setIsLoading(true);
 
     try {
-      const productData = {
+      const isEditing = Boolean(initialProduct);
+      const productData: any = {
         name,
-        code,
         category,
         priceCost: priceCost ? parseFloat(priceCost) : 0,
         priceSale: parseFloat(priceSale),
         quantityStock: parseInt(quantityStock),
         minStock: parseInt(minStock),
       };
+      // Na criação, o SKU é gerado pelo backend — só enviamos em edição.
+      if (isEditing) productData.code = code;
 
       if (initialProduct) {
         await productService.updateProduct(initialProduct.id, productData);
@@ -99,14 +101,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="code">Código do Produto</label>
+        <label htmlFor="code">Código do Produto (SKU)</label>
         <input
           id="code"
           type="text"
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          placeholder="ex: SKU-001"
-          disabled={isLoading}
+          placeholder={initialProduct ? 'Ex: PRD-000001' : 'Gerado automaticamente ao salvar'}
+          disabled={isLoading || !initialProduct}
+          readOnly={!initialProduct}
         />
       </div>
 

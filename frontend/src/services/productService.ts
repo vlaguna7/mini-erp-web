@@ -2,7 +2,7 @@ import apiClient from './api';
 
 export interface ProductFormData {
   name: string;
-  code: string;
+  code?: string;
   category?: string;
   quantityStock?: number;
   priceCost?: number;

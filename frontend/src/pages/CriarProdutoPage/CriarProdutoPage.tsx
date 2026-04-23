@@ -323,8 +323,11 @@ const CriarProdutoPage: React.FC = () => {
     // Informações gerais
     if (!name.trim()) newErrors.name = 'Nome do produto é obrigatório';
     if (name.length > 100) newErrors.name = 'Nome deve ter no máximo 100 caracteres';
-    if (!code.trim()) newErrors.code = 'Código do produto (SKU) é obrigatório';
-    if (code.length > 50) newErrors.code = 'Código deve ter no máximo 50 caracteres';
+    // SKU só é validado na edição — na criação é gerado pelo backend.
+    if (isEditing) {
+      if (!code.trim()) newErrors.code = 'Código do produto (SKU) é obrigatório';
+      if (code.length > 50) newErrors.code = 'Código deve ter no máximo 50 caracteres';
+    }
 
     // Valores
     const parsedPriceCost = parseFloat(priceCost);
@@ -394,7 +397,8 @@ const CriarProdutoPage: React.FC = () => {
     try {
       const data: ProductFormData = {
         name: name.trim(),
-        code: code.trim(),
+        // Na criação, o SKU é gerado pelo backend — enviamos só em edição.
+        ...(isEditing ? { code: code.trim() } : {}),
         categoryId: categoryId ? parseInt(categoryId) : undefined,
         category: categoryId ? categories.find(c => c.id === parseInt(categoryId))?.name : undefined,
         unitType: unitType || undefined,
@@ -564,12 +568,14 @@ const CriarProdutoPage: React.FC = () => {
       </div>
 
       <div className={styles.fieldGroup}>
-        <label>Código do Produto (SKU) *</label>
+        <label>Código do Produto (SKU){isEditing ? ' *' : ''}</label>
         <input
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          placeholder="Ex: PROD-001"
+          placeholder={isEditing ? 'Ex: PRD-000001' : 'Gerado automaticamente ao salvar'}
           maxLength={50}
+          readOnly={!isEditing}
+          disabled={!isEditing}
           className={errors.code ? styles.error : ''}
         />
         {errors.code && <span className={styles.errorText}>{errors.code}</span>}
