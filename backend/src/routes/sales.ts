@@ -44,7 +44,7 @@ router.post(
   }
 );
 
-// GET / — listar vendas do usuário
+// GET / — listar vendas do usuário (com filtros opcionais para busca)
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -54,7 +54,19 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     const dateFrom = req.query.date_from as string | undefined;
     const dateTo = req.query.date_to as string | undefined;
 
-    const result = await SaleService.getSalesByUser(userId, limit, offset, dateFrom, dateTo);
+    const parseId = (v: any): number | undefined => {
+      const n = parseInt(v as string);
+      return Number.isFinite(n) && n > 0 ? n : undefined;
+    };
+
+    const filters = {
+      saleId: parseId(req.query.sale_id),
+      clientId: parseId(req.query.client_id),
+      productId: parseId(req.query.product_id),
+      barcode: (req.query.barcode as string | undefined)?.trim() || undefined,
+    };
+
+    const result = await SaleService.getSalesByUser(userId, limit, offset, dateFrom, dateTo, filters);
 
     return res.json({
       sales: result.sales,

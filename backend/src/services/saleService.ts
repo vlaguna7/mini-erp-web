@@ -127,7 +127,13 @@ export class SaleService {
     limit: number = 20,
     offset: number = 0,
     dateFrom?: string,
-    dateTo?: string
+    dateTo?: string,
+    filters?: {
+      saleId?: number;
+      clientId?: number;
+      productId?: number;
+      barcode?: string;
+    }
   ) {
     const safeLimit = Math.min(Math.max(1, limit), 100);
 
@@ -143,11 +149,33 @@ export class SaleService {
       }
     }
 
+    if (filters?.saleId) where.id = filters.saleId;
+    if (filters?.clientId) where.clientId = filters.clientId;
+
+    // Filtro por produto ou barcode: aplicado via items.some — produto validado como pertencente ao mesmo user
+    if (filters?.productId || filters?.barcode) {
+      const productWhere: any = { userId };
+      if (filters.productId) productWhere.id = filters.productId;
+      if (filters.barcode) productWhere.barcode = filters.barcode;
+      const products = await prisma.product.findMany({ where: productWhere, select: { id: true } });
+      const productIds = products.map((p) => p.id);
+      if (productIds.length === 0) {
+        return { sales: [], total: 0 };
+      }
+      where.items = { some: { productId: { in: productIds } } };
+    }
+
     const [sales, total] = await Promise.all([
       prisma.sale.findMany({
         where,
         include: {
           client: { select: { id: true, name: true } },
+          seller: { select: { id: true, name: true } },
+          items: {
+            include: {
+              product: { select: { id: true, name: true, code: true } },
+            },
+          },
           _count: { select: { items: true } },
         },
         orderBy: { createdAt: 'desc' },

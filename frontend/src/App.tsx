@@ -36,6 +36,7 @@ import LancarDespesaPage from './pages/FinanceiroPage/pages/LancarDespesaPage';
 import DespesaRecorrentePage from './pages/FinanceiroPage/pages/DespesaRecorrentePage';
 import LancarEntradaPage from './pages/FinanceiroPage/pages/LancarEntradaPage';
 import RenegociacaoDividaPage from './pages/FinanceiroPage/pages/RenegociacaoDividaPage';
+import LancarDevolucaoPage from './pages/LancarDevolucaoPage';
 import { PDVLayout } from './layouts/PDVLayout';
 import WelcomeOverlay from './components/WelcomeOverlay';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -135,7 +136,7 @@ function App() {
           <Route path="/vendas-e-clientes/editar-cliente/:id" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><ListaClientesPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-venda" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Venda" /></ProtectedLayout>} />
-          <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Devolução de Venda" /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><LancarDevolucaoPage /></ProtectedLayout>} />
           <Route path="/financeiro" element={<ProtectedLayout isInitializing={isInitializing}><FinanceiroPage /></ProtectedLayout>} />
           <Route path="/financeiro/lancar-despesa" element={<ProtectedLayout isInitializing={isInitializing}><LancarDespesaPage /></ProtectedLayout>} />
           <Route path="/financeiro/despesa-recorrente" element={<ProtectedLayout isInitializing={isInitializing}><DespesaRecorrentePage /></ProtectedLayout>} />
