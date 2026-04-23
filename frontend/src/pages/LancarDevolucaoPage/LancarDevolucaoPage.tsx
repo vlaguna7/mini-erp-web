@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -16,6 +16,9 @@ import {
   ShoppingCart,
   ScanLine,
   CheckCircle,
+  Check,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import { saleService } from '../../services/saleService';
 import { clientService } from '../../services/clientService';
@@ -107,7 +110,10 @@ const LancarDevolucaoPage: React.FC = () => {
 
   // ── Step 3: quantidades a devolver ──
   const [returnQty, setReturnQty] = useState<ReturnQtyMap>({});
-  const [scanCode, setScanCode] = useState('');
+  const [scannerActive, setScannerActive] = useState(false);
+  const [flashItemId, setFlashItemId] = useState<number | null>(null);
+  const scanBufferRef = useRef('');
+  const scanBufferTimerRef = useRef<number | null>(null);
 
   // ── Step 4: método e cliente do crédito ──
   const [resolutionMethod, setResolutionMethod] = useState<ResolutionMethod | ''>('');
@@ -410,86 +416,193 @@ const LancarDevolucaoPage: React.FC = () => {
     setReturnQty(next);
   };
 
-  const handleScan = () => {
+  const setItemQty = (saleItemId: number, rawValue: number, max: number) => {
+    const v = Number.isFinite(rawValue) ? Math.max(0, Math.min(max, Math.trunc(rawValue))) : 0;
+    setReturnQty((prev) => ({ ...prev, [saleItemId]: v }));
+  };
+
+  const registerScan = (code: string) => {
     if (!selectedSale) return;
-    const code = scanCode.trim();
-    if (!code) return;
-    const match = selectedSale.items.find((it) => it.product.code === code);
+    const match = selectedSale.items.find(
+      (it) => it.product.code.toLowerCase() === code.toLowerCase()
+    );
     if (!match) {
       setSubmitError('Produto não encontrado nesta venda');
-      setScanCode('');
       return;
     }
+    setSubmitError('');
     setReturnQty((prev) => ({
       ...prev,
       [match.id]: Math.min((prev[match.id] || 0) + 1, match.quantity),
     }));
-    setScanCode('');
+    setFlashItemId(match.id);
+    window.setTimeout(() => {
+      setFlashItemId((id) => (id === match.id ? null : id));
+    }, 600);
   };
+
+  // F8 alterna o scanner (sempre ativo na página, independente do step)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'F8') {
+        e.preventDefault();
+        setScannerActive((s) => !s);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  // Listener global do scanner — captura tecla por tecla quando ativo
+  useEffect(() => {
+    if (!scannerActive) return;
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      const isTypingField = tag === 'input' || tag === 'textarea' || tag === 'select' || (target?.isContentEditable ?? false);
+      if (isTypingField) return; // não interfere em inputs de busca/quantidade
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = scanBufferRef.current.trim();
+        scanBufferRef.current = '';
+        if (code) registerScan(code);
+        return;
+      }
+      if (e.key.length === 1) {
+        scanBufferRef.current += e.key;
+        if (scanBufferTimerRef.current) window.clearTimeout(scanBufferTimerRef.current);
+        scanBufferTimerRef.current = window.setTimeout(() => {
+          scanBufferRef.current = '';
+        }, 400);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+      if (scanBufferTimerRef.current) window.clearTimeout(scanBufferTimerRef.current);
+      scanBufferRef.current = '';
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scannerActive, selectedSale]);
 
   const renderStep3 = () => {
     if (!selectedSale) return null;
+    const selectedCount = Object.values(returnQty).filter((q) => q > 0).length;
     return (
       <div className={styles.card}>
         <h2 className={styles.cardTitle}>Selecione os produtos a serem devolvidos</h2>
         {submitError && <div className={styles.globalError}>{submitError}</div>}
 
-        <div className={styles.scanRow}>
-          <div className={styles.scanField}>
-            <Search size={16} />
-            <input
-              className={styles.scanInput}
-              type="text"
-              value={scanCode}
-              onChange={(e) => setScanCode(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleScan(); } }}
-              placeholder="Clique aqui para utilizar o leitor de código de barras"
-            />
+        <div className={styles.toolbar}>
+          <div className={styles.toolbarLeft}>
+            <button
+              type="button"
+              className={`${styles.scanBtn} ${scannerActive ? styles.active : ''}`}
+              onClick={() => setScannerActive((s) => !s)}
+              aria-pressed={scannerActive}
+              title="Alterna leitura via scanner (F8)"
+            >
+              <span className={styles.scanPulse} />
+              <ScanLine size={16} />
+              {scannerActive ? 'Escutando leitor...' : 'Ler código de barras (F8)'}
+            </button>
           </div>
-          <button type="button" className={styles.scanBtn} onClick={handleScan}>
-            <ScanLine size={16} /> Ler código de barras (F8)
-          </button>
-          <button type="button" className={styles.ghostBtn} onClick={() => handleSetAll(true)}>Todos</button>
-          <button type="button" className={styles.ghostBtn} onClick={() => handleSetAll(false)}>Nenhum</button>
+          <div className={styles.toolbarRight}>
+            <button type="button" className={styles.ghostBtn} onClick={() => handleSetAll(true)}>
+              <Check size={14} /> Todos
+            </button>
+            <button type="button" className={styles.ghostBtn} onClick={() => handleSetAll(false)}>
+              <X size={14} /> Nenhum
+            </button>
+          </div>
         </div>
 
-        <div className={styles.productsTableWrap}>
-          <table className={styles.productsTable}>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th style={{ textAlign: 'right' }}>Qtd. Disponível</th>
-                <th style={{ textAlign: 'right' }}>Valor Un.</th>
-                <th style={{ textAlign: 'right' }}>Qtd. Devolver</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedSale.items.map((it) => {
-                const current = returnQty[it.id] ?? 0;
-                return (
-                  <tr key={it.id}>
-                    <td>{it.product.name}</td>
-                    <td style={{ textAlign: 'right' }}>{it.quantity}</td>
-                    <td style={{ textAlign: 'right' }}>{fmtBRL(it.unitPrice)}</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <input
-                        className={styles.qtyInput}
-                        type="number"
-                        min={0}
-                        max={it.quantity}
-                        value={current}
-                        onChange={(e) => {
-                          const raw = parseInt(e.target.value, 10);
-                          const v = Number.isFinite(raw) ? Math.max(0, Math.min(it.quantity, raw)) : 0;
-                          setReturnQty((prev) => ({ ...prev, [it.id]: v }));
-                        }}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className={styles.selectionSummary}>
+          <div className={styles.selectionSummaryItem}>
+            <span className={styles.selectionSummaryLabel}>Produtos</span>
+            <span className={styles.selectionSummaryValue}>
+              {selectedCount} / {selectedSale.items.length}
+            </span>
+          </div>
+          <div className={styles.selectionSummaryItem}>
+            <span className={styles.selectionSummaryLabel}>Unidades</span>
+            <span className={styles.selectionSummaryValue}>{totals.qty}</span>
+          </div>
+          <div className={styles.selectionSummaryItem} style={{ marginLeft: 'auto' }}>
+            <span className={styles.selectionSummaryLabel}>Total a devolver</span>
+            <span className={`${styles.selectionSummaryValue} ${styles.accent}`}>{fmtBRL(totals.refund)}</span>
+          </div>
+        </div>
+
+        <div className={styles.productCards}>
+          {selectedSale.items.map((it) => {
+            const current = returnQty[it.id] ?? 0;
+            const isSel = current > 0;
+            const subtotal = Number(it.unitPrice) * current;
+            const cls = `${styles.productCard} ${isSel ? styles.selected : ''} ${flashItemId === it.id ? styles.flash : ''}`;
+            const toggle = () => {
+              setReturnQty((prev) => ({ ...prev, [it.id]: isSel ? 0 : it.quantity }));
+            };
+            return (
+              <div key={it.id} className={cls}>
+                <button
+                  type="button"
+                  className={styles.selectBox}
+                  onClick={toggle}
+                  aria-pressed={isSel}
+                  aria-label={isSel ? 'Desmarcar produto' : 'Selecionar produto'}
+                >
+                  {isSel && <Check size={16} />}
+                </button>
+
+                <div className={styles.productMain}>
+                  <span className={styles.productName}>{it.product.name}</span>
+                  <div className={styles.productMetaRow}>
+                    <span className={styles.productMetaItem}>SKU: <strong>{it.product.code}</strong></span>
+                    <span className={styles.productMetaItem}>Disponível: <strong>{it.quantity}</strong></span>
+                    <span className={styles.productMetaItem}>Valor un.: <strong>{fmtBRL(it.unitPrice)}</strong></span>
+                  </div>
+                </div>
+
+                <div className={styles.qtyStepper}>
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setItemQty(it.id, current - 1, it.quantity)}
+                    disabled={current <= 0}
+                    aria-label="Diminuir quantidade"
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <input
+                    className={styles.qtyValue}
+                    type="number"
+                    min={0}
+                    max={it.quantity}
+                    value={current}
+                    onChange={(e) => {
+                      const raw = parseInt(e.target.value, 10);
+                      setItemQty(it.id, raw, it.quantity);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setItemQty(it.id, current + 1, it.quantity)}
+                    disabled={current >= it.quantity}
+                    aria-label="Aumentar quantidade"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+
+                <div className={styles.productSubtotal}>
+                  <span className={styles.productSubtotalLabel}>Subtotal</span>
+                  <span className={styles.productSubtotalValue}>{fmtBRL(subtotal)}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
