@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Smartphone, CreditCard, Trash2 } from 'lucide-react';
+import { DollarSign, Smartphone, CreditCard, Trash2, Wallet } from 'lucide-react';
 import { usePDVStore, PaymentMethod } from '../../store/pdvStore';
 import styles from './PDVPayment.module.css';
 
@@ -9,6 +9,8 @@ const PAYMENT_METHODS = [
   { id: 'credit' as PaymentMethod, label: 'Cartão de Crédito', icon: CreditCard },
   { id: 'debit' as PaymentMethod, label: 'Cartão de Débito', icon: CreditCard },
 ];
+
+const CREDIT_BALANCE_METHOD: PaymentMethod = 'credit_balance';
 
 const CARD_BRANDS = [
   { id: 'visa', label: 'Visa', icon: '𝗩', color: '#1a1f71' },
@@ -40,17 +42,28 @@ const PDVPayment: React.FC = () => {
     getSubtotal,
     getTotalToPay,
     getTotalPaid,
+    selectedClient,
   } = usePDVStore();
 
   const [amountInput, setAmountInput] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [selectedInstallments, setSelectedInstallments] = useState(1);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [methodError, setMethodError] = useState<string>('');
 
   const subtotal = getSubtotal();
   const totalToPay = getTotalToPay();
   const totalPaid = getTotalPaid();
   const remaining = Math.max(0, totalToPay - totalPaid);
+
+  // Saldo de crédito disponível do cliente selecionado (bruto) e já descontando o que está
+  // sendo usado no pagamento atual (para permitir múltiplas entradas sem estourar).
+  const clientCreditBalance = Number(selectedClient?.creditBalance ?? 0);
+  const creditAlreadyUsed = payments
+    .filter((p) => p.method === CREDIT_BALANCE_METHOD)
+    .reduce((s, p) => s + p.amount, 0);
+  const creditAvailable = Math.max(0, clientCreditBalance - creditAlreadyUsed);
+  const showCreditBalance = !!selectedClient && clientCreditBalance > 0;
 
   const fmt = (value: number) =>
     value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -58,32 +71,55 @@ const PDVPayment: React.FC = () => {
   const parsedAmount = parseFloat((amountInput || '0').replace(',', '.')) || 0;
 
   const handleSelectMethod = (method: PaymentMethod) => {
+    setMethodError('');
     setSelectedMethod(method);
     setSelectedInstallments(1);
     setSelectedBrand(null);
     const rest = Math.max(0, totalToPay - totalPaid);
-    setAmountInput(rest > 0 ? rest.toFixed(2).replace('.', ',') : '');
+    // Para saldo de crédito, o teto é min(restante, saldo disponível)
+    const cap = method === CREDIT_BALANCE_METHOD ? Math.min(rest, creditAvailable) : rest;
+    setAmountInput(cap > 0 ? cap.toFixed(2).replace('.', ',') : '');
   };
 
   const handleAddPayment = () => {
     if (!selectedMethod) return;
+    setMethodError('');
+
     const parsed = parseFloat(amountInput.replace(',', '.'));
     if (isNaN(parsed) || parsed <= 0) return;
     const maxAllowed = Math.max(0, totalToPay - totalPaid);
-    const amount = Math.min(parsed, maxAllowed);
+    let amount = Math.min(parsed, maxAllowed);
     if (amount <= 0) return;
 
     if (selectedMethod === 'credit' && !selectedBrand) return;
 
+    if (selectedMethod === CREDIT_BALANCE_METHOD) {
+      if (!selectedClient) {
+        setMethodError('Selecione um cliente para usar saldo de crédito');
+        return;
+      }
+      if (creditAvailable <= 0) {
+        setMethodError('Saldo de crédito esgotado');
+        return;
+      }
+      amount = Math.min(amount, creditAvailable);
+      if (amount <= 0) return;
+    }
+
     const info = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
     const brandLabel = selectedBrand ? CARD_BRANDS.find((b) => b.id === selectedBrand)?.label : undefined;
 
-    let label = info?.label || selectedMethod;
-    if (selectedMethod === 'credit' && selectedInstallments > 1) {
-      label = `${info?.label} ${selectedInstallments}x`;
-    }
-    if (brandLabel) {
-      label += ` (${brandLabel})`;
+    let label: string;
+    if (selectedMethod === CREDIT_BALANCE_METHOD) {
+      label = 'Saldo de crédito';
+    } else {
+      label = info?.label || selectedMethod;
+      if (selectedMethod === 'credit' && selectedInstallments > 1) {
+        label = `${info?.label} ${selectedInstallments}x`;
+      }
+      if (brandLabel) {
+        label += ` (${brandLabel})`;
+      }
     }
 
     addPayment({
@@ -92,7 +128,7 @@ const PDVPayment: React.FC = () => {
       label,
       amount,
       installments: selectedMethod === 'credit' ? selectedInstallments : undefined,
-      cardBrand: selectedBrand || undefined,
+      cardBrand: selectedMethod === 'credit' ? (selectedBrand || undefined) : undefined,
     });
     setSelectedMethod(null);
     setAmountInput('');
@@ -145,7 +181,22 @@ const PDVPayment: React.FC = () => {
               <span>{label}</span>
             </button>
           ))}
+          {showCreditBalance && (
+            <button
+              key={CREDIT_BALANCE_METHOD}
+              className={`${styles.methodCard} ${styles.methodCredit} ${selectedMethod === CREDIT_BALANCE_METHOD ? styles.methodActive : ''}`}
+              onClick={() => handleSelectMethod(CREDIT_BALANCE_METHOD)}
+              disabled={creditAvailable <= 0}
+              title={creditAvailable <= 0 ? 'Saldo de crédito já totalmente utilizado nesta venda' : `Saldo disponível: ${fmt(creditAvailable)}`}
+            >
+              <Wallet size={24} strokeWidth={1.5} />
+              <span>Saldo de crédito</span>
+              <span className={styles.methodHint}>{fmt(creditAvailable)}</span>
+            </button>
+          )}
         </div>
+
+        {methodError && <div className={styles.warn}>{methodError}</div>}
 
         {selectedMethod && (
           <div className={styles.addRow}>

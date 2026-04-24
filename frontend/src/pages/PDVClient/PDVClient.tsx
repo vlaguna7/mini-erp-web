@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, User } from 'lucide-react';
+import { Plus, User, Wallet } from 'lucide-react';
 import { clientService } from '../../services/clientService';
 import { usePDVStore } from '../../store/pdvStore';
 import styles from './PDVClient.module.css';
@@ -61,9 +61,13 @@ const PDVClient: React.FC = () => {
         email: client.email || undefined,
         cpf: client.cpfCnpj || undefined,
         phone: client.phone || undefined,
+        creditBalance: Number(client.creditBalance ?? 0) || 0,
       });
     }
   };
+
+  const fmtCurrency = (v: number) =>
+    v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   if (isLoading) {
     return (
@@ -144,6 +148,15 @@ const PDVClient: React.FC = () => {
                 <span className={styles.pdvClientItemLabel}>EMAIL:</span>
                 <span className={styles.pdvClientItemValue}>{client.email || '—'}</span>
               </div>
+
+              {Number(client.creditBalance ?? 0) > 0 && (
+                <div className={`${styles.pdvClientItemCol} ${styles.pdvClientItemColCredit}`}>
+                  <span className={styles.pdvClientItemLabel}>SALDO:</span>
+                  <span className={styles.pdvClientCreditBadge}>
+                    <Wallet size={12} /> {fmtCurrency(Number(client.creditBalance))}
+                  </span>
+                </div>
+              )}
             </button>
           ))}
         </div>

@@ -28,9 +28,26 @@ interface CreateSaleData {
   observation?: string;
 }
 
+// Métodos cujo efeito é puramente financeiro-comercial (dinheiro/pix/cartão).
+// `credit_balance` tem tratamento especial: consome saldo do cliente e precisa ser
+// debitado atomicamente dentro da transação da venda.
+const CREDIT_BALANCE_METHOD = 'credit_balance';
+
+// Tolerância p/ comparação entre decimais vindos do front (Number) e total da venda.
+const CENTS_EPSILON = 0.01;
+
 export class SaleService {
   static async createSale(userId: number, data: CreateSaleData) {
-    // Validate that all products belong to this user
+    // ── 1. Cliente pertence ao tenant ──
+    const client = await prisma.client.findFirst({
+      where: { id: data.client_id, userId },
+      select: { id: true, creditBalance: true, name: true },
+    });
+    if (!client) {
+      throw { status: 400, message: 'Cliente não encontrado' };
+    }
+
+    // ── 2. Produtos pertencem ao tenant ──
     const productIds = data.items.map((i) => i.product_id);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds }, userId },
@@ -43,7 +60,7 @@ export class SaleService {
       throw { status: 400, message: `Produtos não encontrados: ${missing.join(', ')}` };
     }
 
-    // Check stock availability
+    // ── 3. Estoque disponível ──
     for (const item of data.items) {
       const product = products.find((p) => p.id === item.product_id)!;
       if (product.quantityStock < item.quantity) {
@@ -54,14 +71,51 @@ export class SaleService {
       }
     }
 
-    // Transaction: create sale + items + payments + decrement stock
+    // ── 4. Consistência dos pagamentos ──
+    //    O frontend pode errar, mas o backend não confia: todas as contas são refeitas aqui.
+    const totalPaid = data.payments.reduce((s, p) => s + Number(p.amount), 0);
+    const saleTotal = Number(data.total);
+    if (!(saleTotal > 0)) {
+      throw { status: 400, message: 'Total da venda inválido' };
+    }
+    if (Math.abs(totalPaid - saleTotal) > CENTS_EPSILON) {
+      throw {
+        status: 400,
+        message: `Soma dos pagamentos (${totalPaid.toFixed(2)}) não bate com o total da venda (${saleTotal.toFixed(2)})`,
+      };
+    }
+
+    // Total solicitado em saldo de crédito (pode haver mais de uma entrada por erro do front — somamos)
+    const creditBalanceAmount = data.payments
+      .filter((p) => p.method === CREDIT_BALANCE_METHOD)
+      .reduce((s, p) => s + Number(p.amount), 0);
+
+    if (creditBalanceAmount > 0) {
+      // Checagem prévia (pré-voo): dá mensagem clara sem precisar esperar a corrida.
+      // A verificação definitiva é feita ATOMICAMENTE dentro da transação (updateMany com gte).
+      const currentBalance = Number(client.creditBalance);
+      if (creditBalanceAmount > currentBalance + CENTS_EPSILON) {
+        throw {
+          status: 400,
+          message: `Saldo de crédito insuficiente. Disponível: R$ ${currentBalance.toFixed(2)}, solicitado: R$ ${creditBalanceAmount.toFixed(2)}`,
+        };
+      }
+      if (creditBalanceAmount > saleTotal + CENTS_EPSILON) {
+        throw {
+          status: 400,
+          message: 'Saldo de crédito usado excede o valor da venda',
+        };
+      }
+    }
+
+    // ── 5. Transação atômica: cria venda + itens + pagamentos + debita estoque + debita saldo + gera FT de baixa ──
     const sale = await prisma.$transaction(async (tx) => {
       const newSale = await tx.sale.create({
         data: {
           userId,
-          clientId: data.client_id,
+          clientId: client.id,
           sellerId: data.seller_id || null,
-          totalValue: data.total,
+          totalValue: saleTotal,
           subtotal: data.subtotal,
           discount: data.discount,
           surcharge: data.surcharge,
@@ -72,18 +126,16 @@ export class SaleService {
         },
       });
 
-      // Create sale items
       await tx.saleItem.createMany({
         data: data.items.map((item) => ({
           saleId: newSale.id,
           productId: item.product_id,
           quantity: item.quantity,
           unitPrice: item.unit_price,
-          subtotal: item.unit_price * item.quantity,
+          subtotal: Number(item.unit_price) * item.quantity,
         })),
       });
 
-      // Create sale payments
       await tx.salePayment.createMany({
         data: data.payments.map((p) => ({
           saleId: newSale.id,
@@ -91,11 +143,11 @@ export class SaleService {
           label: p.label,
           amount: p.amount,
           installments: p.installments || null,
-          cardBrand: p.cardBrand || null,
+          // Saldo de crédito não tem bandeira — ignora qualquer valor vindo do front.
+          cardBrand: p.method === CREDIT_BALANCE_METHOD ? null : (p.cardBrand || null),
         })),
       });
 
-      // Decrement stock for each product
       for (const item of data.items) {
         await tx.product.update({
           where: { id: item.product_id },
@@ -103,14 +155,51 @@ export class SaleService {
         });
       }
 
+      // ── Débito ATÔMICO do saldo do cliente ──
+      //   - `gte: creditBalanceAmount` no WHERE previne saldo negativo em corrida (dois caixas, mesmo cliente).
+      //   - `id: client.id, userId` isola por tenant.
+      //   - Se count !== 1, lança erro → toda a transação reverte (inclusive a venda já criada).
+      if (creditBalanceAmount > 0) {
+        const updated = await tx.client.updateMany({
+          where: {
+            id: client.id,
+            userId,
+            creditBalance: { gte: creditBalanceAmount },
+          },
+          data: { creditBalance: { decrement: creditBalanceAmount } },
+        });
+        if (updated.count !== 1) {
+          throw {
+            status: 409,
+            message: 'Saldo de crédito do cliente foi alterado por outra operação. Revise e tente novamente.',
+          };
+        }
+
+        // Registra a baixa no financeiro como RECEITA (liquida o passivo "saldo a devolver").
+        await tx.financialTransaction.create({
+          data: {
+            userId,
+            clientId: client.id,
+            type: 'RECEITA',
+            category: 'Crédito utilizado',
+            description: `Uso de saldo de crédito na venda #${newSale.id} — ${client.name}`.slice(0, 255),
+            value: creditBalanceAmount,
+            date: new Date(),
+            paymentMethod: CREDIT_BALANCE_METHOD,
+            status: 'PAGO',
+            notes: null,
+          },
+        });
+      }
+
       return newSale;
     });
 
-    // Return full sale with relations
+    // Retorno completo com relações
     return prisma.sale.findUnique({
       where: { id: sale.id },
       include: {
-        client: { select: { id: true, name: true, cpfCnpj: true, phone: true, email: true } },
+        client: { select: { id: true, name: true, cpfCnpj: true, phone: true, email: true, creditBalance: true } },
         seller: { select: { id: true, name: true } },
         items: {
           include: {

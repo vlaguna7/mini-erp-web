@@ -171,6 +171,32 @@
   text-overflow: ellipsis;
 }
 
+/* Coluna do saldo: não estica os filhos — o label e o badge alinham juntos à esquerda,
+   no mesmo eixo vertical, sem depender do stretch padrão do flex. */
+.pdvClientItemColCredit {
+  align-items: flex-start;
+}
+
+.pdvClientItemColCredit .pdvClientItemLabel {
+  /* Alinha visualmente o texto "SALDO:" com o texto interno do badge (que tem padding horizontal) */
+  padding-left: 0.55rem;
+}
+
+.pdvClientCreditBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  align-self: flex-start;
+  max-width: 100%;
+}
+
 .pdvSearchIcon {
   color: #94a3b8;
   flex-shrink: 0;
@@ -395,6 +421,24 @@
     flex-basis: 100%;
     margin-left: 52px; /* align with name after photo */
     margin-top: -0.35rem;
+  }
+
+  /* Saldo de crédito também aparece no mobile, em linha própria alinhada ao nome.
+     O label é ocultado pois o badge já é autodescritivo (ícone de carteira + valor). */
+  .pdvClientItem .pdvClientItemColCredit {
+    display: flex;
+    flex-basis: 100%;
+    margin-left: 52px;
+    margin-top: 0.1rem;
+  }
+
+  .pdvClientItem .pdvClientItemColCredit .pdvClientItemLabel {
+    display: none;
+  }
+
+  .pdvClientItem .pdvClientItemColCredit .pdvClientCreditBadge {
+    padding: 0.22rem 0.6rem;
+    font-size: 0.72rem;
   }
 
   .pdvClientItemLabel {

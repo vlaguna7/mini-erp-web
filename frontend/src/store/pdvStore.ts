@@ -17,6 +17,7 @@ export interface Client {
   email?: string;
   cpf?: string;
   phone?: string;
+  creditBalance?: number;
 }
 
 export interface Seller {
@@ -25,7 +26,7 @@ export interface Seller {
   email?: string;
 }
 
-export type PaymentMethod = 'cash' | 'pix' | 'credit' | 'debit';
+export type PaymentMethod = 'cash' | 'pix' | 'credit' | 'debit' | 'credit_balance';
 
 export interface PaymentEntry {
   id: string;
@@ -147,7 +148,20 @@ export const usePDVStore = create<PDVStore>()(
   clearCart: () => set({ cart: [], payments: [] }),
 
   setSelectedClient: (client: Client | null) =>
-    set({ selectedClient: client }),
+    set((state) => {
+      // Se trocou para outro cliente (ou removeu), descarta pagamentos de saldo
+      // que ficariam referenciando o saldo anterior. Soma de pagamentos muda → precisa refazer.
+      const prevId = state.selectedClient?.id ?? null;
+      const newId = client?.id ?? null;
+      const clientChanged = prevId !== newId;
+      const hadCreditPayment = state.payments.some((p) => p.method === 'credit_balance');
+      return {
+        selectedClient: client,
+        payments: clientChanged && hadCreditPayment
+          ? state.payments.filter((p) => p.method !== 'credit_balance')
+          : state.payments,
+      };
+    }),
 
   setSelectedPayment: (method: PaymentMethod | null) =>
     set({ selectedPayment: method }),

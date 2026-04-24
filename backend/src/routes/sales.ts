@@ -12,16 +12,27 @@ router.post(
   '/',
   [
     body('client_id').isInt({ min: 1 }).withMessage('client_id é obrigatório'),
-    body('items').isArray({ min: 1 }).withMessage('items deve conter ao menos 1 produto'),
+    body('items').isArray({ min: 1, max: 500 }).withMessage('items deve conter ao menos 1 produto'),
     body('items.*.product_id').isInt({ min: 1 }),
-    body('items.*.quantity').isInt({ min: 1 }),
-    body('items.*.unit_price').isFloat({ min: 0 }),
-    body('payments').isArray({ min: 1 }).withMessage('payments deve conter ao menos 1 pagamento'),
-    body('payments.*.method').isString().notEmpty(),
-    body('payments.*.label').isString().notEmpty(),
-    body('payments.*.amount').isFloat({ min: 0.01 }),
-    body('total').isFloat({ min: 0 }).withMessage('total é obrigatório'),
-    body('subtotal').isFloat({ min: 0 }).withMessage('subtotal é obrigatório'),
+    body('items.*.quantity').isInt({ min: 1, max: 9999999 }),
+    body('items.*.unit_price').isFloat({ min: 0, max: 99999999.99 }),
+    body('payments').isArray({ min: 1, max: 20 }).withMessage('payments deve conter ao menos 1 pagamento'),
+    body('payments.*.method')
+      .isString()
+      .isIn(['cash', 'pix', 'credit', 'debit', 'credit_balance'])
+      .withMessage('Método de pagamento inválido'),
+    body('payments.*.label').isString().notEmpty().isLength({ max: 100 }),
+    body('payments.*.amount').isFloat({ min: 0.01, max: 99999999.99 }),
+    body('payments.*.installments').optional({ nullable: true }).isInt({ min: 1, max: 36 }),
+    body('payments.*.cardBrand').optional({ nullable: true }).isString().isLength({ max: 50 }),
+    body('total').isFloat({ min: 0.01, max: 99999999.99 }).withMessage('total é obrigatório'),
+    body('subtotal').isFloat({ min: 0, max: 99999999.99 }).withMessage('subtotal é obrigatório'),
+    body('discount').optional().isFloat({ min: 0, max: 99999999.99 }),
+    body('surcharge').optional().isFloat({ min: 0, max: 99999999.99 }),
+    body('seller_id').optional({ nullable: true }).isInt({ min: 1 }),
+    body('presence_indicator').optional({ nullable: true }).isString().isLength({ max: 50 }),
+    body('sale_category').optional({ nullable: true }).isString().isLength({ max: 50 }),
+    body('observation').optional({ nullable: true }).isString().isLength({ max: 2000 }),
   ],
   async (req: AuthRequest, res: Response) => {
     try {

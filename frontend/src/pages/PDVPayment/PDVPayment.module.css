@@ -90,6 +90,29 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.methodCredit {
+  border-color: var(--color-success);
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+}
+
+.methodCredit:hover:not(:disabled) {
+  border-color: var(--color-success-hover);
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+}
+
+.methodCredit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.methodHint {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
 /* ===== Adicionar valor ===== */
 .addRow {
   display: flex;
