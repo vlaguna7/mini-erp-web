@@ -12,6 +12,7 @@ import SalesAndClientsPage from './pages/SalesAndClientsPage';
 import BlankPage from './pages/BlankPage';
 import CadastrarClientePage from './pages/CadastrarClientePage';
 import ListaClientesPage from './pages/ListaClientesPage';
+import VerClientePage from './pages/VerClientePage';
 import CriarProdutoPage from './pages/CriarProdutoPage';
 import GestaoEstoquePage from './pages/GestaoEstoquePage';
 import CategoriasPage from './pages/CategoriasPage';
@@ -134,6 +135,7 @@ function App() {
           <Route path="/vendas-e-clientes"    element={<ProtectedLayout isInitializing={isInitializing}><SalesAndClientsPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/cadastrar-cliente" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/editar-cliente/:id" element={<ProtectedLayout isInitializing={isInitializing}><CadastrarClientePage /></ProtectedLayout>} />
+          <Route path="/vendas-e-clientes/ver-cliente/:id" element={<ProtectedLayout isInitializing={isInitializing}><VerClientePage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lista-clientes" element={<ProtectedLayout isInitializing={isInitializing}><ListaClientesPage /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-venda" element={<ProtectedLayout isInitializing={isInitializing}><BlankPage title="Lançar Venda" /></ProtectedLayout>} />
           <Route path="/vendas-e-clientes/lancar-devolucao" element={<ProtectedLayout isInitializing={isInitializing}><LancarDevolucaoPage /></ProtectedLayout>} />

@@ -135,4 +135,79 @@ export class ClientService {
     await prisma.client.delete({ where: { id: clientId } });
     return { message: 'Client deleted successfully' };
   }
+
+  static async getPurchaseHistory(
+    userId: number,
+    clientId: number,
+    limit: number = 20,
+    offset: number = 0
+  ) {
+    await this.getClientById(userId, clientId);
+
+    const where = { userId, clientId };
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
+    const [sales, total, aggregate] = await Promise.all([
+      prisma.sale.findMany({
+        where,
+        select: {
+          id: true,
+          totalValue: true,
+          subtotal: true,
+          discount: true,
+          surcharge: true,
+          presenceIndicator: true,
+          saleCategory: true,
+          observation: true,
+          saleDate: true,
+          createdAt: true,
+          seller: { select: { id: true, name: true } },
+          items: {
+            select: {
+              id: true,
+              quantity: true,
+              unitPrice: true,
+              subtotal: true,
+              product: { select: { id: true, name: true, code: true } },
+            },
+          },
+          payments: {
+            select: {
+              id: true,
+              method: true,
+              label: true,
+              amount: true,
+              installments: true,
+              cardBrand: true,
+            },
+          },
+        },
+        orderBy: [{ saleDate: 'desc' }, { createdAt: 'desc' }],
+        take: safeLimit,
+        skip: offset,
+      }),
+      prisma.sale.count({ where }),
+      prisma.sale.aggregate({
+        where,
+        _sum: { totalValue: true },
+        _max: { saleDate: true },
+        _min: { saleDate: true },
+      }),
+    ]);
+
+    const totalSpent = aggregate._sum.totalValue ? Number(aggregate._sum.totalValue) : 0;
+    const averageTicket = total > 0 ? totalSpent / total : 0;
+
+    return {
+      sales,
+      total,
+      stats: {
+        totalSales: total,
+        totalSpent,
+        averageTicket,
+        firstPurchaseDate: aggregate._min.saleDate,
+        lastPurchaseDate: aggregate._max.saleDate,
+      },
+    };
+  }
 }

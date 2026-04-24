@@ -52,13 +52,48 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
-    const client = await ClientService.getClientById(
-      req.user!.id,
-      parseInt(req.params.id)
-    );
+    const clientId = parseInt(req.params.id);
+    if (!Number.isFinite(clientId) || clientId < 1) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+    const client = await ClientService.getClientById(req.user!.id, clientId);
     res.status(200).json(client);
   } catch (error: any) {
     res.status(404).json({ error: error.message });
+  }
+});
+
+router.get('/:id/purchases', async (req: AuthRequest, res: Response) => {
+  try {
+    const clientId = parseInt(req.params.id);
+    if (!Number.isFinite(clientId) || clientId < 1) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const offset = (page - 1) * limit;
+
+    const result = await ClientService.getPurchaseHistory(
+      req.user!.id,
+      clientId,
+      limit,
+      offset
+    );
+
+    res.status(200).json({
+      sales: result.sales,
+      total: result.total,
+      stats: result.stats,
+      page,
+      limit,
+      totalPages: Math.ceil(result.total / limit),
+    });
+  } catch (error: any) {
+    if (error.message === 'Client not found') {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
+    console.error('Erro ao buscar histórico de compras:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }
 });
 

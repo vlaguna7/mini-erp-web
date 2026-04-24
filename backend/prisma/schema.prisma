@@ -210,11 +210,14 @@ model Client {
   city         String?  @db.VarChar(100)
   state        String?  @db.VarChar(2)
   observations String?  @db.Text
+  creditBalance Decimal @default(0) @map("credit_balance") @db.Decimal(12, 2)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  salesAsClient  Sale[] @relation("SaleClient")
+  user                         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salesAsClient                Sale[]                 @relation("SaleClient")
+  returns                      Return[]               @relation("ReturnClient")
+  financialTransactions        FinancialTransaction[] @relation("FinancialTransactionClient")
 
   @@index([userId], name: "idx_clients_user_id")
   @@map("clients")
@@ -320,27 +323,33 @@ model SalePayment {
 }
 
 model Return {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  saleId     Int?     @map("sale_id")
-  productId  Int      @map("product_id")
-  quantity   Int
-  reason     String?  @db.VarChar(255)
-  returnDate DateTime @map("return_date") @db.Date
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  id               Int      @id @default(autoincrement())
+  userId           Int      @map("user_id")
+  saleId           Int?     @map("sale_id")
+  productId        Int      @map("product_id")
+  clientId         Int?     @map("client_id")
+  quantity         Int
+  refundValue      Decimal? @map("refund_value") @db.Decimal(10, 2)
+  resolutionMethod String?  @map("resolution_method") @db.VarChar(30)
+  reason           String?  @db.VarChar(255)
+  returnDate       DateTime @map("return_date") @db.Date
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   sale    Sale?   @relation(fields: [saleId], references: [id], onDelete: SetNull)
   product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  client  Client? @relation("ReturnClient", fields: [clientId], references: [id], onDelete: SetNull)
 
   @@index([userId], name: "idx_returns_user_id")
+  @@index([clientId], name: "idx_returns_client_id")
   @@map("returns")
 }
 
 model FinancialTransaction {
   id            Int      @id @default(autoincrement())
   userId        Int      @map("user_id")
+  clientId      Int?     @map("client_id")
   type          String   @db.VarChar(30) // DESPESA, RECEITA, RENEGOCIACAO
   category      String?  @db.VarChar(100)
   description   String   @db.VarChar(255)
@@ -352,9 +361,11 @@ model FinancialTransaction {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client Client? @relation("FinancialTransactionClient", fields: [clientId], references: [id], onDelete: SetNull)
 
   @@index([userId], name: "idx_financial_transactions_user_id")
+  @@index([clientId], name: "idx_financial_transactions_client_id")
   @@map("financial_transactions")
 }
 

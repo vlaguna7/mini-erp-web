@@ -581,29 +581,64 @@ export class ReportService {
     return { summary: { totalClients: rows.length, segments: Object.fromEntries(segs) }, rows };
   }
 
-  /* ─── 12. Crédito de Clientes ─── */
+  /* ─── 12. Crédito de Clientes ───
+   * Agrega apenas devoluções com resolutionMethod='GERAR_CREDITO' (o único método
+   * que gera saldo no cadastro). Usa `refundValue` histórico; se NULL (registro
+   * anterior à migração e ainda não tratado pelo backfill), cai para unitPrice
+   * do saleItem correspondente × quantidade.
+   *
+   * Para registros antigos (antes da coluna resolution_method existir), usa o
+   * prefixo `[GERAR_CREDITO]` que foi historicamente gravado no campo reason.
+   */
   static async clientCreditsReport(userId: number, dateFrom?: string, dateTo?: string) {
     const dateRange = parseDateRange(dateFrom, dateTo);
-    const where: any = { userId };
+    const where: any = {
+      userId,
+      OR: [
+        { resolutionMethod: 'GERAR_CREDITO' },
+        { AND: [{ resolutionMethod: null }, { reason: { startsWith: '[GERAR_CREDITO]' } }] },
+      ],
+    };
     if (dateRange) where.returnDate = dateRange;
 
     const returns = await prisma.return.findMany({
       where,
       include: {
-        product: { select: { name: true, priceSale: true } },
-        sale: { select: { client: { select: { id: true, name: true } } } },
+        client: { select: { id: true, name: true } },
+        sale: {
+          select: {
+            clientId: true,
+            client: { select: { id: true, name: true } },
+            items: { select: { productId: true, unitPrice: true, quantity: true } },
+          },
+        },
       },
       orderBy: { returnDate: 'desc' },
     });
 
     const map = new Map<number, { name: string; count: number; credit: number }>();
     for (const r of returns) {
-      const cid = r.sale?.client?.id || 0;
-      const cn = r.sale?.client?.name || 'Sem cliente';
-      const cv = Number(r.product?.priceSale || 0) * r.quantity;
+      // Prioriza o client gravado na devolução (quem efetivamente recebeu o crédito).
+      // Fallback para client da venda para registros antigos.
+      const cid = r.client?.id ?? r.sale?.client?.id ?? 0;
+      const cn = r.client?.name ?? r.sale?.client?.name ?? 'Sem cliente';
+
+      // Valor: usa refundValue persistido; senão calcula do saleItem histórico.
+      let value = r.refundValue != null ? Number(r.refundValue) : 0;
+      if (value === 0 && r.sale) {
+        const matches = r.sale.items.filter((it) => it.productId === r.productId);
+        if (matches.length > 0) {
+          // média ponderada por quantidade — robusto a múltiplos saleItems do mesmo produto
+          const totalQty = matches.reduce((s, it) => s + it.quantity, 0);
+          const weighted = matches.reduce((s, it) => s + Number(it.unitPrice) * it.quantity, 0);
+          const avg = totalQty > 0 ? weighted / totalQty : 0;
+          value = avg * r.quantity;
+        }
+      }
+
       const e = map.get(cid) || { name: cn, count: 0, credit: 0 };
       e.count += r.quantity;
-      e.credit += cv;
+      e.credit += value;
       map.set(cid, e);
     }
 

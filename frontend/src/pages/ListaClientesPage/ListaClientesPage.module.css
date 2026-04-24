@@ -218,6 +218,19 @@
   color: #64748b;
 }
 
+.creditBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
 /* ── Row actions ── */
 .rowActions {
   display: flex;
@@ -237,6 +250,11 @@
   transition: background 0.15s;
 }
 
+.iconBtn.view {
+  background: #f1f5f9;
+  color: #475569;
+}
+
 .iconBtn.edit {
   background: #eff6ff;
   color: #2563eb;
@@ -245,6 +263,10 @@
 .iconBtn.delete {
   background: #fef2f2;
   color: #dc2626;
+}
+
+.iconBtn.view:hover {
+  background: #e2e8f0;
 }
 
 .iconBtn.edit:hover {

@@ -22,8 +22,9 @@ const METHOD_LABEL: Record<ResolutionMethod, string> = {
   GERAR_CREDITO: 'Gerar Crédito',
 };
 
-// Armazena método + observação do usuário dentro do campo `reason` (VarChar 255).
-// Prefixo [METHOD] permite parse futuro se virar coluna própria no schema.
+// Mantido por compatibilidade: o método passou a ser uma coluna própria (`resolutionMethod`),
+// mas o `reason` ainda carrega o prefixo `[METHOD]` para leitura humana e para reconstrução
+// no backfill de registros antigos.
 function buildReason(method: ResolutionMethod, obs?: string | null): string {
   const note = (obs || '').trim();
   const base = `[${method}]`;
@@ -50,13 +51,27 @@ export class ReturnService {
     });
     if (!sale) throw { status: 404, message: 'Venda não encontrada' };
 
-    // 2. Validar clientId (se fornecido) pertence ao usuário
-    if (data.clientId) {
+    // 2. Cliente destinatário do crédito/reembolso
+    //    Prioridade: clientId explicitamente enviado > cliente da venda original.
+    //    Se for enviado, deve pertencer ao mesmo tenant.
+    let targetClientId: number | null = null;
+    if (data.clientId != null) {
       const client = await prisma.client.findFirst({
         where: { id: data.clientId, userId },
         select: { id: true },
       });
       if (!client) throw { status: 400, message: 'Cliente inválido' };
+      targetClientId = client.id;
+    } else if (sale.clientId) {
+      targetClientId = sale.clientId;
+    }
+
+    // GERAR_CREDITO exige destinatário — sem cliente não há cadastro onde gravar saldo.
+    if (data.resolutionMethod === 'GERAR_CREDITO' && !targetClientId) {
+      throw {
+        status: 400,
+        message: 'Cliente é obrigatório para gerar crédito (selecione o cliente que receberá o crédito)',
+      };
     }
 
     // 3. Mapear saleItems originais por id
@@ -108,27 +123,31 @@ export class ReturnService {
       }
     }
 
-    // 8. Valor total a reembolsar (unitPrice x quantidade)
-    const totalRefund = data.items.reduce((sum, ret) => {
+    // 8. Valor total a reembolsar (unitPrice histórico x quantidade)
+    const itemRefunds = data.items.map((ret) => {
       const si = saleItemsById.get(ret.saleItemId)!;
-      return sum + Number(si.unitPrice) * ret.quantity;
-    }, 0);
+      const refundValue = Number(si.unitPrice) * ret.quantity;
+      return { ret, si, refundValue };
+    });
+    const totalRefund = itemRefunds.reduce((sum, r) => sum + r.refundValue, 0);
 
-    const targetClientId = data.clientId ?? sale.clientId ?? null;
     const returnDate = data.returnDate ? new Date(data.returnDate) : new Date();
     const reason = buildReason(data.resolutionMethod, data.observation);
 
-    // 9. Transação: cria Returns + devolve estoque + cria FinancialTransaction se aplicável
+    // 9. Transação atômica: cria Returns + devolve estoque + cria FinancialTransaction + credita saldo.
+    //    Qualquer falha aqui reverte TUDO — saldo do cliente nunca fica inconsistente.
     const result = await prisma.$transaction(async (tx) => {
       const createdReturns: { id: number }[] = [];
-      for (const ret of data.items) {
-        const si = saleItemsById.get(ret.saleItemId)!;
+      for (const { ret, si, refundValue } of itemRefunds) {
         const r = await tx.return.create({
           data: {
             userId,
             saleId: sale.id,
             productId: si.productId,
+            clientId: targetClientId,
             quantity: ret.quantity,
+            refundValue,
+            resolutionMethod: data.resolutionMethod,
             reason,
             returnDate,
           },
@@ -152,6 +171,7 @@ export class ReturnService {
         const tx1 = await tx.financialTransaction.create({
           data: {
             userId,
+            clientId: targetClientId,
             type: 'DESPESA',
             category,
             description: `${descPrefix} referente à venda #${sale.id}${clientPart}`.slice(0, 255),
@@ -163,6 +183,19 @@ export class ReturnService {
           },
         });
         financialTransactionId = tx1.id;
+      }
+
+      // Incrementa o saldo de crédito do cliente SOMENTE em GERAR_CREDITO.
+      // `updateMany` com filtro por userId garante que mesmo que o targetClientId
+      // tenha sido adulterado em corrida, não creditamos cliente de outro tenant.
+      if (data.resolutionMethod === 'GERAR_CREDITO' && targetClientId) {
+        const updated = await tx.client.updateMany({
+          where: { id: targetClientId, userId },
+          data: { creditBalance: { increment: totalRefund } },
+        });
+        if (updated.count !== 1) {
+          throw { status: 400, message: 'Falha ao creditar saldo do cliente' };
+        }
       }
 
       return { returnIds: createdReturns.map((r) => r.id), financialTransactionId };

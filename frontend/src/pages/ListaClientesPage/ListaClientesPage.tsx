@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, Download, Upload, Edit2, Trash2, Users, Plus,
-  ChevronLeft, ChevronRight,
+  Search, Download, Upload, Edit2, Trash2, Users, Plus, Eye,
+  ChevronLeft, ChevronRight, Wallet,
 } from 'lucide-react';
 import { clientService } from '../../services/clientService';
 import styles from './ListaClientesPage.module.css';
@@ -23,6 +23,11 @@ function formatPhone(value?: string | null): string {
   if (d.length === 11) return d.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   if (d.length === 10) return d.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   return value;
+}
+
+function formatCurrency(value: string | number | null | undefined): string {
+  const n = Number(value ?? 0);
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
 function getInitials(name: string): string {
@@ -213,6 +218,7 @@ const ListaClientesPage: React.FC = () => {
                   <th className={styles.mobileHide}>Vendedor</th>
                   <th>Telefone</th>
                   <th className={styles.mobileHide}>E-mail</th>
+                  <th style={{ textAlign: 'right' }}>Saldo</th>
                   <th style={{ textAlign: 'center' }}>Ações</th>
                 </tr>
               </thead>
@@ -239,8 +245,25 @@ const ListaClientesPage: React.FC = () => {
                     <td className={`${styles.cellMuted} ${styles.mobileHide}`}>
                       {client.email || '—'}
                     </td>
+                    <td style={{ textAlign: 'right' }}>
+                      {Number(client.creditBalance ?? 0) > 0 ? (
+                        <span className={styles.creditBadge} title="Saldo de crédito disponível">
+                          <Wallet size={12} /> {formatCurrency(client.creditBalance)}
+                        </span>
+                      ) : (
+                        <span className={styles.cellMuted}>—</span>
+                      )}
+                    </td>
                     <td>
                       <div className={styles.rowActions}>
+                        <button
+                          className={`${styles.iconBtn} ${styles.view}`}
+                          title="Ver cadastro e histórico de compras"
+                          onClick={() => navigate(`/vendas-e-clientes/ver-cliente/${client.id}`)}
+                          type="button"
+                        >
+                          <Eye size={14} />
+                        </button>
                         <button
                           className={`${styles.iconBtn} ${styles.edit}`}
                           title="Editar"

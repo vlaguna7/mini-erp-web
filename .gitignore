@@ -28,3 +28,8 @@ coverage/
 # Docker
 .docker/
 .env
+
+# Claude Code — contexto local, não deve ir para o repositório
+CLAUDE.md
+**/CLAUDE.md
+.claude/

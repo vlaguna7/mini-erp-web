@@ -22,6 +22,13 @@ export interface ClientData {
   observations?: string;
 }
 
+export interface ClientRecord extends ClientData {
+  id: number;
+  creditBalance?: string | number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export const clientService = {
   getClients: async (page: number = 1, limit: number = 100) => {
     const response = await apiClient.get('/clients', { params: { page, limit } });
@@ -47,4 +54,57 @@ export const clientService = {
     const response = await apiClient.delete(`/clients/${id}`);
     return response.data;
   },
+
+  getClientPurchases: async (id: number, page: number = 1, limit: number = 50) => {
+    const response = await apiClient.get(`/clients/${id}/purchases`, {
+      params: { page, limit },
+    });
+    return response.data as {
+      sales: ClientPurchase[];
+      total: number;
+      stats: {
+        totalSales: number;
+        totalSpent: number;
+        averageTicket: number;
+        firstPurchaseDate: string | null;
+        lastPurchaseDate: string | null;
+      };
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  },
 };
+
+export interface ClientPurchaseItem {
+  id: number;
+  quantity: number;
+  unitPrice: string;
+  subtotal: string;
+  product: { id: number; name: string; code: string | null };
+}
+
+export interface ClientPurchasePayment {
+  id: number;
+  method: string;
+  label: string;
+  amount: string;
+  installments: number | null;
+  cardBrand: string | null;
+}
+
+export interface ClientPurchase {
+  id: number;
+  totalValue: string;
+  subtotal: string;
+  discount: string;
+  surcharge: string;
+  presenceIndicator: string | null;
+  saleCategory: string | null;
+  observation: string | null;
+  saleDate: string;
+  createdAt: string;
+  seller: { id: number; name: string } | null;
+  items: ClientPurchaseItem[];
+  payments: ClientPurchasePayment[];
+}
