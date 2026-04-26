@@ -107,6 +107,18 @@ const LancarDevolucaoPage: React.FC = () => {
   // ── Step 2: resultados ──
   const [sales, setSales] = useState<SaleDto[]>([]);
   const [selectedSale, setSelectedSale] = useState<SaleDto | null>(null);
+  const [expandedSales, setExpandedSales] = useState<Set<number>>(new Set());
+
+  const toggleExpandedSale = (saleId: number) => {
+    setExpandedSales((prev) => {
+      const next = new Set(prev);
+      if (next.has(saleId)) next.delete(saleId);
+      else next.add(saleId);
+      return next;
+    });
+  };
+
+  const PRODUCTS_PREVIEW_LIMIT = 3;
 
   // ── Step 3: quantidades a devolver ──
   const [returnQty, setReturnQty] = useState<ReturnQtyMap>({});
@@ -400,6 +412,12 @@ const LancarDevolucaoPage: React.FC = () => {
         <div className={styles.saleList}>
           {sales.map((sale) => {
             const isSel = selectedSale?.id === sale.id;
+            const isExpanded = expandedSales.has(sale.id);
+            const totalItems = sale.items.length;
+            const overflow = Math.max(0, totalItems - PRODUCTS_PREVIEW_LIMIT);
+            const visibleItems = isExpanded || overflow === 0
+              ? sale.items
+              : sale.items.slice(0, PRODUCTS_PREVIEW_LIMIT);
             return (
               <button
                 key={sale.id}
@@ -426,12 +444,33 @@ const LancarDevolucaoPage: React.FC = () => {
                     </span>
                   </div>
                   <div className={styles.saleCardField}>
-                    <span className={styles.saleFieldLabel}>Produtos</span>
+                    <span className={styles.saleFieldLabel}>Produtos ({totalItems})</span>
                     <ul className={styles.saleProductsList}>
-                      {sale.items.map((it) => (
-                        <li key={it.id}>{it.quantity} {it.quantity > 1 ? 'un' : 'un'} x {it.product.name}</li>
+                      {visibleItems.map((it) => (
+                        <li key={it.id}>{it.quantity} un x {it.product.name}</li>
                       ))}
                     </ul>
+                    {overflow > 0 && (
+                      <span
+                        className={styles.saleProductsToggle}
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={isExpanded}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleExpandedSale(sale.id);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleExpandedSale(sale.id);
+                          }
+                        }}
+                      >
+                        {isExpanded ? 'Mostrar menos' : `+${overflow} produto${overflow > 1 ? 's' : ''}`}
+                      </span>
+                    )}
                   </div>
                 </div>
               </button>

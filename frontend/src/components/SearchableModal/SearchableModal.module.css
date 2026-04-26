@@ -321,12 +321,86 @@
   color: var(--color-slate-700);
 }
 
-@media (max-width: 640px) {
-  .overlay {
-    padding: var(--spacing-md);
-    align-items: flex-end;
+/* ===========================================================
+   RESPONSIVO
+   - Tablet (≤1023): trigger ganha altura touch-friendly.
+   - Mobile (≤640): modal vira fullscreen edge-to-edge,
+     respeitando safe-area-inset; atalhos de teclado escondidos.
+   =========================================================== */
+@media (max-width: 1023px) {
+  .trigger {
+    min-height: 44px;
   }
+}
+
+@media (max-width: 640px) {
+  /* Modal ocupa a tela inteira: sem padding no overlay, sem cantos arredondados */
+  .overlay {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    backdrop-filter: none;
+  }
+
   .modal {
-    max-height: 80vh;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    /* Respeita o notch/home-indicator do iOS */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .header {
+    padding: var(--spacing-md);
+  }
+
+  .title {
+    font-size: var(--font-size-base);
+  }
+
+  /* Botão fechar maior para toque */
+  .closeBtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .searchBox {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  /* Input de busca com font 16px (evita zoom iOS) e altura touch-friendly */
+  .searchInput {
+    font-size: var(--font-size-base);
+    min-height: 40px;
+  }
+
+  /* Lista ganha mais espaço útil */
+  .list {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  /* Items com altura touch-friendly */
+  .item {
+    padding: var(--spacing-md) var(--spacing-sm);
+    min-height: 56px;
+    gap: var(--spacing-sm);
+  }
+
+  .itemIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .itemPrimary {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Footer de atalhos de teclado é inútil no mobile */
+  .footer {
+    display: none;
   }
 }
