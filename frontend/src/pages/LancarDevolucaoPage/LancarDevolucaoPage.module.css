@@ -78,6 +78,73 @@
   flex-shrink: 0;
 }
 
+/* ===== Stepper mobile (progress bar) =====
+   Em desktop fica escondido; mobile esconde o stepper de ícones e exibe esta barra. */
+.stepperMobile {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background: white;
+  border: 1px solid var(--color-slate-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.stepperMobileHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.stepperMobileIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepperMobileText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stepperMobileCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: var(--font-weight-medium);
+}
+
+.stepperMobileTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-slate-900);
+}
+
+.stepperMobileTrack {
+  height: 6px;
+  background: var(--color-slate-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.stepperMobileFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
 /* ===== Cards e seções ===== */
 .card {
   background: white;
@@ -342,6 +409,14 @@
 
 .scanBtn.active .scanPulse {
   animation: scanPulseAnim 1.2s ease-in-out infinite;
+}
+
+/* Texto do scanBtn em duas variações: completa (desktop) e curta (mobile) */
+.scanLabelFull {
+  display: inline;
+}
+.scanLabelShort {
+  display: none;
 }
 
 @keyframes scanPulseAnim {
@@ -739,10 +814,29 @@
   color: var(--color-slate-900);
 }
 
+/* Wrapper que permite scroll horizontal sem distorcer a tabela em telas estreitas.
+   Sombra à direita sinaliza visualmente que há conteúdo escondido. */
+.tableScroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: var(--spacing-md);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)) left center,
+    linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) right center,
+    linear-gradient(to right, var(--color-slate-200), var(--color-slate-200)) left center,
+    linear-gradient(to right, var(--color-slate-200), var(--color-slate-200)) right center;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
 .reviewProductsTable {
   width: 100%;
   border-collapse: collapse;
-  margin-top: var(--spacing-md);
+  margin-top: 0;
 }
 
 .reviewProductsTable th {
@@ -894,33 +988,372 @@
   font-size: var(--font-size-sm);
 }
 
-/* ===== Responsivo ===== */
-@media (max-width: 1024px) {
+/* ===========================================================
+   RESPONSIVO — overrides ordenados do menos específico (tablet)
+   para o mais específico (mobile pequeno).
+   Base do arquivo é desktop-first; estas queries reduzem para
+   tablet (≤1024) e mobile (≤640).
+   =========================================================== */
+
+/* ---------- Tablet: 768–1023 px ---------- */
+@media (max-width: 1023px) {
+  .page {
+    padding: var(--spacing-lg);
+  }
+
+  .card {
+    padding: var(--spacing-lg);
+  }
+
+  /* Filtros e grids principais: 4/3-col → 2-col */
   .grid,
   .summaryGrid,
   .methodGrid {
     grid-template-columns: repeat(2, 1fr);
   }
-}
 
-@media (max-width: 640px) {
-  .page {
-    padding: var(--spacing-md);
-  }
-  .grid,
-  .summaryGrid,
-  .methodGrid {
-    grid-template-columns: 1fr;
-  }
-  .stepper {
-    overflow-x: auto;
-    justify-content: flex-start;
+  /* Stepper mantém ícones, mas labels menores e ícones um pouco menores */
+  .stepIcon {
+    width: 44px;
+    height: 44px;
   }
   .stepLabel {
     font-size: var(--font-size-xs);
   }
-  .stepIcon {
-    width: 44px;
+
+  /* Step 4: cada método ocupa linha completa quando há só 2 cols */
+  .methodOption {
+    padding: var(--spacing-md);
+  }
+}
+
+/* ---------- Mobile: ≤640 px ---------- */
+@media (max-width: 640px) {
+  /* ── Página & cards ── */
+  .page {
+    padding: var(--spacing-md);
+    /* Espaço extra no fundo para que o footer sticky não cubra conteúdo */
+    padding-bottom: calc(var(--spacing-2xl) + var(--spacing-3xl));
+  }
+
+  .card {
+    padding: var(--spacing-md);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .cardTitle {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* ── Stepper: esconde o de ícones e mostra a versão progress bar ── */
+  .stepper {
+    display: none;
+  }
+  .stepperMobile {
+    display: flex;
+  }
+
+  /* ── Grids para 1 coluna ── */
+  .grid,
+  .methodGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  /* Step 4: 4 cards de resumo ficam em 2x2 (compacto, mas legível) */
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .summaryCard {
+    padding: var(--spacing-sm);
+  }
+  .summaryValue {
+    font-size: var(--font-size-base);
+  }
+  .summaryLabel {
+    font-size: 0.65rem;
+  }
+
+  /* ── Inputs touch-friendly: altura mínima e font-size 16px (evita zoom iOS) ── */
+  .field input,
+  .field textarea,
+  .field select {
+    min-height: 44px;
+    font-size: var(--font-size-base);
+  }
+
+  /* ── globalError compacto ── */
+  .globalError {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  /* ── Step 2: cards de venda ── */
+  .filterBar {
+    padding: var(--spacing-md);
+  }
+
+  .saleCard {
+    padding: var(--spacing-md);
+  }
+
+  .saleCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .saleTotalBadge {
+    margin-left: 0;
+    align-self: flex-start;
+  }
+
+  .saleCardBody {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .saleProductsList {
+    font-size: var(--font-size-xs);
+    padding-left: var(--spacing-md);
+  }
+
+  /* ── Step 3: toolbar reorganizada ── */
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .toolbarLeft {
+    flex: none;
+  }
+
+  .scanBtn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  /* Encurta texto do scanBtn em mobile pra não quebrar */
+  .scanLabelFull {
+    display: none;
+  }
+  .scanLabelShort {
+    display: inline;
+  }
+
+  .toolbarRight {
+    justify-content: flex-end;
+  }
+
+  .ghostBtn {
+    flex: 1;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  /* ── Step 3: resumo de seleção (2x2 com total span) ── */
+  .selectionSummary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .selectionSummaryItem {
+    margin-left: 0 !important;
+  }
+
+  .selectionSummaryItem:last-child {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-primary-light);
+    padding-top: var(--spacing-sm);
+  }
+
+  .selectionSummaryValue {
+    font-size: var(--font-size-base);
+  }
+
+  /* ── Step 3: cards de produto em layout 2 linhas ── */
+  .productCard {
+    grid-template-columns: 32px 1fr;
+    gap: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .productMain {
+    /* Nome em linha 1 col 2; meta na sequência */
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* qtyStepper e subtotal compartilham linha 2 — ocupam de col 1 a -1 e ficam lado a lado */
+  .qtyStepper {
+    grid-column: 1 / -1;
+    grid-row: 2;
     height: 44px;
+    width: fit-content;
+  }
+
+  .qtyBtn {
+    width: 44px;
+  }
+
+  .qtyValue {
+    width: 60px;
+    font-size: var(--font-size-base);
+  }
+
+  .productSubtotal {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    text-align: left;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    min-width: 0;
+    padding-top: var(--spacing-xs);
+    border-top: 1px dashed var(--color-slate-100);
+  }
+
+  .productMetaRow {
+    gap: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  /* Aumenta o checkbox touch-friendly */
+  .selectBox {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* ── Step 4: método como cards empilhados ── */
+  .methodOption {
+    padding: var(--spacing-md);
+  }
+
+  .methodTitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .methodDesc {
+    font-size: 0.7rem;
+    line-height: var(--line-height-tight);
+  }
+
+  /* ── Step 5: revisão ── */
+  .reviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .reviewItem {
+    padding: var(--spacing-sm);
+  }
+
+  .reviewItemValue {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Tabela com scroll horizontal e fontes menores */
+  .reviewProductsTable th,
+  .reviewProductsTable td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+  }
+
+  /* ── Footer sticky no mobile ── */
+  .footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom: none;
+    box-shadow: 0 -2px 12px rgba(15, 23, 42, 0.08);
+    padding: var(--spacing-sm) var(--spacing-md);
+    /* Respeita home-indicator no iPhone */
+    padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom, 0px));
+    margin-left: calc(-1 * var(--spacing-md));
+    margin-right: calc(-1 * var(--spacing-md));
+    margin-bottom: calc(-1 * var(--spacing-md));
+    flex-wrap: nowrap;
+  }
+
+  .footerLeft {
+    flex: 0 0 auto;
+    gap: var(--spacing-xs);
+  }
+
+  .footerRight {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .footerHint {
+    display: none; /* dica de UX se some no mobile pra dar espaço aos botões */
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  /* Botão primário ganha mais peso visual em mobile */
+  .footerRight .btnPrimary {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Cancelar/Voltar ficam compactos (só ícone visível seria ideal, mas mantemos texto enxuto) */
+  .footerLeft .btn {
+    padding: var(--spacing-sm);
+  }
+
+  /* ── Chips de filtros aplicados ── */
+  .chip {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  /* ── Empty state ── */
+  .empty {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  /* ── Modal de sucesso responsivo ── */
+  .successCard {
+    padding: var(--spacing-xl);
+    max-width: 92%;
+  }
+}
+
+/* ---------- Mobile pequeno: ≤380 px (Galaxy S8, iPhone SE 1) ---------- */
+@media (max-width: 380px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stepper de quantidade encosta na borda — não permite o botão Subtotal abaixo */
+  .qtyStepper {
+    width: 100%;
+  }
+
+  .qtyValue {
+    flex: 1;
+    width: auto;
   }
 }

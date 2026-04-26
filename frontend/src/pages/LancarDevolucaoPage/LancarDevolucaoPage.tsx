@@ -243,27 +243,59 @@ const LancarDevolucaoPage: React.FC = () => {
   };
 
   // ── Stepper ──
-  const renderStepper = () => (
-    <div className={styles.stepper}>
-      {STEPS.map((s, i) => {
-        const Icon = s.icon;
-        const isActive = i === activeStep;
-        const isDone = i < activeStep;
-        const cls = `${styles.step} ${isActive ? styles.active : ''} ${isDone ? styles.completed : ''}`;
-        return (
-          <React.Fragment key={s.label}>
-            <div className={cls}>
-              <div className={styles.stepIcon}>
-                <Icon size={24} />
-              </div>
-              <span className={styles.stepLabel}>{s.label}</span>
+  const renderStepper = () => {
+    const ActiveIcon = STEPS[activeStep].icon;
+    const progressPct = ((activeStep + 1) / STEPS.length) * 100;
+    return (
+      <>
+        {/* Versão desktop/tablet — ícones em linha */}
+        <div className={styles.stepper} aria-hidden="true">
+          {STEPS.map((s, i) => {
+            const Icon = s.icon;
+            const isActive = i === activeStep;
+            const isDone = i < activeStep;
+            const cls = `${styles.step} ${isActive ? styles.active : ''} ${isDone ? styles.completed : ''}`;
+            return (
+              <React.Fragment key={s.label}>
+                <div className={cls}>
+                  <div className={styles.stepIcon}>
+                    <Icon size={24} />
+                  </div>
+                  <span className={styles.stepLabel}>{s.label}</span>
+                </div>
+                {i < STEPS.length - 1 && <ChevronRight className={styles.stepArrow} size={20} />}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Versão mobile — barra de progresso compacta */}
+        <div
+          className={styles.stepperMobile}
+          role="progressbar"
+          aria-valuenow={activeStep + 1}
+          aria-valuemin={1}
+          aria-valuemax={STEPS.length}
+          aria-label={`Passo ${activeStep + 1} de ${STEPS.length}: ${STEPS[activeStep].label}`}
+        >
+          <div className={styles.stepperMobileHead}>
+            <div className={styles.stepperMobileIcon}>
+              <ActiveIcon size={20} />
             </div>
-            {i < STEPS.length - 1 && <ChevronRight className={styles.stepArrow} size={20} />}
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
+            <div className={styles.stepperMobileText}>
+              <span className={styles.stepperMobileCount}>
+                Passo {activeStep + 1} de {STEPS.length}
+              </span>
+              <span className={styles.stepperMobileTitle}>{STEPS[activeStep].label}</span>
+            </div>
+          </div>
+          <div className={styles.stepperMobileTrack}>
+            <div className={styles.stepperMobileFill} style={{ width: `${progressPct}%` }} />
+          </div>
+        </div>
+      </>
+    );
+  };
 
   // ── STEP 1: Buscar ──
   const renderStep1 = () => (
@@ -282,6 +314,8 @@ const LancarDevolucaoPage: React.FC = () => {
             onChange={(e) => setFilterSaleId(e.target.value)}
             placeholder="Número da venda"
             maxLength={50}
+            inputMode="search"
+            enterKeyHint="search"
           />
         </div>
         <div className={styles.field}>
@@ -292,6 +326,8 @@ const LancarDevolucaoPage: React.FC = () => {
             onChange={(e) => setFilterDocFiscal(e.target.value)}
             placeholder="Número documento Fiscal"
             maxLength={50}
+            inputMode="search"
+            enterKeyHint="search"
           />
         </div>
         <div className={styles.field}>
@@ -504,7 +540,17 @@ const LancarDevolucaoPage: React.FC = () => {
             >
               <span className={styles.scanPulse} />
               <ScanLine size={16} />
-              {scannerActive ? 'Escutando leitor...' : 'Ler código de barras (F8)'}
+              {scannerActive ? (
+                <>
+                  <span className={styles.scanLabelFull}>Escutando leitor...</span>
+                  <span className={styles.scanLabelShort}>Escutando...</span>
+                </>
+              ) : (
+                <>
+                  <span className={styles.scanLabelFull}>Ler código de barras (F8)</span>
+                  <span className={styles.scanLabelShort}>Ler código</span>
+                </>
+              )}
             </button>
           </div>
           <div className={styles.toolbarRight}>
@@ -550,7 +596,7 @@ const LancarDevolucaoPage: React.FC = () => {
                   className={styles.selectBox}
                   onClick={toggle}
                   aria-pressed={isSel}
-                  aria-label={isSel ? 'Desmarcar produto' : 'Selecionar produto'}
+                  aria-label={isSel ? `Desmarcar ${it.product.name}` : `Selecionar ${it.product.name}`}
                 >
                   {isSel && <Check size={16} />}
                 </button>
@@ -584,6 +630,8 @@ const LancarDevolucaoPage: React.FC = () => {
                       const raw = parseInt(e.target.value, 10);
                       setItemQty(it.id, raw, it.quantity);
                     }}
+                    inputMode="numeric"
+                    aria-label={`Quantidade a devolver de ${it.product.name}`}
                   />
                   <button
                     type="button"
@@ -744,26 +792,28 @@ const LancarDevolucaoPage: React.FC = () => {
           </div>
         </div>
 
-        <table className={styles.reviewProductsTable}>
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th style={{ textAlign: 'right' }}>Qtd. Devolver</th>
-              <th style={{ textAlign: 'right' }}>Valor Un.</th>
-              <th style={{ textAlign: 'right' }}>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selectedItems.map((it) => (
-              <tr key={it.id}>
-                <td>{it.product.name}</td>
-                <td style={{ textAlign: 'right' }}>{it.returnQuantity}</td>
-                <td style={{ textAlign: 'right' }}>{fmtBRL(it.unitPrice)}</td>
-                <td style={{ textAlign: 'right' }}>{fmtBRL(Number(it.unitPrice) * (it.returnQuantity || 0))}</td>
+        <div className={styles.tableScroll}>
+          <table className={styles.reviewProductsTable}>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th style={{ textAlign: 'right' }}>Qtd. Devolver</th>
+                <th style={{ textAlign: 'right' }}>Valor Un.</th>
+                <th style={{ textAlign: 'right' }}>Subtotal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {selectedItems.map((it) => (
+                <tr key={it.id}>
+                  <td>{it.product.name}</td>
+                  <td style={{ textAlign: 'right' }}>{it.returnQuantity}</td>
+                  <td style={{ textAlign: 'right' }}>{fmtBRL(it.unitPrice)}</td>
+                  <td style={{ textAlign: 'right' }}>{fmtBRL(Number(it.unitPrice) * (it.returnQuantity || 0))}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {observation && (
           <div className={styles.reviewItem} style={{ marginTop: 'var(--spacing-lg)' }}>
