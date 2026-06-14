@@ -106,4 +106,44 @@ router.patch(
   }
 );
 
+router.post(
+  '/forgot-password',
+  async (req: AuthRequest, res: Response) => {
+    try {
+      if (req.body.email) {
+        await AuthService.requestPasswordReset(req.body.email);
+      }
+    } catch (error: any) {
+      console.error('Forgot password error:', error.message);
+    }
+
+    res.status(200).json({ message: 'Se o email existir, você receberá um link em breve' });
+  }
+);
+
+router.post(
+  '/reset-password',
+  [
+    body('token').notEmpty().withMessage('token is required'),
+    body('newPassword')
+      .isLength({ min: 6 })
+      .withMessage('newPassword must be at least 6 characters'),
+  ],
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+      await AuthService.resetPassword(req.body.token, req.body.newPassword);
+      res.status(200).json({ message: 'Senha redefinida com sucesso' });
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.status).json({ error: error.message });
+      }
+      console.error('Reset password error:', error.message);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  }
+);
+
 export default router;
